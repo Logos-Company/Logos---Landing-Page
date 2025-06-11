@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { LogosImages } from '../../../json/logos_images';
 @Component({
   selector: 'app-testimonials',
   standalone: true,
@@ -9,37 +10,36 @@ import { CommonModule } from '@angular/common';
 })
 export class TestimonialsComponent {
   title = 'Opinie pacjentów';
+  testimonials: { title: string; image: string; review: string; name: string; }[] = [];
+  constructor(private logos: LogosImages) {
 
-  testimonials = [
-    {
-      title: 'Im absolutely in love with @gather_place.',
-      review: 'It’s the first video calling software built for people who meet to get work done. Feeling whole lot productive.',
-      name: 'Andrew Jones',
-      role: 'Product Developer at Webflow',
-      image: 'assets/images/andrew-jones.jpg'
-    },
-    {
-      title: 'Im absolutely in love with @gather_place.',
-      review: 'It’s the first video calling software built for people who meet to get work done. Feeling whole lot productive.',
-      name: 'Andrew Jones',
-      role: 'Product Developer at Webflow',
-      image: 'assets/images/andrew-jones.jpg'
-    },
-    {
-      title: 'Im absolutely in love with @gather_place.',
-      review: 'It’s the first video calling software built for people who meet to get work done. Feeling whole lot productive.',
-      name: 'Andrew Jones',
-      role: 'Product Developer at Webflow',
-      image: 'assets/images/andrew-jones.jpg'
-    },
-    {
-      title: 'Im absolutely in love with @gather_place.',
-      review: 'It’s the first video calling software built for people who meet to get work done. Feeling whole lot productive.',
-      name: 'Andrew Jones',
-      role: 'Product Developer at Webflow',
-      image: 'assets/images/andrew-jones.jpg'
-    }
-  ];
+    this.testimonials = [
+      {
+        title: 'Zmieniło moje życie!',
+        review: 'Dzięki terapii odzyskałam spokój i kontrolę nad emocjami. Sesje online były wygodne i dyskretne.',
+        name: 'Marta K.',
+        image: this.logos.testimonialImage2
+      },
+      {
+        title: 'Poprawiłem relacje z bliskimi',
+        review: 'Nauczyłem się jasno wyrażać swoje potrzeby i stawiać granice. Dzięki temu moje kontakty rodzinne i zawodowe się poprawiły.',
+        name: 'Adam W.',
+        image: this.logos.testimonialImage1
+      },
+      {
+        title: 'Wsparcie w walce z lękiem',
+        review: 'Techniki, które poznałam, pomogły mi opanować ataki paniki i radzić sobie ze stresem na co dzień.',
+        name: 'Paulina L.',
+        image: this.logos.testimonialImage4
+      },
+      {
+        title: 'Zwiększyłem pewność siebie',
+        review: 'Przez lata miałem wątpliwości co do siebie. Teraz czuję się silniejszy i bardziej sobą.',
+        name: 'Michał R.',
+        image: this.logos.testimonialImage3
+      }
+    ];
+  }
   visibleCards: boolean[] = [];
 
   ngOnInit() {

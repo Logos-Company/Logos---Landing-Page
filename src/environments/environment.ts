@@ -1,5 +1,7 @@
 // src/environments/environment.ts
 export const environment = {
+    posthogHost: "https://eu.i.posthog.com",
+    posthogApiKey: "phc_ozFNiSOBS7VttpZn26DBLRLts4RqIjdXWpqPOZnIivo",
     production: false,
     firebase: {
         apiKey: "AIzaSyBXO_FMLNahiQxjh_nd_2x-f0-EZB-xUY4",

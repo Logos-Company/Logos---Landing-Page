@@ -4,21 +4,34 @@
         <button class="dashboard__logout" (click)="logout()">Wyloguj</button>
     </header>
 
-    <p class="dashboard__intro">
-        Wybierz psychologa i umów się na sesję:
-    </p>
+    <p class="dashboard__intro">Wybierz psychologa i umów się na sesję:</p>
 
     <div class="dashboard__grid">
-        <div class="card" *ngFor="let psy of psychologists">
+        <div class="card" *ngFor="let psy of psychologists" [class.card--selected]="selectedPsychologistId === psy.id">
             <img class="card__avatar" [src]="psy.avatar" [alt]="psy.name" />
             <h3 class="card__name">{{ psy.name }}</h3>
             <p class="card__spec">{{ psy.specialization }}</p>
-            <button class="card__btn" [class.card__btn--selected]="selectedPsychologist === psy.id"
-                (click)="selectedPsychologist = psy.id">
-                {{ selectedPsychologist === psy.id ? 'Wybrany' : 'Wybierz' }}
+            <button class="card__btn" (click)="selectedPsychologistId = psy.id"
+                [class.card__btn--selected]="selectedPsychologistId === psy.id">
+                {{ selectedPsychologistId === psy.id ? 'Wybrany' : 'Wybierz' }}
             </button>
         </div>
     </div>
+
+    <!-- Szczegóły wybranego psychologa -->
+    <section *ngIf="selectedPsychologist" class="psychologist-details">
+        <h2>Informacje o psychologu</h2>
+        <h3>{{ selectedPsychologist.name }}</h3>
+        <p><strong>Specjalizacja:</strong> {{ selectedPsychologist.specialization }}</p>
+        <p><strong>Opis:</strong> {{ selectedPsychologist.description }}</p>
+        <p>
+            <strong>Dni pracy:</strong>
+            {{ selectedPsychologist.workingDays.join(', ') }}
+        </p>
+        <p><strong>Godziny pracy:</strong> {{ selectedPsychologist.workingHours }}</p>
+        <p *ngIf="selectedPsychologist.additionalInfo"><strong>Informacje dodatkowe:</strong> {{
+            selectedPsychologist.additionalInfo }}</p>
+    </section>
 
     <div class="dashboard__actions">
         <button class="dashboard__book" (click)="confirmBooking()">Umów spotkanie</button>

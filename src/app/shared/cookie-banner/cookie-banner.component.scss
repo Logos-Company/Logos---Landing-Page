@@ -1,0 +1,22 @@
+/* cookie-banner.component.scss */
+.cookie-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #1e1f4b;
+    color: #fff;
+    padding: 15px;
+    text-align: center;
+    z-index: 10000;
+
+    button {
+        margin-left: 20px;
+        background: #007bff;
+        border: none;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+}

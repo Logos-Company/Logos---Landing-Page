@@ -4,15 +4,19 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NavbarComponent } from '../shared/navbar/navbar.component';
 import { FooterComponent } from '../shared/footer/footer.component';
+import { MobileNavComponent } from '../shared/navbar/mobile-nav/mobile-nav.component';
+import { LogosImages } from "../json/logos_images";
 
 @Component({
   selector: 'app-contact',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NavbarComponent, FooterComponent],
+  imports: [CommonModule, ReactiveFormsModule, NavbarComponent, FooterComponent, MobileNavComponent],
   templateUrl: './contact.component.html',
   styleUrls: ['./contact.component.scss']
 })
 export class ContactComponent {
+  logosImages = new LogosImages();
+
   contactForm: FormGroup;
 
   constructor(private fb: FormBuilder) {
@@ -20,7 +24,10 @@ export class ContactComponent {
       email: ['', [Validators.required, Validators.email]],
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
-      phone: ['', Validators.required],
+      phone: ['', [
+        Validators.required,
+        Validators.pattern(/^\d{9}$/)
+      ]]
     });
   }
 

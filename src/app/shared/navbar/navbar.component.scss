@@ -12,7 +12,6 @@
     }
 
     &_container {
-        max-width: 1200px;
         margin: 0 auto;
         display: flex;
         align-items: center;
@@ -50,17 +49,19 @@
             transition: color 0.2s;
 
             &:hover {
+                cursor: pointer;
                 color: #7B4AE2;
             }
 
             &.cta {
                 background-color: #007bff;
                 color: white;
-                padding: 8px 16px;
-                border-radius: 20px;
-                font-weight: bold;
+                padding: 10px 16px;
+                border-radius: 8px;
+                font-size: 15px;
 
                 &:hover {
+                    cursor: pointer;
                     background-color: #0056b3;
                 }
             }

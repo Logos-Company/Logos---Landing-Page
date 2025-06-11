@@ -5,14 +5,13 @@
         <div class="testimonials_column">
             <div class="testimonial_card" *ngFor="let testimonial of testimonials.slice(0, 2); let i = index"
                 [class.visible]="visibleCards[i]">
-                <h3 class="testimonial_title">{{ testimonial.title }}</h3>
-                <p class="testimonial_review">{{ testimonial.review }}</p>
+                <h3 class="testimonial_card_title">{{ testimonial.title }}</h3>
+                <p class="testimonial_card_review">{{ testimonial.review }}</p>
 
-                <div class="testimonial_author">
-                    <img class="testimonial_image" [src]="testimonial.image" [alt]="testimonial.name" />
-                    <div class="testimonial_info">
-                        <strong class="testimonial_name">{{ testimonial.name }}</strong>
-                        <span class="testimonial_role">{{ testimonial.role }}</span>
+                <div class="testimonial_card_author">
+                    <img class="testimonial_card_author_image" [src]="testimonial.image" [alt]="testimonial.name" />
+                    <div class="testimonial_card_author_info">
+                        <strong class="testimonial_card_author_info_name">{{ testimonial.name }}</strong>
                     </div>
                 </div>
             </div>
@@ -21,14 +20,13 @@
         <div class="testimonials_column">
             <div class="testimonial_card" *ngFor="let testimonial of testimonials.slice(2, 4); let i = index"
                 [class.visible]="visibleCards[i + 2]">
-                <h3 class="testimonial_title">{{ testimonial.title }}</h3>
-                <p class="testimonial_review">{{ testimonial.review }}</p>
+                <h3 class="testimonial_card_title">{{ testimonial.title }}</h3>
+                <p class="testimonial_card_review">{{ testimonial.review }}</p>
 
-                <div class="testimonial_author">
-                    <img class="testimonial_image" [src]="testimonial.image" [alt]="testimonial.name" />
-                    <div class="testimonial_info">
-                        <strong class="testimonial_name">{{ testimonial.name }}</strong>
-                        <span class="testimonial_role">{{ testimonial.role }}</span>
+                <div class="testimonial_card_author">
+                    <img class="testimonial_card_author_image" [src]="testimonial.image" [alt]="testimonial.name" />
+                    <div class="testimonial_card_author_info">
+                        <strong class="testimonial_card_author_info_name">{{ testimonial.name }}</strong>
                     </div>
                 </div>
             </div>

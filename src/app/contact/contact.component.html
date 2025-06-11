@@ -1,39 +1,45 @@
 <app-navbar></app-navbar>
+<app-mobile-nav></app-mobile-nav>
 <div class="contact">
     <div class="contact__container">
         <div class="contact__left">
-            <h2 class="contact__title">Skontaktuj się</h2>
+
+            <h2 class="contact__title">Skontaktuj się z nami w celu wizyty</h2> <img
+                [src]=logosImages.psychologistTalkingImage alt="Kontakt" class="contact__image" />
+
         </div>
 
         <div class="contact__right">
             <form [formGroup]="contactForm" (ngSubmit)="submitForm()" class="contact__form">
-                <label for="email">Email</label>
-                <input id="email" type="email" formControlName="email" />
+                <label for="email">Email <span style="color: red">*</span></label>
+                <input id="email" type="email" formControlName="email" placeholder="np. jan.kowalski@example.com"
+                    required />
                 <div class="error" *ngIf="contactForm.get('email')?.touched && contactForm.get('email')?.invalid">
                     Podaj poprawny email.
                 </div>
 
-                <label for="firstName">Imię</label>
-                <input id="firstName" type="text" formControlName="firstName" />
+                <label for="firstName">Imię <span style="color: red">*</span></label>
+                <input id="firstName" type="text" formControlName="firstName" placeholder="np. Jan" required />
                 <div class="error"
                     *ngIf="contactForm.get('firstName')?.touched && contactForm.get('firstName')?.invalid">
                     Imię jest wymagane.
                 </div>
 
-                <label for="lastName">Nazwisko</label>
-                <input id="lastName" type="text" formControlName="lastName" />
+                <label for="lastName">Nazwisko <span style="color: red">*</span></label>
+                <input id="lastName" type="text" formControlName="lastName" placeholder="np. Kowalski" required />
                 <div class="error" *ngIf="contactForm.get('lastName')?.touched && contactForm.get('lastName')?.invalid">
                     Nazwisko jest wymagane.
                 </div>
 
-                <label for="phone">Numer telefonu</label>
-                <input id="phone" type="tel" formControlName="phone" />
+                <label for="phone">Numer telefonu <span style="color: red">*</span></label>
+                <input id="phone" type="tel" formControlName="phone" placeholder="np. 123456789" required />
                 <div class="error" *ngIf="contactForm.get('phone')?.touched && contactForm.get('phone')?.invalid">
-                    Numer telefonu jest wymagany.
+                    Numer telefonu musi zawierać 9 cyfr.
                 </div>
 
                 <button type="submit" class="contact__submit">Wyślij</button>
             </form>
+
         </div>
     </div>
 </div>

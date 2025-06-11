@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { LogosImages } from '../../../json/logos_images';
 import { LogosTexts } from '../../../json/logos_texts';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-hero',
@@ -10,12 +11,13 @@ import { LogosTexts } from '../../../json/logos_texts';
 })
 export class HeroComponent {
 
+  constructor(private router: Router) { }
 
   bookSession() {
-    // tutaj możesz np. przekierować:
-    // this.router.navigate(['/invest']);
-    alert("Przekierowanie do rejestracji sesji...");
+    this.router.navigate(['/contactform']);
+
   }
+
   logosTexts = new LogosTexts();
   logosImages = new LogosImages();
 }

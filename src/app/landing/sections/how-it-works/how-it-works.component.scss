@@ -1,14 +1,16 @@
 .how-it-works {
-    max-width: 900px;
-    margin: 60px auto;
-    padding: 0 20px;
+    padding: 60px 20px;
     text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 
     &__title {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: #1e1f4b;
-        margin-bottom: 10px;
+        font-size: 2rem;
+        font-weight: bold;
+        color: #011632;
+        margin-bottom: 0px;
     }
 
     &__description {
@@ -19,14 +21,15 @@
 
     &__steps {
         display: flex;
-        gap: 60px;
+        gap: 90px;
         justify-content: center;
         position: relative;
     }
 
     .step {
         position: relative;
-        max-width: 200px;
+        max-width: 250px;
+        width: 250px;
         padding: 0 10px;
         text-align: center;
 
@@ -59,7 +62,7 @@
             position: absolute;
             top: 50%;
             right: -80px;
-            width: 80px;
+            width: 90px;
             height: 60px;
             transform: translateY(-50%);
             pointer-events: none;
@@ -82,12 +85,44 @@
 }
 
 @media (max-width: 768px) {
-    .how-it-works__steps {
-        flex-direction: column;
-        gap: 60px;
-    }
+    .how-it-works {
+        &__steps {
+            flex-direction: column;
+            align-items: center; // dodane - wyśrodkowanie kolumny
+            gap: 60px;
+        }
 
-    .step__arrow {
-        display: none;
+        .step {
+            max-width: 100%; // pozwala dostosować szerokość do ekranu
+        }
+
+        /* Ukrywamy poziome strzałki */
+        .step__arrow:not(.step__arrow--down) {
+            display: none;
+        }
+
+        /* Pokaż pionowe strzałki */
+        .step__arrow--down {
+            display: block;
+            position: relative;
+            top: auto;
+            right: auto;
+            margin: 20px auto 0;
+            width: 24px;
+            height: 40px;
+            transform: none;
+            pointer-events: none;
+
+            svg {
+                width: 24px;
+                height: 40px;
+                display: block;
+                margin: 0 auto;
+
+                path {
+                    stroke-dasharray: 8 8;
+                }
+            }
+        }
     }
 }

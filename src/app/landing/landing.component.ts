@@ -10,6 +10,7 @@ import { SpecialistsShowcaseComponent } from './sections/specialists-showcase/sp
 import { CtaSectionComponent } from './sections/cta-section/cta-section.component';
 import { NavbarComponent } from '../shared/navbar/navbar.component';
 import { FooterComponent } from '../shared/footer/footer.component';
+import { MobileNavComponent } from '../shared/navbar/mobile-nav/mobile-nav.component';
 
 @Component({
   selector: 'app-landing',
@@ -25,7 +26,8 @@ import { FooterComponent } from '../shared/footer/footer.component';
     SpecialistsShowcaseComponent,
     CtaSectionComponent,
     NavbarComponent,
-    FooterComponent
+    FooterComponent,
+    MobileNavComponent
   ],
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.scss'],

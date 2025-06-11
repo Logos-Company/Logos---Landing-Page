@@ -1,15 +1,14 @@
 .faq {
-    max-width: 700px;
+    max-width: 900px;
     margin: 60px auto;
     padding: 0 20px;
     text-align: center;
     font-family: Arial, sans-serif;
 
     &__title {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: #1e1f4b;
-        margin-bottom: 10px;
+        font-size: 2rem;
+        font-weight: bold;
+        color: #011632;
     }
 
     &__description {

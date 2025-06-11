@@ -7,8 +7,8 @@
     &_title {
         font-size: 2rem;
         font-weight: bold;
-        color: #1e1f4b;
-        margin-bottom: 50px;
+        color: #011632;
+        margin-bottom: 40px;
     }
 
     &_grid {
@@ -66,8 +66,11 @@
             gap: 15px;
 
             &_image {
-                width: 50px;
-                height: 50px;
+                width: 40px; // mniejszy rozmiar
+                height: 40px;
+                border-radius: 50%;
+                object-fit: cover;
+                flex-shrink: 0;
                 border-radius: 50%;
                 object-fit: cover;
             }

@@ -12,6 +12,7 @@ import {
 } from '@angular/animations';
 
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-cta-section',
   standalone: true,
@@ -28,5 +29,9 @@ import { CommonModule } from '@angular/common';
   ]
 })
 export class CtaSectionComponent {
+  constructor(private router: Router) { }
 
+  goToContactForm() {
+    this.router.navigate(['/contactform']);
+  }
 }

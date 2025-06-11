@@ -3,32 +3,54 @@
     justify-content: center;
     align-items: center;
     padding: 80px 20px;
+    min-height: 70vh;
+    background-color: #f9f9f9;
 
     &__container {
         display: flex;
-        flex-direction: row;
-        max-width: 1000px;
+        max-width: 1200px;
         width: 100%;
-        gap: 60px;
+        background-color: white;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        border-radius: 16px;
+        overflow: hidden;
+    }
+
+    &__left,
+    &__right {
+        flex: 1;
+        padding: 40px;
     }
 
     &__left {
-        flex: 1;
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
+        background-color: #ffffff;
 
-        & .contact__title {
-            font-size: 2.2rem;
+        .contact__title {
+            font-size: 2.5rem;
             font-weight: bold;
-            color: #1e1f4b;
+            color: #011632;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .contact__image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
         }
     }
 
     &__right {
-        flex: 2;
+        background-color: #eef1f8;
+        display: flex;
+        align-items: center;
 
         .contact__form {
+            width: 100%;
             display: flex;
             flex-direction: column;
             gap: 15px;
@@ -36,6 +58,7 @@
             label {
                 font-weight: 600;
                 margin-bottom: 5px;
+                color: #333;
             }
 
             input {
@@ -43,12 +66,13 @@
                 font-size: 1rem;
                 border: 1px solid #ccc;
                 border-radius: 8px;
+                background-color: white;
             }
 
             .error {
                 color: red;
                 font-size: 0.85rem;
-                margin-top: -10px;
+                margin-top: -8px;
                 margin-bottom: 10px;
             }
 
@@ -79,7 +103,10 @@
 
     .contact__left,
     .contact__right {
-        flex: 1;
-        width: 100%;
+        padding: 30px 20px;
+    }
+
+    .contact__left .contact__title {
+        font-size: 2rem;
     }
 }

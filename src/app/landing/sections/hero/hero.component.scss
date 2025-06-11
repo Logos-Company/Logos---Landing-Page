@@ -1,30 +1,31 @@
 .hero {
     display: flex;
     justify-content: space-between;
-    align-items: center; // <-- zmienione z flex-start
-    padding: 60px 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-    flex-wrap: wrap;
-    min-height: 100vh; // <-- kluczowy dodatek
+    align-items: center;
+    padding: 0px 0px;
+    margin-top: 60px;
     position: relative;
     overflow: hidden;
 
     &_left {
-        flex: 1;
-        min-width: 300px;
-        max-width: 600px;
+        padding-left: 7%;
+        width: 50%;
 
         .hero_title {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #1e1f4b;
+            font-size: 55px;
+            font-weight: 600;
+            font-family: 'Metrolopolis', sans-serif;
+            line-height: 1.2;
+
+            color: #011632;
             margin-bottom: 20px;
         }
 
         .hero_description {
             font-size: 1.125rem;
-            color: #333;
+            color: #3C4959;
+            width: 60%;
+            font-family: 'Metrolopolis', sans-serif;
             margin-bottom: 30px;
             line-height: 1.6;
         }
@@ -32,41 +33,46 @@
         .hero_cta {
             background-color: #007bff;
             color: white;
-            padding: 12px 24px;
+            padding: 16px 30px;
             border: none;
-            border-radius: 25px;
+            border-radius: 8px;
             font-size: 1rem;
-            font-weight: bold;
+            font-family: 'Metrolopolis', sans-serif;
+            font-weight: 500;
             cursor: pointer;
             transition: background-color 0.3s ease;
 
             &:hover {
+                cursor: pointer;
                 background-color: #0056b3;
             }
         }
 
         .hero_reviews {
-            margin-top: 40px;
+            margin-top: 50px;
             display: flex;
 
             .hero_review {
                 display: flex;
                 align-items: flex-start;
                 margin-bottom: 20px;
-                width: 300px;
+                border-radius: 15px;
+                width: 350px;
+                margin-right: 20px;
+                box-shadow: 0 0px 8px rgba(0, 0, 0, 0.1);
+
             }
         }
     }
 
     &_right {
-        flex: 1;
+
+        width: 50%;
         display: flex;
         justify-content: center;
-        align-items: center;
-
 
         .hero_image {
-            max-width: 100%;
+            max-width: 80%;
 
         }
     }
@@ -75,9 +81,29 @@
 @media screen and (max-width: 768px) {
     .hero {
         flex-direction: column;
+        align-items: center; // dodane
+        text-align: center; // dodane
 
         &_right {
             margin-top: 40px;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        &_left {
+            .hero_reviews {
+                /* Flex w kolumnę */
+                flex-direction: column;
+                align-items: center;
+                /* wycentruj recenzje */
+
+                .hero_review {
+                    /* Usuń sztywne szerokości, żeby adaptowały się do kontenera */
+                    width: 100%;
+                    max-width: 400px;
+                }
+            }
         }
     }
 }

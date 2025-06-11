@@ -1,31 +1,30 @@
 <div class="login">
     <div class="login__left">
         <div class="login__overlay">
-            <h1 class="login__brand">CodeSquid</h1>
             <h2 class="login__heading">
-                Online Community For <br /> Front-end Developers
+                Zadbaj o siebie<br />Zrób pierwszy krok
             </h2>
             <p class="login__desc">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                incididun.
+                Wybierz specjalistę, umów wizytę i zacznij świadomie dbać o swoje zdrowie psychiczne. Twój komfort i
+                dobrostan są dla nas najważniejsze.
             </p>
         </div>
     </div>
 
     <div class="login__right">
-        <h2 class="login__title">Login to Logos Panel</h2>
+        <h2 class="login__title">Zaloguj się do Panelu</h2>
 
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login__form">
             <!-- Login -->
-            <label for="username">Login</label>
-            <input type="text" id="username" formControlName="username" placeholder="johndadev" />
+            <label for="username">Login <span style="color: red">*</span></label>
+            <input type="text" id="username" formControlName="username" placeholder="np. johndadev" required />
             <div class="error" *ngIf="loginForm.get('username')?.touched && loginForm.get('username')?.invalid">
                 Login jest wymagany.
             </div>
 
             <!-- Password -->
-            <label for="password">Password</label>
-            <input type="password" id="password" formControlName="password" placeholder="**************" />
+            <label for="password">Hasło <span style="color: red">*</span></label>
+            <input type="password" id="password" formControlName="password" placeholder="********" required />
             <div class="error" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
                 Hasło jest wymagane.
             </div>
@@ -33,17 +32,17 @@
             <!-- Remember Me -->
             <div class="login__remember">
                 <input type="checkbox" id="remember" formControlName="remember" />
-                <label for="remember">Remember me</label>
+                <label for="remember">Zapamiętaj mnie</label>
             </div>
 
-            <!-- Error Message from Firebase Login -->
+            <!-- Błąd logowania (np. z Firebase) -->
             <div class="error" *ngIf="errorMessage">
                 {{ errorMessage }}
             </div>
 
             <!-- Submit -->
             <button type="submit" class="login__btn" [disabled]="loginForm.invalid">
-                LOG IN
+                Zaloguj się
             </button>
         </form>
     </div>
