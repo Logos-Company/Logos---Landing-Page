@@ -1,0 +1,67 @@
+.specialists {
+    max-width: 1200px;
+    margin: 80px auto;
+    padding: 0 20px;
+    text-align: center;
+
+    &__title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1e1f4b;
+        margin-bottom: 10px;
+    }
+
+    &__description {
+        font-size: 1.2rem;
+        color: #555;
+        margin-bottom: 50px;
+    }
+
+    &__grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+    }
+}
+
+.specialist-card {
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+
+    &:hover {
+        transform: translateY(-4px);
+    }
+
+    &__image {
+        width: 100%;
+        height: 250px;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+    }
+
+    &__info {
+        padding: 20px 16px;
+    }
+
+    &__name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #1e1f4b;
+        margin: 0 0 8px;
+    }
+
+    &__profession {
+        font-size: 1rem;
+        color: #777;
+    }
+}

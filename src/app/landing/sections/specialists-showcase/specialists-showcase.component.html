@@ -1,0 +1,19 @@
+<section class="specialists">
+    <h2 class="specialists__title">Poznaj naszych specjalistów</h2>
+    <p class="specialists__description">
+        Każdy z naszych psychologów to osoba z doświadczeniem, empatią i indywidualnym podejściem do Ciebie i Twojej
+        sytuacji.
+    </p>
+
+    <div class="specialists__grid" @listAnimation>
+        <div class="specialist-card" *ngFor="let specialist of specialists">
+            <div class="specialist-card__image">
+                <img [src]="specialist.image" [alt]="specialist.name" />
+            </div>
+            <div class="specialist-card__info">
+                <h3 class="specialist-card__name">{{ specialist.name }}</h3>
+                <p class="specialist-card__profession">{{ specialist.profession }}</p>
+            </div>
+        </div>
+    </div>
+</section>

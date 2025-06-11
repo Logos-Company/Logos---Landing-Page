@@ -1,0 +1,28 @@
+<section class="dashboard">
+    <header class="dashboard__header">
+        <h1>Witaj, {{ userName }}!</h1>
+        <button class="dashboard__logout" (click)="logout()">Wyloguj</button>
+    </header>
+
+    <p class="dashboard__intro">
+        Wybierz psychologa i umów się na sesję:
+    </p>
+
+    <div class="dashboard__grid">
+        <div class="card" *ngFor="let psy of psychologists">
+            <img class="card__avatar" [src]="psy.avatar" [alt]="psy.name" />
+            <h3 class="card__name">{{ psy.name }}</h3>
+            <p class="card__spec">{{ psy.specialization }}</p>
+            <button class="card__btn" [class.card__btn--selected]="selectedPsychologist === psy.id"
+                (click)="selectedPsychologist = psy.id">
+                {{ selectedPsychologist === psy.id ? 'Wybrany' : 'Wybierz' }}
+            </button>
+        </div>
+    </div>
+
+    <div class="dashboard__actions">
+        <button class="dashboard__book" (click)="confirmBooking()">Umów spotkanie</button>
+        <div class="dashboard__message error" *ngIf="message">{{ message }}</div>
+        <div class="dashboard__message success" *ngIf="successMessage">{{ successMessage }}</div>
+    </div>
+</section>

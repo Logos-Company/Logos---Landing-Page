@@ -1,0 +1,13 @@
+<div class="help-areas">
+    <h2 class="help-areas_title">Z jakimi problemami pomagamy?</h2>
+
+    <div class="help-areas_grid">
+        <div class="help-areas_card" *ngFor="let problem of problems">
+            <div class="help-areas_icon">
+                <img [src]="problem.icon" [alt]="problem.title" />
+            </div>
+            <h3 class="help-areas_card_title">{{ problem.title }}</h3>
+            <p class="help-areas_card_description">{{ problem.description }}</p>
+        </div>
+    </div>
+</div>

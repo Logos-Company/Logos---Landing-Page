@@ -1,0 +1,21 @@
+<section class="faq">
+    <h2 class="faq__title">Masz pytania? Mamy odpowiedzi.</h2>
+    <p class="faq__description">
+        Zebraliśmy odpowiedzi na pytania, które najczęściej zadają nasi pacjenci – wszystko, co warto wiedzieć przed
+        wizytą.
+    </p>
+
+    <div class="faq__card" @listAnimation>
+        <div class="faq__item" *ngFor="let faq of faqs; let i = index">
+            <div class="faq__question" (click)="toggle(i)">
+                {{ faq.question }}
+                <button class="faq__toggle-btn" [class.expanded]="expandedIndex === i" aria-label="Toggle answer">
+                    +
+                </button>
+            </div>
+            <div class="faq__answer" [class.faq__answer--visible]="expandedIndex === i">
+                {{ faq.answer }}
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,114 @@
+.mobilenav {
+    position: fixed;
+    z-index: 6;
+    width: 100%;
+
+    &_container {
+        display: flex;
+        justify-content: space-between;
+
+        height: 60px;
+
+        background: #ffffff;
+
+        &_burger {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: 10px;
+
+            &_btn {
+                cursor: pointer;
+                margin: 20px;
+
+                &_iconbar {
+                    width: 22px;
+                    height: 2px;
+                    background: #ffffff;
+                    margin: 3px;
+                    position: relative;
+                }
+            }
+        }
+
+        &_items {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 10px;
+
+            &_switch {
+                margin-right: 10px;
+            }
+        }
+    }
+}
+
+.mobilenav_side {
+    position: absolute;
+    top: 100%;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    &_container {
+        display: flex;
+        width: 100%;
+        max-width: 231px;
+        height: 100%;
+        background: #ffffff;
+        box-shadow: 7px 4px 4px rgba(0, 0, 0, 0.25);
+        position: fixed;
+        justify-content: flex-start;
+        flex-direction: column;
+        align-items: center;
+
+        &_title {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            font-style: normal;
+            font-weight: 700;
+            font-size: 10px;
+            line-height: 24px;
+            color: #212429;
+
+            &_close {
+                margin-left: 20px;
+            }
+        }
+
+        &_items {
+            font-style: normal;
+            font-weight: 400;
+            font-size: 20px;
+            line-height: 24px;
+            color: #212429;
+
+            &_link:hover {
+                background: #1f1f1f;
+            }
+
+            &_link {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                max-width: 230px;
+                min-width: 200px;
+                height: 60px;
+                margin-top: 20px;
+            }
+        }
+    }
+}
+
+@media screen and (min-width: 767px) {
+    .mobilenav {
+        display: none;
+    }
+
+    .mobileNav {
+        display: none;
+    }
+}

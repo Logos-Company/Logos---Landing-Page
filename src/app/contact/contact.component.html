@@ -1,0 +1,40 @@
+<app-navbar></app-navbar>
+<div class="contact">
+    <div class="contact__container">
+        <div class="contact__left">
+            <h2 class="contact__title">Skontaktuj się</h2>
+        </div>
+
+        <div class="contact__right">
+            <form [formGroup]="contactForm" (ngSubmit)="submitForm()" class="contact__form">
+                <label for="email">Email</label>
+                <input id="email" type="email" formControlName="email" />
+                <div class="error" *ngIf="contactForm.get('email')?.touched && contactForm.get('email')?.invalid">
+                    Podaj poprawny email.
+                </div>
+
+                <label for="firstName">Imię</label>
+                <input id="firstName" type="text" formControlName="firstName" />
+                <div class="error"
+                    *ngIf="contactForm.get('firstName')?.touched && contactForm.get('firstName')?.invalid">
+                    Imię jest wymagane.
+                </div>
+
+                <label for="lastName">Nazwisko</label>
+                <input id="lastName" type="text" formControlName="lastName" />
+                <div class="error" *ngIf="contactForm.get('lastName')?.touched && contactForm.get('lastName')?.invalid">
+                    Nazwisko jest wymagane.
+                </div>
+
+                <label for="phone">Numer telefonu</label>
+                <input id="phone" type="tel" formControlName="phone" />
+                <div class="error" *ngIf="contactForm.get('phone')?.touched && contactForm.get('phone')?.invalid">
+                    Numer telefonu jest wymagany.
+                </div>
+
+                <button type="submit" class="contact__submit">Wyślij</button>
+            </form>
+        </div>
+    </div>
+</div>
+<app-footer></app-footer>

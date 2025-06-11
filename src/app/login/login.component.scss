@@ -1,0 +1,116 @@
+.login {
+    display: flex;
+    min-height: 100vh;
+
+    &__left {
+        width: 50%;
+        background: linear-gradient(135deg, #1e1f4b, #007bff);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-image: url('/assets/hero.jpg'); // Zmień na swoją ścieżkę
+        background-size: cover;
+        background-position: center;
+        position: relative;
+
+        &::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        &__overlay {
+            position: relative;
+            color: #fff;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        &__brand {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        &__heading {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        &__desc {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+    }
+
+    &__right {
+        width: 50%;
+        padding: 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        &__title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 40px;
+        }
+
+        &__form {
+            display: flex;
+            flex-direction: column;
+
+            label {
+                font-weight: 600;
+                margin-top: 20px;
+                margin-bottom: 5px;
+            }
+
+            input[type='text'],
+            input[type='password'] {
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                font-size: 1rem;
+            }
+
+            &__remember {
+                display: flex;
+                align-items: center;
+                margin: 20px 0;
+
+                input {
+                    margin-right: 10px;
+                }
+            }
+
+            &__btn {
+                background-color: #007bff;
+                color: white;
+                padding: 12px;
+                font-weight: bold;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: 0.3s ease;
+
+                &:hover {
+                    background-color: #0056b3;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .login {
+        flex-direction: column;
+
+        &__left,
+        &__right {
+            width: 100%;
+            padding: 40px;
+        }
+    }
+}

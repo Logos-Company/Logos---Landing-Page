@@ -1,0 +1,37 @@
+<section class="testimonials">
+    <h2 class="testimonials_title">{{ title }}</h2>
+
+    <div class="testimonials_grid">
+        <div class="testimonials_column">
+            <div class="testimonial_card" *ngFor="let testimonial of testimonials.slice(0, 2); let i = index"
+                [class.visible]="visibleCards[i]">
+                <h3 class="testimonial_title">{{ testimonial.title }}</h3>
+                <p class="testimonial_review">{{ testimonial.review }}</p>
+
+                <div class="testimonial_author">
+                    <img class="testimonial_image" [src]="testimonial.image" [alt]="testimonial.name" />
+                    <div class="testimonial_info">
+                        <strong class="testimonial_name">{{ testimonial.name }}</strong>
+                        <span class="testimonial_role">{{ testimonial.role }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="testimonials_column">
+            <div class="testimonial_card" *ngFor="let testimonial of testimonials.slice(2, 4); let i = index"
+                [class.visible]="visibleCards[i + 2]">
+                <h3 class="testimonial_title">{{ testimonial.title }}</h3>
+                <p class="testimonial_review">{{ testimonial.review }}</p>
+
+                <div class="testimonial_author">
+                    <img class="testimonial_image" [src]="testimonial.image" [alt]="testimonial.name" />
+                    <div class="testimonial_info">
+                        <strong class="testimonial_name">{{ testimonial.name }}</strong>
+                        <span class="testimonial_role">{{ testimonial.role }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

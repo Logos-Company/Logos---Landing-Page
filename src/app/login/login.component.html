@@ -1,0 +1,50 @@
+<div class="login">
+    <div class="login__left">
+        <div class="login__overlay">
+            <h1 class="login__brand">CodeSquid</h1>
+            <h2 class="login__heading">
+                Online Community For <br /> Front-end Developers
+            </h2>
+            <p class="login__desc">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                incididun.
+            </p>
+        </div>
+    </div>
+
+    <div class="login__right">
+        <h2 class="login__title">Login to Logos Panel</h2>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login__form">
+            <!-- Login -->
+            <label for="username">Login</label>
+            <input type="text" id="username" formControlName="username" placeholder="johndadev" />
+            <div class="error" *ngIf="loginForm.get('username')?.touched && loginForm.get('username')?.invalid">
+                Login jest wymagany.
+            </div>
+
+            <!-- Password -->
+            <label for="password">Password</label>
+            <input type="password" id="password" formControlName="password" placeholder="**************" />
+            <div class="error" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
+                Hasło jest wymagane.
+            </div>
+
+            <!-- Remember Me -->
+            <div class="login__remember">
+                <input type="checkbox" id="remember" formControlName="remember" />
+                <label for="remember">Remember me</label>
+            </div>
+
+            <!-- Error Message from Firebase Login -->
+            <div class="error" *ngIf="errorMessage">
+                {{ errorMessage }}
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="login__btn" [disabled]="loginForm.invalid">
+                LOG IN
+            </button>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,30 @@
+<section class="how-it-works">
+    <h2 class="how-it-works__title">Jak to działa?</h2>
+    <p class="how-it-works__description">Umówienie wizyty to tylko kilka kroków</p>
+
+    <div class="how-it-works__steps" [@listAnimation]>
+        <div class="step" *ngFor="let step of steps; let i = index">
+            <div class="step__icon">
+                <img [src]="step.icon" [alt]="step.title" />
+            </div>
+            <h3 class="step__title">{{ step.title }}</h3>
+            <p class="step__desc">{{ step.desc }}</p>
+
+            <!-- Strzałka i linia między krokami, oprócz ostatniego -->
+            <div *ngIf="i !== steps.length - 1" class="step__arrow" [ngClass]="{
+          'step__arrow--down': i % 2 === 0,
+          'step__arrow--up': i % 2 === 1
+        }">
+                <svg viewBox="0 0 80 60" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                    <!-- Linia falista -->
+                    <path *ngIf="i % 2 === 0" d="M0 30 C20 0, 60 0, 80 30" stroke="#007bff" stroke-width="3"
+                        stroke-dasharray="8 8" />
+                    <path *ngIf="i % 2 === 1" d="M0 30 C20 60, 60 60, 80 30" stroke="#007bff" stroke-width="3"
+                        stroke-dasharray="8 8" />
+                    <!-- Strzałka na końcu -->
+                    <path d="M70 25 L80 30 L70 35" stroke="#007bff" stroke-width="3" fill="none" />
+                </svg>
+            </div>
+        </div>
+    </div>
+</section>

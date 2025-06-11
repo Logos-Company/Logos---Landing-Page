@@ -1,0 +1,83 @@
+.hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; // <-- zmienione z flex-start
+    padding: 60px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+    min-height: 100vh; // <-- kluczowy dodatek
+    position: relative;
+    overflow: hidden;
+
+    &_left {
+        flex: 1;
+        min-width: 300px;
+        max-width: 600px;
+
+        .hero_title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #1e1f4b;
+            margin-bottom: 20px;
+        }
+
+        .hero_description {
+            font-size: 1.125rem;
+            color: #333;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .hero_cta {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+
+            &:hover {
+                background-color: #0056b3;
+            }
+        }
+
+        .hero_reviews {
+            margin-top: 40px;
+            display: flex;
+
+            .hero_review {
+                display: flex;
+                align-items: flex-start;
+                margin-bottom: 20px;
+                width: 300px;
+            }
+        }
+    }
+
+    &_right {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+
+        .hero_image {
+            max-width: 100%;
+
+        }
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .hero {
+        flex-direction: column;
+
+        &_right {
+            margin-top: 40px;
+        }
+    }
+}

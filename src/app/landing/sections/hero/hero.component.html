@@ -1,0 +1,19 @@
+<div class="hero">
+    <div class="hero_left">
+        <h1 class="hero_title">Porozmawiaj z psychologiem. <br />Bez wychodzenia z domu.</h1>
+        <p class="hero_description">
+            Logos to nowoczesna forma terapii online – dyskretna, dostępna i wygodna.
+            Umów się na sesję w kilka minut i zyskaj realne wsparcie, kiedy go potrzebujesz.
+        </p>
+        <button class="hero_cta" (click)="bookSession()">Umów się na sesję</button>
+
+        <div class="hero_reviews">
+            <img class="hero_review" [src]="logosImages.reviewImage1" alt="Psycholog" />
+            <img class="hero_review" [src]="logosImages.reviewImage1" alt="Psycholog" />
+        </div>
+    </div>
+
+    <div class="hero_right">
+        <img class="hero_image" [src]="logosImages.psychologistImage" alt="Psycholog" />
+    </div>
+</div>
