@@ -20,9 +20,9 @@
     </div>
 
     <nav class="mobile-nav_links" [@openClose]="openCloseTrigger" *ngIf="mobileMenuOpen">
-        <a class="mobile-nav_links_link" (click)="closeMenuAndNavigate(goToHome)">Strona Główna</a>
-        <a class="mobile-nav_links_link" (click)="closeMenuAndNavigate(goToContactForm)">Kontakt</a>
-        <a class="mobile-nav_links_link" (click)="closeMenuAndNavigate(goToLogin)">Login</a>
-        <a class="mobile-nav_links_link cta" (click)="closeMenuAndNavigate(goToContactForm)">Umów się na sesję</a>
+        <a class="mobile-nav_links_link" (click)="goToHome()">Strona Główna</a>
+        <a class="mobile-nav_links_link" (click)="goToContactForm()">Kontakt</a>
+        <a class="mobile-nav_links_link" (click)="goToLogin()">Login</a>
+        <a class="mobile-nav_links_link cta" (click)="goToContactForm()">Umów się na sesję</a>
     </nav>
 </header>

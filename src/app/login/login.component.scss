@@ -2,6 +2,7 @@
     display: flex;
     min-height: 100vh;
 
+
     &__left {
         flex: 1;
         background-image: url('/assets/login-bg2.png'); // <- zamień na własny obraz
@@ -9,12 +10,13 @@
         background-position: center;
         display: flex;
         align-items: end;
+        margin-top: 70px;
         justify-content: center;
 
         & .login__overlay {
             color: white;
             // background-color: white;
-            padding: 20px;
+            padding: 60px;
 
         }
 
@@ -35,6 +37,7 @@
 
     &__right {
         flex: 1;
+        margin-top: 70px;
         background-color: #eef1f8;
         display: flex;
         align-items: center;

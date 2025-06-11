@@ -1,13 +1,13 @@
 .footer {
     background-color: #f8f9fc;
-    padding: 60px 20px;
+    padding: 20px 20px;
     font-family: 'Inter', sans-serif;
 
     &__content {
         max-width: 1200px;
         margin: 0 auto;
         display: grid;
-        grid-template-columns: repeat(5, 1fr);
+        grid-template-columns: 2fr 1fr 1fr;
         gap: 40px;
 
         @media (max-width: 900px) {
@@ -20,9 +20,12 @@
         }
     }
 
-    &__brand {
-        grid-column: span 1;
+    &__col {
+        display: flex;
+        flex-direction: column;
+    }
 
+    &__brand {
         .footer__logo {
             display: flex;
             align-items: center;
@@ -49,6 +52,7 @@
         .footer__copyright {
             font-size: 0.85rem;
             color: #aaa;
+            margin-top: auto;
         }
     }
 
@@ -78,23 +82,25 @@
     }
 
     &__social {
-        display: flex;
-        align-items: flex-start;
-        gap: 15px;
+        .footer__social-icons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
 
-        a img {
-            width: 24px;
-            height: 24px;
-            transition: opacity 0.3s;
+            a img {
+                width: 24px;
+                height: 24px;
+                transition: opacity 0.3s;
 
-            &:hover {
-                opacity: 0.7;
+                &:hover {
+                    opacity: 0.7;
+                }
             }
-        }
 
-        @media (max-width: 600px) {
-            justify-content: center;
-            margin-top: 20px;
+            @media (max-width: 600px) {
+                justify-content: center;
+                margin-top: 10px;
+            }
         }
     }
 }

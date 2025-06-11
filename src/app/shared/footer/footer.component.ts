@@ -8,9 +8,10 @@ import {
   stagger
 } from '@angular/animations';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-footer',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule], // <- TO JEST KLUCZOWE
   templateUrl: './footer.component.html',
   styleUrl: './footer.component.scss',
   animations: [
