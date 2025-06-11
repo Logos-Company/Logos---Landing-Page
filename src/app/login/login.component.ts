@@ -8,13 +8,11 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
 import { environment } from '../../environments/environment';
 import { NavbarComponent } from '../shared/navbar/navbar.component';
-import { FooterComponent } from '../shared/footer/footer.component';
 import { MobileNavComponent } from '../shared/navbar/mobile-nav/mobile-nav.component';
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, NavbarComponent,
-    FooterComponent,
     MobileNavComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
