@@ -1,0 +1,118 @@
+<app-navbar></app-navbar>
+<app-mobile-nav></app-mobile-nav>
+<div class="register">
+    <div class="register__left">
+        <div class="register__overlay">
+            <h2 class="register__heading">
+                Rozpocznij swoją drogę<br />do lepszego samopoczucia
+            </h2>
+            <p class="register__desc">
+                Dołącz do tysięcy osób, które już skorzystały z naszej platformy. 
+                Profesjonalni specjaliści, bezpieczne rozmowy, elastyczne terminy.
+            </p>
+            <div class="register__features">
+                <div class="feature">✓ Bezpłatna konsultacja</div>
+                <div class="feature">✓ Elastyczne terminy</div>
+                <div class="feature">✓ 100% poufności</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="register__right">
+        <div class="register__form-wrapper">
+            <h2 class="register__title">Utwórz konto</h2>
+
+            <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register__form">
+                <!-- Imię -->
+                <label for="firstName">Imię <span style="color: red">*</span></label>
+                <input type="text" id="firstName" formControlName="firstName" placeholder="np. Anna" required />
+                <div class="error" *ngIf="registerForm.get('firstName')?.touched && registerForm.get('firstName')?.invalid">
+                    Imię jest wymagane.
+                </div>
+
+                <!-- Nazwisko -->
+                <label for="lastName">Nazwisko <span style="color: red">*</span></label>
+                <input type="text" id="lastName" formControlName="lastName" placeholder="np. Kowalska" required />
+                <div class="error" *ngIf="registerForm.get('lastName')?.touched && registerForm.get('lastName')?.invalid">
+                    Nazwisko jest wymagane.
+                </div>
+
+                <!-- Email -->
+                <label for="email">Email <span style="color: red">*</span></label>
+                <input type="email" id="email" formControlName="email" placeholder="np. anna@example.com" required />
+                <div class="error" *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid">
+                    <span *ngIf="registerForm.get('email')?.errors?.['required']">Email jest wymagany.</span>
+                    <span *ngIf="registerForm.get('email')?.errors?.['email']">Podaj prawidłowy adres email.</span>
+                </div>
+
+                <!-- Telefon -->
+                <label for="phone">Telefon <span style="color: red">*</span></label>
+                <input type="tel" id="phone" formControlName="phone" placeholder="np. 123-456-789" required />
+                <div class="error" *ngIf="registerForm.get('phone')?.touched && registerForm.get('phone')?.invalid">
+                    Numer telefonu jest wymagany.
+                </div>
+
+                <!-- Login -->
+                <label for="username">Login <span style="color: red">*</span></label>
+                <input type="text" id="username" formControlName="username" placeholder="np. anna_kowalska" required />
+                <div class="error" *ngIf="registerForm.get('username')?.touched && registerForm.get('username')?.invalid">
+                    Login jest wymagany.
+                </div>
+
+                <!-- Password -->
+                <label for="password">Hasło <span style="color: red">*</span></label>
+                <input type="password" id="password" formControlName="password" placeholder="********" required />
+                <div class="error" *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid">
+                    <span *ngIf="registerForm.get('password')?.errors?.['required']">Hasło jest wymagane.</span>
+                    <span *ngIf="registerForm.get('password')?.errors?.['minlength']">Hasło musi mieć co najmniej 6
+                        znaków.</span>
+                </div>
+
+                <!-- Confirm Password -->
+                <label for="confirmPassword">Potwierdź hasło <span style="color: red">*</span></label>
+                <input type="password" id="confirmPassword" formControlName="confirmPassword" placeholder="********"
+                    required />
+                <div class="error"
+                    *ngIf="registerForm.get('confirmPassword')?.touched && registerForm.get('confirmPassword')?.invalid">
+                    <span *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">Potwierdź hasło.</span>
+                    <span *ngIf="registerForm.get('confirmPassword')?.errors?.['passwordMismatch']">Hasła nie są
+                        identyczne.</span>
+                </div>
+
+                <!-- Terms acceptance -->
+                <div class="register__terms">
+                    <input type="checkbox" id="acceptTerms" formControlName="acceptTerms" />
+                    <label for="acceptTerms">
+                        Akceptuję <a href="/terms-of-service" target="_blank">warunki użytkowania</a>
+                        i <a href="/privacy-policy" target="_blank">politykę prywatności</a> <span
+                            style="color: red">*</span>
+                    </label>
+                </div>
+                <div class="error"
+                    *ngIf="registerForm.get('acceptTerms')?.touched && registerForm.get('acceptTerms')?.invalid">
+                    Musisz zaakceptować warunki użytkowania.
+                </div>
+
+                <!-- Błąd rejestracji -->
+                <div class="error" *ngIf="errorMessage">
+                    {{ errorMessage }}
+                </div>
+
+                <!-- Success message -->
+                <div class="success" *ngIf="successMessage">
+                    {{ successMessage }}
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" class="register__btn" [disabled]="registerForm.invalid || isLoading">
+                    <span *ngIf="!isLoading">Utwórz konto</span>
+                    <span *ngIf="isLoading">Tworzenie konta...</span>
+                </button>
+            </form>
+
+            <div class="register__login-link">
+                <p>Masz już konto? <a [routerLink]="['/login']">Zaloguj się</a></p>
+            </div>
+        </div>
+    </div>
+</div>

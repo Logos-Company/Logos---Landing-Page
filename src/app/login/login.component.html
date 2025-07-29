@@ -43,9 +43,14 @@
             </div>
 
             <!-- Submit -->
-            <button type="submit" class="login__btn" [disabled]="loginForm.invalid">
-                Zaloguj się
+            <button type="submit" class="login__btn" [disabled]="loginForm.invalid || isLoading">
+                <span *ngIf="!isLoading">Zaloguj się</span>
+                <span *ngIf="isLoading">Logowanie...</span>
             </button>
         </form>
+
+        <div class="login__register-link">
+            <p>Nie masz konta? <a [routerLink]="['/register']">Utwórz konto</a></p>
+        </div>
     </div>
 </div>

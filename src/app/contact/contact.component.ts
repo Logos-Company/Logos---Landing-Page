@@ -21,13 +21,15 @@ export class ContactComponent {
 
   constructor(private fb: FormBuilder) {
     this.contactForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
       phone: ['', [
         Validators.required,
         Validators.pattern(/^\d{9}$/)
-      ]]
+      ]],
+      message: [''], // Optional field
+      acceptPrivacy: [false, Validators.requiredTrue]
     });
   }
 

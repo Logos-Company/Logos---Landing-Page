@@ -35,4 +35,10 @@ export class NavbarComponent {
   handleScroll(): void {
     this.isScrolled = window.scrollY > 10;
   }
+
+  // Check if we're on login or register page to always show background
+  get shouldHaveBackground(): boolean {
+    const url = this.router.url;
+    return this.isScrolled || url.includes('/login') || url.includes('/register');
+  }
 }

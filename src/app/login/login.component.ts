@@ -1,30 +1,29 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
-// Firebase JS SDK (modular)
-import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
-import { environment } from '../../environments/environment';
 import { NavbarComponent } from '../shared/navbar/navbar.component';
 import { MobileNavComponent } from '../shared/navbar/mobile-nav/mobile-nav.component';
+import { AuthService } from '../core/auth.service';
+
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, NavbarComponent,
-    MobileNavComponent],
+    MobileNavComponent, RouterModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
   loginForm: FormGroup;
   errorMessage = '';
-  private db = getFirestore(initializeApp(environment.firebase));
+  isLoading = false;
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
@@ -40,27 +39,22 @@ export class LoginComponent {
     }
 
     const { username, password, remember } = this.loginForm.value;
+    this.isLoading = true;
+    this.errorMessage = '';
 
     try {
-      const colRef = collection(this.db, 'customers');
-      const q = query(colRef,
-        where('login', '==', username),
-        where('password', '==', password)
-      );
-      const snapshot = await getDocs(q);
+      const result = await this.authService.login(username, password, remember);
 
-      if (!snapshot.empty) {
-        const userData = snapshot.docs[0].data();
-        if (remember) {
-          localStorage.setItem('user', JSON.stringify(userData));
-        }
+      if (result.success) {
         this.router.navigate(['/dashboard']);
       } else {
-        this.errorMessage = 'Nieprawidłowy login lub hasło.';
+        this.errorMessage = result.message;
       }
-    } catch (err) {
-      console.error(err);
-      this.errorMessage = 'Błąd logowania. Spróbuj później.';
+    } catch (error) {
+      console.error('Login error:', error);
+      this.errorMessage = 'Wystąpił nieoczekiwany błąd. Spróbuj ponownie.';
+    } finally {
+      this.isLoading = false;
     }
   }
 }

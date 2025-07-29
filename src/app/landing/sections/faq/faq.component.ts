@@ -25,7 +25,7 @@ export class FaqComponent {
   faqs = [
     {
       question: 'Jak wygląda pierwsze spotkanie z psychologiem?',
-      answer: 'Pierwsze spotkanie to rozmowa, w której poznajemy Twoje potrzeby i ustalamy cele terapii.'
+      answer: 'Pierwsze spotkanie ma charakter konsultacyjny – służy rozpoznaniu Twoich potrzeb oraz określeniu kierunku dalszej pracy terapeutycznej.'
     },
     {
       question: 'Czy terapia online jest skuteczna?',

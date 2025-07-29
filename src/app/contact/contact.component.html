@@ -1,46 +1,127 @@
 <app-navbar></app-navbar>
 <app-mobile-nav></app-mobile-nav>
+
+<!-- Hero Section -->
+<div class="contact-hero">
+    <div class="contact-hero__container">
+        <h1 class="contact-hero__title">Umów się na wizytę</h1>
+        <p class="contact-hero__subtitle">Skontaktuj się z nami i zacznij swoją drogę do lepszego samopoczucia</p>
+    </div>
+</div>
+
+<!-- Main Contact Section -->
 <div class="contact">
     <div class="contact__container">
+        <!-- Left Side - Info -->
         <div class="contact__left">
-
-            <h2 class="contact__title">Skontaktuj się z nami w celu wizyty</h2> <img
-                [src]=logosImages.psychologistTalkingImage alt="Kontakt" class="contact__image" />
-
+            <div class="contact__info">
+                <h2 class="contact__title">Dlaczego warto z nami rozmawiać?</h2>
+                
+                <div class="contact__features">
+                    <div class="contact__feature">
+                        <div class="contact__feature-icon">🔒</div>
+                        <div class="contact__feature-content">
+                            <h3>100% Poufności</h3>
+                            <p>Wszystkie rozmowy są objęte tajemnicą zawodową</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact__feature">
+                        <div class="contact__feature-icon">⏰</div>
+                        <div class="contact__feature-content">
+                            <h3>Elastyczne terminy</h3>
+                            <p>Znajdziemy termin dopasowany do Twojego harmonogramu</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact__feature">
+                        <div class="contact__feature-icon">💬</div>
+                        <div class="contact__feature-content">
+                            <h3>Pierwsza konsultacja bezpłatna</h3>
+                            <p>Poznaj nas i nasze podejście bez żadnych zobowiązań</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact__feature">
+                        <div class="contact__feature-icon">🎯</div>
+                        <div class="contact__feature-content">
+                            <h3>Specjaliści dopasowani do Ciebie</h3>
+                            <p>Pomoże Ci osoba z odpowiednim doświadczeniem</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="contact__image-container">
+                    <img [src]="logosImages.psychologistTalkingImage" alt="Profesjonalna rozmowa" class="contact__image" />
+                </div>
+            </div>
         </div>
 
+        <!-- Right Side - Form -->
         <div class="contact__right">
-            <form [formGroup]="contactForm" (ngSubmit)="submitForm()" class="contact__form">
-                <label for="email">Email <span style="color: red">*</span></label>
-                <input id="email" type="email" formControlName="email" placeholder="np. jan.kowalski@example.com"
-                    required />
-                <div class="error" *ngIf="contactForm.get('email')?.touched && contactForm.get('email')?.invalid">
-                    Podaj poprawny email.
-                </div>
+            <div class="contact__form-container">
+                <h3 class="contact__form-title">Wyślij zapytanie</h3>
+                <p class="contact__form-subtitle">Skontaktujemy się z Tobą w ciągu 24 godzin</p>
+                
+                <form [formGroup]="contactForm" (ngSubmit)="submitForm()" class="contact__form">
+                    <div class="contact__form-row">
+                        <div class="contact__form-group">
+                            <label for="firstName">Imię <span class="required">*</span></label>
+                            <input id="firstName" type="text" formControlName="firstName" placeholder="Twoje imię" required />
+                            <div class="error" *ngIf="contactForm.get('firstName')?.touched && contactForm.get('firstName')?.invalid">
+                                Imię jest wymagane
+                            </div>
+                        </div>
+                        
+                        <div class="contact__form-group">
+                            <label for="lastName">Nazwisko <span class="required">*</span></label>
+                            <input id="lastName" type="text" formControlName="lastName" placeholder="Twoje nazwisko" required />
+                            <div class="error" *ngIf="contactForm.get('lastName')?.touched && contactForm.get('lastName')?.invalid">
+                                Nazwisko jest wymagane
+                            </div>
+                        </div>
+                    </div>
 
-                <label for="firstName">Imię <span style="color: red">*</span></label>
-                <input id="firstName" type="text" formControlName="firstName" placeholder="np. Jan" required />
-                <div class="error"
-                    *ngIf="contactForm.get('firstName')?.touched && contactForm.get('firstName')?.invalid">
-                    Imię jest wymagane.
-                </div>
+                    <div class="contact__form-group">
+                        <label for="email">Email <span class="required">*</span></label>
+                        <input id="email" type="email" formControlName="email" placeholder="twoj@email.com" required />
+                        <div class="error" *ngIf="contactForm.get('email')?.touched && contactForm.get('email')?.invalid">
+                            Podaj poprawny adres email
+                        </div>
+                    </div>
 
-                <label for="lastName">Nazwisko <span style="color: red">*</span></label>
-                <input id="lastName" type="text" formControlName="lastName" placeholder="np. Kowalski" required />
-                <div class="error" *ngIf="contactForm.get('lastName')?.touched && contactForm.get('lastName')?.invalid">
-                    Nazwisko jest wymagane.
-                </div>
+                    <div class="contact__form-group">
+                        <label for="phone">Numer telefonu <span class="required">*</span></label>
+                        <input id="phone" type="tel" formControlName="phone" placeholder="123 456 789" required />
+                        <div class="error" *ngIf="contactForm.get('phone')?.touched && contactForm.get('phone')?.invalid">
+                            Podaj poprawny numer telefonu (9 cyfr)
+                        </div>
+                    </div>
 
-                <label for="phone">Numer telefonu <span style="color: red">*</span></label>
-                <input id="phone" type="tel" formControlName="phone" placeholder="np. 123456789" required />
-                <div class="error" *ngIf="contactForm.get('phone')?.touched && contactForm.get('phone')?.invalid">
-                    Numer telefonu musi zawierać 9 cyfr.
-                </div>
+                    <div class="contact__form-group">
+                        <label for="message">Wiadomość (opcjonalne)</label>
+                        <textarea id="message" formControlName="message" placeholder="Opowiedz nam krótko o swoich potrzebach..." rows="4"></textarea>
+                    </div>
 
-                <button type="submit" class="contact__submit">Wyślij</button>
-            </form>
+                    <div class="contact__form-group">
+                        <label class="contact__checkbox">
+                            <input type="checkbox" formControlName="acceptPrivacy" required />
+                            <span class="checkmark"></span>
+                            Akceptuję <a href="/privacy-policy" target="_blank">politykę prywatności</a> <span class="required">*</span>
+                        </label>
+                        <div class="error" *ngIf="contactForm.get('acceptPrivacy')?.touched && contactForm.get('acceptPrivacy')?.invalid">
+                            Musisz zaakceptować politykę prywatności
+                        </div>
+                    </div>
 
+                    <button type="submit" class="contact__submit" [disabled]="contactForm.invalid">
+                        <span class="contact__submit-text">Wyślij zapytanie</span>
+                        <span class="contact__submit-icon">→</span>
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
+
 <app-footer></app-footer>

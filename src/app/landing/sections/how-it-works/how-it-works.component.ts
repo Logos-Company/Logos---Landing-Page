@@ -41,7 +41,7 @@ export class HowItWorksComponent {
       {
         icon: logos.laptopIcon,
         title: 'Dołącz do spotkania',
-        desc: 'Spotkanie odbywa się online lub stacjonarnie, w zależności od Twoich preferencji.'
+        desc: 'Spotkanie odbywa się online w bezpiecznej i wygodnej atmosferze.'
       },
       {
         icon: logos.arrowRightIcon,

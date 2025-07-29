@@ -38,6 +38,12 @@ export class HelpAreasComponent {
         icon: this.logos.startIcon2,
         description:
           'Wzmocnij samoocenę, przełam wewnętrzne blokady i naucz się żyć bardziej w zgodzie ze sobą.'
+      },
+      {
+        title: 'Potrzeba rozmowy',
+        icon: this.logos.speakingIcon,
+        description:
+          'Masz po prostu potrzebę rozmowy z kimś, kto nie będzie pytał, oceniał? Oferujemy wsparcie bez osądzania.'
       }
     ];
   }

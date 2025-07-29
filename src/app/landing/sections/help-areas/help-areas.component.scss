@@ -1,6 +1,6 @@
 .help-areas {
     padding: 60px 20px;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     text-align: center;
 
@@ -13,8 +13,22 @@
 
     &_grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 30px;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 25px;
+
+        @media (max-width: 1400px) {
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 480px) {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
     }
 
     &_card {
