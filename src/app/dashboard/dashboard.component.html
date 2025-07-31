@@ -1,41 +1,197 @@
-<section class="dashboard">
-    <header class="dashboard__header">
-        <h1>Witaj, {{ userName }}!</h1>
-        <button class="dashboard__logout" (click)="logout()">Wyloguj</button>
+<div class="dashboard">
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="header-content">
+            <h1>Witaj, {{ getUserDisplayName() }}!</h1>
+            <div class="header-actions">
+                <span class="user-role" [class]="currentUser?.role">{{ currentUser?.role | uppercase }}</span>
+                <button class="logout-btn" (click)="logout()">Wyloguj</button>
+            </div>
+        </div>
     </header>
 
-    <p class="dashboard__intro">Wybierz psychologa i umów się na sesję:</p>
+    <!-- Navigation Tabs -->
+    <nav class="dashboard-nav">
+        <button class="nav-tab" [class.active]="activeTab === 'overview'" (click)="setActiveTab('overview')">
+            Przegląd
+        </button>
+        <button class="nav-tab" [class.active]="activeTab === 'calendar'" (click)="setActiveTab('calendar')">
+            Kalendarz
+        </button>
+        <button class="nav-tab" [class.active]="activeTab === 'search'" (click)="setActiveTab('search')">
+            Psychologowie
+        </button>
+        <button class="nav-tab" [class.active]="activeTab === 'packages'" (click)="setActiveTab('packages')">
+            Pakiety
+        </button>
+    </nav>
 
-    <div class="dashboard__grid">
-        <div class="card" *ngFor="let psy of psychologists" [class.card--selected]="selectedPsychologistId === psy.id">
-            <img class="card__avatar" [src]="psy.avatar" [alt]="psy.name" />
-            <h3 class="card__name">{{ psy.name }}</h3>
-            <p class="card__spec">{{ psy.specialization }}</p>
-            <button class="card__btn" (click)="selectedPsychologistId = psy.id"
-                [class.card__btn--selected]="selectedPsychologistId === psy.id">
-                {{ selectedPsychologistId === psy.id ? 'Wybrany' : 'Wybierz' }}
-            </button>
-        </div>
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="isLoading">
+        <div class="spinner"></div>
+        <p>Ładowanie danych...</p>
     </div>
 
-    <!-- Szczegóły wybranego psychologa -->
-    <section *ngIf="selectedPsychologist" class="psychologist-details">
-        <h2>Informacje o psychologu</h2>
-        <h3>{{ selectedPsychologist.name }}</h3>
-        <p><strong>Specjalizacja:</strong> {{ selectedPsychologist.specialization }}</p>
-        <p><strong>Opis:</strong> {{ selectedPsychologist.description }}</p>
-        <p>
-            <strong>Dni pracy:</strong>
-            {{ selectedPsychologist.workingDays.join(', ') }}
-        </p>
-        <p><strong>Godziny pracy:</strong> {{ selectedPsychologist.workingHours }}</p>
-        <p *ngIf="selectedPsychologist.additionalInfo"><strong>Informacje dodatkowe:</strong> {{
-            selectedPsychologist.additionalInfo }}</p>
-    </section>
+    <!-- Main Content -->
+    <main class="dashboard-content" *ngIf="!isLoading">
 
-    <div class="dashboard__actions">
-        <button class="dashboard__book" (click)="confirmBooking()">Umów spotkanie</button>
-        <div class="dashboard__message error" *ngIf="message">{{ message }}</div>
-        <div class="dashboard__message success" *ngIf="successMessage">{{ successMessage }}</div>
+        <!-- Overview Tab -->
+        <section class="overview-section" *ngIf="activeTab === 'overview'">
+            <div class="overview-grid">
+
+                <!-- Package Status Card -->
+                <div class="status-card package-status">
+                    <div class="card-header">
+                        <h3>Status pakietu</h3>
+                        <span class="status-icon">📦</span>
+                    </div>
+                    <div class="card-content">
+                        <p class="status-text" [class]="currentUserPackage?.status">
+                            {{ getPackageStatusText() }}
+                        </p>
+                        <p class="sessions-text" *ngIf="currentUserPackage">
+                            {{ getSessionsText() }}
+                        </p>
+                        <div class="progress-bar" *ngIf="currentUserPackage">
+                            <div class="progress-fill"
+                                [style.width.%]="(currentUserPackage.sessionsUsed / currentUserPackage.totalSessions) * 100">
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn btn-primary" (click)="navigateToPackages()" *ngIf="!hasActivePackage()">
+                                Kup pakiet
+                            </button>
+                            <button class="btn btn-secondary" (click)="navigateToPackages()" *ngIf="hasActivePackage()">
+                                Zarządzaj pakietem
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Appointments Card -->
+                <div class="status-card appointments-status">
+                    <div class="card-header">
+                        <h3>Nadchodzące wizyty</h3>
+                        <span class="status-icon">📅</span>
+                    </div>
+                    <div class="card-content">
+                        <p class="appointment-text">{{ getUpcomingAppointmentText() }}</p>
+                        <div class="appointments-list" *ngIf="upcomingAppointments.length > 0">
+                            <div *ngFor="let appointment of upcomingAppointments.slice(0, 3)" class="appointment-item">
+                                <div class="appointment-date">
+                                    {{ formatDate(appointment.date) }}
+                                </div>
+                                <div class="appointment-time">
+                                    {{ appointment.startTime }} - {{ appointment.endTime }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn btn-primary" (click)="navigateToCalendar()">
+                                {{ upcomingAppointments.length > 0 ? 'Zobacz wszystkie' : 'Umów wizytę' }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Assigned Psychologist Card -->
+                <div class="status-card psychologist-status">
+                    <div class="card-header">
+                        <h3>Twój psycholog</h3>
+                        <span class="status-icon">👩‍⚕️</span>
+                    </div>
+                    <div class="card-content">
+                        <div *ngIf="assignedPsychologist; else noPsychologist">
+                            <h4>{{ assignedPsychologist.firstName }} {{ assignedPsychologist.lastName }}</h4>
+                            <p class="specializations">
+                                {{ assignedPsychologist.specializations.join(', ') }}
+                            </p>
+                            <div class="rating">
+                                <span class="stars">★★★★★</span>
+                                <span class="rating-text">{{ assignedPsychologist.rating }}/5</span>
+                            </div>
+                        </div>
+                        <ng-template #noPsychologist>
+                            <p>Nie masz jeszcze przypisanego psychologa</p>
+                        </ng-template>
+                        <div class="card-actions">
+                            <button class="btn btn-primary" (click)="navigateToSearch()">
+                                {{ assignedPsychologist ? 'Zmień psychologa' : 'Wybierz psychologa' }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Stats Card -->
+                <div class="status-card stats-card">
+                    <div class="card-header">
+                        <h3>Statystyki</h3>
+                        <span class="status-icon">📊</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="stat-item">
+                            <span class="stat-label">Sesje użyte:</span>
+                            <span class="stat-value">{{ currentUserPackage?.sessionsUsed || 0 }}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Sesje pozostałe:</span>
+                            <span class="stat-value">{{ currentUserPackage?.sessionsRemaining || 0 }}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Nadchodzące wizyty:</span>
+                            <span class="stat-value">{{ upcomingAppointments.length }}</span>
+                        </div>
+                        <div class="stat-item" *ngIf="currentUserPackage?.isOnCredit">
+                            <span class="stat-label">Do spłaty:</span>
+                            <span class="stat-value credit">{{ currentUserPackage.creditBalance }} zł</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="recent-activity" *ngIf="upcomingAppointments.length > 0">
+                <h3>Ostatnia aktywność</h3>
+                <div class="activity-list">
+                    <div *ngFor="let appointment of upcomingAppointments.slice(0, 5)" class="activity-item">
+                        <div class="activity-icon">📅</div>
+                        <div class="activity-details">
+                            <p class="activity-text">
+                                Wizyta umówiona na {{ formatDate(appointment.date) }} o {{ appointment.startTime }}
+                            </p>
+                            <small class="activity-time">
+                                Status: {{ appointment.status === 'scheduled' ? 'Zaplanowana' : appointment.status }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Calendar Tab -->
+        <section class="calendar-section" *ngIf="activeTab === 'calendar'">
+            <app-calendar [userId]="currentUser?.id || ''" (appointmentCreated)="onAppointmentCreated()"></app-calendar>
+        </section>
+
+        <!-- Psychologist Search Tab -->
+        <section class="search-section" *ngIf="activeTab === 'search'">
+            <app-psychologist-search></app-psychologist-search>
+        </section>
+
+        <!-- Package Management Tab -->
+        <section class="packages-section" *ngIf="activeTab === 'packages'">
+            <app-package-management></app-package-management>
+        </section>
+
+    </main>
+
+    <!-- Quick Action Buttons (Floating) -->
+    <div class="quick-actions" *ngIf="hasActivePackage() && activeTab === 'overview'">
+        <button class="quick-action-btn calendar" (click)="navigateToCalendar()" title="Umów wizytę">
+            📅
+        </button>
+        <button class="quick-action-btn search" (click)="navigateToSearch()" title="Znajdź psychologa">
+            🔍
+        </button>
     </div>
-</section>
+</div>

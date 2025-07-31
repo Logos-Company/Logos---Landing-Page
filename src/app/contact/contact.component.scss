@@ -51,7 +51,7 @@
         gap: 20px;
         background: white;
         border-radius: 12px;
-        box-shadow: 
+        box-shadow:
             0 8px 20px -4px rgba(0, 0, 0, 0.08),
             0 0 0 1px rgba(255, 255, 255, 0.05);
         overflow: hidden;
@@ -86,7 +86,7 @@
         }
     }
 
-        &__title {
+    &__title {
         font-size: 2.2rem;
         font-weight: 700;
         margin-bottom: 1.8rem;
@@ -203,7 +203,8 @@
             font-size: 0.9rem;
         }
 
-        input, textarea {
+        input,
+        textarea {
             padding: 1rem;
             border: 2px solid #e5e7eb;
             border-radius: 10px;
@@ -258,7 +259,7 @@
         }
     }
 
-        &__submit {
+    &__submit {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         border: none;
@@ -321,7 +322,8 @@
             border-radius: 16px;
         }
 
-        &__left, &__right {
+        &__left,
+        &__right {
             padding: 40px 30px;
         }
 

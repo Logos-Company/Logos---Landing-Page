@@ -24,6 +24,10 @@ export class NavbarComponent {
   goToLogin() {
     this.router.navigate(['/login']);
   }
+
+  goToAdminLogin() {
+    this.router.navigate(['/admin/login']);
+  }
   logosTexts = new LogosTexts();
   logosImages = new LogosImages();
   isScrolled = false;

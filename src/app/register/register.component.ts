@@ -29,8 +29,7 @@ export class RegisterComponent {
             firstName: ['', Validators.required],
             lastName: ['', Validators.required],
             email: ['', [Validators.required, Validators.email]],
-            phone: ['', Validators.required],
-            username: ['', Validators.required],
+            phone: [''],
             password: ['', [Validators.required, Validators.minLength(6)]],
             confirmPassword: ['', Validators.required],
             acceptTerms: [false, Validators.requiredTrue]
@@ -73,7 +72,6 @@ export class RegisterComponent {
                 lastName: formData.lastName,
                 email: formData.email,
                 phone: formData.phone,
-                username: formData.username,
                 password: formData.password
             });
 
@@ -90,6 +88,32 @@ export class RegisterComponent {
 
         } catch (error) {
             console.error('Registration error:', error);
+            this.errorMessage = 'Wystąpił nieoczekiwany błąd. Spróbuj ponownie.';
+        } finally {
+            this.isLoading = false;
+        }
+    }
+
+    async onGoogleSignup() {
+        this.isLoading = true;
+        this.errorMessage = '';
+        this.successMessage = '';
+
+        try {
+            const result = await this.authService.loginWithGoogle();
+
+            if (result.success) {
+                this.successMessage = result.message + ' Przekierowujemy do panelu...';
+
+                // Redirect to dashboard after 2 seconds
+                setTimeout(() => {
+                    this.router.navigate(['/dashboard']);
+                }, 2000);
+            } else {
+                this.errorMessage = result.message;
+            }
+        } catch (error) {
+            console.error('Google signup error:', error);
             this.errorMessage = 'Wystąpił nieoczekiwany błąd. Spróbuj ponownie.';
         } finally {
             this.isLoading = false;

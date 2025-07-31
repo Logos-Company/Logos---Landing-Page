@@ -56,7 +56,7 @@
         display: flex;
         flex-direction: column;
         gap: 0.8rem;
-        
+
         .feature {
             color: white;
             font-size: 1rem;
@@ -66,7 +66,7 @@
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-            
+
             &::before {
                 content: "✓";
                 color: #4ade80;
@@ -111,7 +111,7 @@
         }
     }
 
-        &__title {
+    &__title {
         font-size: 1.6rem;
         font-weight: 700;
         color: #333;
@@ -225,6 +225,58 @@
         &:disabled {
             opacity: 0.7;
             cursor: not-allowed;
+        }
+    }
+
+    &__divider {
+        display: flex;
+        align-items: center;
+        margin: 15px 0;
+
+        &::before,
+        &::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background-color: #ddd;
+        }
+
+        span {
+            padding: 0 15px;
+            color: #666;
+            font-size: 0.85rem;
+        }
+    }
+
+    &__google-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 1rem 1.5rem;
+        background-color: white;
+        color: #333;
+        border: 2px solid #e1e5e9;
+        font-weight: 600;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        font-size: 1rem;
+
+        &:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            border-color: #ccc;
+        }
+
+        &:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .google-icon {
+            width: 20px;
+            height: 20px;
         }
     }
 

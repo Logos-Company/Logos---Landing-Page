@@ -57,6 +57,18 @@
             color: #1e1f4b;
         }
 
+        .admin-notice {
+            background: #e3f2fd;
+            color: #1565c0;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+            border-left: 4px solid #1976d2;
+            text-align: center;
+        }
+
         .login__form {
             width: 100%;
             max-width: 320px;
@@ -70,12 +82,23 @@
             }
 
             input[type="text"],
+            input[type="email"],
             input[type="password"] {
                 padding: 8px 10px;
                 border-radius: 5px;
                 border: 1px solid #ccc;
                 background: white;
                 font-size: 0.85rem;
+
+                &:focus {
+                    outline: none;
+                    border-color: #007bff;
+                    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+                }
+
+                &::placeholder {
+                    color: #999;
+                }
             }
 
             .login__btn {
@@ -92,6 +115,63 @@
 
                 &:hover {
                     background-color: #0056b3;
+                }
+
+                &:disabled {
+                    background-color: #6c757d;
+                    cursor: not-allowed;
+                }
+            }
+
+            .login__divider {
+                display: flex;
+                align-items: center;
+                margin: 15px 0;
+
+                &::before,
+                &::after {
+                    content: '';
+                    flex: 1;
+                    height: 1px;
+                    background-color: #ddd;
+                }
+
+                span {
+                    padding: 0 15px;
+                    color: #666;
+                    font-size: 0.85rem;
+                }
+            }
+
+            .login__google-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                padding: 8px;
+                background-color: white;
+                color: #333;
+                border: 1px solid #ddd;
+                font-weight: 600;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: 0.3s;
+                font-size: 0.9rem;
+
+                &:hover {
+                    background-color: #f8f9fa;
+                    border-color: #ccc;
+                }
+
+                &:disabled {
+                    background-color: #f8f9fa;
+                    color: #6c757d;
+                    cursor: not-allowed;
+                }
+
+                .google-icon {
+                    width: 18px;
+                    height: 18px;
                 }
             }
 
