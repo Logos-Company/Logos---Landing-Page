@@ -123,6 +123,121 @@ export class AuthService {
                 return { success: true, message: 'Zalogowano jako administrator' };
             }
 
+            // Temporary psychologist backdoor for testing
+            if (email === 'psycholog@logos.pl' && password === 'psycholog123') {
+                const psychologistUser: User = {
+                    id: 'psychologist-test-id',
+                    firstName: 'Dr Anna',
+                    lastName: 'Kowalska',
+                    email: 'psycholog@logos.pl',
+                    role: 'psychologist' as UserRole,
+                    isActive: true,
+                    createdAt: new Date(),
+                    loginMethod: 'email',
+                    // Psychologist-specific fields
+                    specializations: ['Terapia poznawczo-behawioralna', 'Zaburzenia lękowe', 'Depresja'],
+                    description: 'Doświadczona psycholog kliniczna specjalizująca się w terapii poznawczo-behawioralnej.',
+                    bio: 'Dr Anna Kowalska jest doświadczoną psycholog kliniczną z ponad 10-letnim doświadczeniem w pracy z pacjentami cierpiącymi na zaburzenia lękowe i depresję.',
+                    experience: 10,
+                    education: 'Doktor psychologii klinicznej, Uniwersytet Warszawski',
+                    languages: ['Polski', 'Angielski'],
+                    rating: 4.8,
+                    reviewCount: 127,
+                    hourlyRate: 150,
+                    pricePerSession: 150,
+                    isAvailable: true,
+                    workingHours: {
+                        monday: [{ start: '09:00', end: '17:00' }],
+                        tuesday: [{ start: '09:00', end: '17:00' }],
+                        wednesday: [{ start: '09:00', end: '17:00' }],
+                        thursday: [{ start: '09:00', end: '17:00' }],
+                        friday: [{ start: '09:00', end: '15:00' }],
+                        saturday: [],
+                        sunday: []
+                    },
+                    licenseNumber: 'PSY/2024/001234',
+                    verificationStatus: 'verified',
+                    sessionsThisMonth: 45,
+                    completedSessions: 850,
+                    totalRevenue: 127500,
+                    premiumListing: true,
+                    premiumListingExpiry: new Date(2025, 11, 31) // December 31, 2025
+                };
+
+                if (remember) {
+                    localStorage.setItem('user', JSON.stringify(psychologistUser));
+                }
+
+                this.currentUserSubject.next(psychologistUser);
+                return { success: true, message: 'Zalogowano jako psycholog' };
+            }
+
+            // Temporary moderator backdoor for testing
+            if (email === 'moderator@logos.pl' && password === 'moderator123') {
+                const moderatorUser: User = {
+                    id: 'moderator-test-id',
+                    firstName: 'Katarzyna',
+                    lastName: 'Nowak',
+                    email: 'moderator@logos.pl',
+                    role: 'moderator' as UserRole,
+                    isActive: true,
+                    createdAt: new Date(),
+                    loginMethod: 'email',
+                    // Moderator-specific fields
+                    permissions: ['moderate_reviews', 'block_users', 'approve_psychologists', 'view_reports'],
+                    isOnline: true,
+                    lastActivity: new Date(),
+                    moderatedToday: 15,
+                    performanceScore: 94
+                };
+
+                if (remember) {
+                    localStorage.setItem('user', JSON.stringify(moderatorUser));
+                }
+
+                this.currentUserSubject.next(moderatorUser);
+                return { success: true, message: 'Zalogowano jako moderator' };
+            }
+
+            // Temporary user backdoor for testing
+            if (email === 'user@logos.pl' && password === 'user123') {
+                const testUser: User = {
+                    id: 'user-test-id',
+                    firstName: 'Jan',
+                    lastName: 'Kowalski',
+                    email: 'user@logos.pl',
+                    role: 'user' as UserRole,
+                    isActive: true,
+                    createdAt: new Date(),
+                    loginMethod: 'email',
+                    // User-specific fields
+                    assignedPsychologistId: 'psychologist-test-id',
+                    assignmentStatus: 'approved',
+                    assignmentApprovedAt: new Date(),
+                    activePackageId: 'package-standard',
+                    packageStatus: 'active',
+                    sessionsUsed: 3,
+                    totalSessions: 8,
+                    profileData: {
+                        city: 'Warszawa',
+                        preferences: {
+                            sessionType: 'online',
+                            language: 'pl',
+                            gender: 'no-preference',
+                            specialization: ['anxiety', 'depression']
+                        },
+                        goals: 'Chcę nauczyć się radzić sobie ze stresem i poprawić jakość snu.'
+                    }
+                };
+
+                if (remember) {
+                    localStorage.setItem('user', JSON.stringify(testUser));
+                }
+
+                this.currentUserSubject.next(testUser);
+                return { success: true, message: 'Zalogowano jako użytkownik' };
+            }
+
             // Try Firebase Authentication first
             const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
             const firebaseUser = userCredential.user;

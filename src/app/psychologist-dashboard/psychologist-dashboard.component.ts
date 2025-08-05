@@ -11,17 +11,16 @@ import { Appointment } from '../models/appointment.model';
 import { PsychologistNote, PsychologistStats } from '../models/psychologist.model';
 
 @Component({
-    selector: 'app-psychologist-dashboard',
-    standalone: true,
-    imports: [CommonModule, FormsModule, RouterModule],
-    template: `
+  selector: 'app-psychologist-dashboard',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule],
+  template: `
     <div class="psychologist-dashboard">
       <!-- Header -->
       <header class="dashboard-header">
         <div class="header-content">
           <h1>Panel Psychologa</h1>
           <div class="header-actions">
-            <!-- Online Status Toggle -->
             <div class="online-status-toggle">
               <label class="toggle-switch">
                 <input 
@@ -76,10 +75,17 @@ import { PsychologistNote, PsychologistStats } from '../models/psychologist.mode
         </button>
         <button 
           class="nav-tab" 
-          [class.active]="activeTab === 'schedule'"
-          (click)="setActiveTab('schedule')"
+          [class.active]="activeTab === 'calendar'"
+          (click)="setActiveTab('calendar')"
         >
-          Harmonogram
+          Kalendarz
+        </button>
+        <button 
+          class="nav-tab" 
+          [class.active]="activeTab === 'statistics'"
+          (click)="setActiveTab('statistics')"
+        >
+          Statystyki
         </button>
       </nav>
 
@@ -126,25 +132,8 @@ import { PsychologistNote, PsychologistStats } from '../models/psychologist.mode
                 <p>Aktywni klienci</p>
               </div>
             </div>
-            
-            <div class="stat-card">
-              <div class="stat-icon">📅</div>
-              <div class="stat-content">
-                <h3>{{ stats.upcomingAppointments }}</h3>
-                <p>Nadchodzące wizyty</p>
-              </div>
-            </div>
-            
-            <div class="stat-card">
-              <div class="stat-icon">📈</div>
-              <div class="stat-content">
-                <h3>{{ stats.thisMonthSessions }}</h3>
-                <p>Sesje w tym miesiącu</p>
-              </div>
-            </div>
           </div>
 
-          <!-- Recent Appointments -->
           <div class="recent-appointments">
             <h3>Dzisiejsze wizyty</h3>
             <div class="appointments-list" *ngIf="todayAppointments.length > 0; else noAppointments">
@@ -157,7 +146,7 @@ import { PsychologistNote, PsychologistStats } from '../models/psychologist.mode
                   {{ appointment.startTime }} - {{ appointment.endTime }}
                 </div>
                 <div class="appointment-patient">
-                  Pacjent ID: {{ appointment.userId }}
+                  Pacjent: {{ getPatientName(appointment.userId) }}
                 </div>
                 <div class="appointment-status">
                   {{ getStatusText(appointment.status) }}
@@ -170,143 +159,107 @@ import { PsychologistNote, PsychologistStats } from '../models/psychologist.mode
                   >
                     Rozpocznij sesję
                   </button>
-                  <button 
-                    class="btn btn-sm btn-secondary" 
-                    (click)="viewPatientNotes(appointment.userId)"
-                  >
-                    Notatki
-                  </button>
                 </div>
               </div>
             </div>
             <ng-template #noAppointments>
-              <p class="no-data">Brak wizyt na dzisiaj</p>
+              <p class="no-data">Brak wizyt na dziś</p>
             </ng-template>
           </div>
         </section>
 
-        <!-- Appointments Tab -->
-        <section class="appointments-section" *ngIf="activeTab === 'appointments'">
+        <!-- Calendar Tab -->
+        <section class="calendar-section" *ngIf="activeTab === 'calendar'">
           <div class="section-header">
-            <h3>Wszystkie wizyty</h3>
-            <div class="filters">
-              <select [(ngModel)]="appointmentFilter" (change)="filterAppointments()">
-                <option value="">Wszystkie</option>
-                <option value="scheduled">Zaplanowane</option>
-                <option value="completed">Zakończone</option>
-                <option value="cancelled">Anulowane</option>
-              </select>
+            <h2>Kalendarz</h2>
+            <div class="calendar-controls">
+              <button class="btn btn-secondary" (click)="previousMonth()">‹</button>
+              <span class="current-month">{{ getCurrentMonthYear() }}</span>
+              <button class="btn btn-secondary" (click)="nextMonth()">›</button>
             </div>
           </div>
 
-          <div class="appointments-table">
-            <div class="table-header">
-              <div class="col">Data</div>
-              <div class="col">Godzina</div>
-              <div class="col">Pacjent</div>
-              <div class="col">Status</div>
-              <div class="col">Akcje</div>
-            </div>
-            
-            <div 
-              *ngFor="let appointment of filteredAppointments" 
-              class="table-row"
-            >
-              <div class="col">{{ appointment.date | date:'short' }}</div>
-              <div class="col">{{ appointment.startTime }} - {{ appointment.endTime }}</div>
-              <div class="col">Pacjent {{ appointment.userId }}</div>
-              <div class="col">
-                <span class="status-badge" [class]="appointment.status">
-                  {{ getStatusText(appointment.status) }}
-                </span>
+          <div class="calendar-container">
+            <div class="calendar-grid">
+              <div class="calendar-header">
+                <div class="day-header">Pon</div>
+                <div class="day-header">Wt</div>
+                <div class="day-header">Śr</div>
+                <div class="day-header">Czw</div>
+                <div class="day-header">Pt</div>
+                <div class="day-header">Sob</div>
+                <div class="day-header">Nie</div>
               </div>
-              <div class="col">
-                <!-- Video Call Actions -->
-                <div class="appointment-actions" *ngIf="appointment.status === 'scheduled'">
-                  <!-- Meeting Link Creation -->
-                  <div class="video-call-section" *ngIf="!appointment.meetingUrl">
-                    <div class="platform-buttons">
-                      <button 
-                        class="btn btn-sm btn-google" 
-                        (click)="createGoogleMeetLink(appointment)"
-                        title="Utwórz Google Meet"
-                      >
-                        <i class="icon">📹</i>
-                        Google Meet
-                      </button>
-                      <button 
-                        class="btn btn-sm btn-teams" 
-                        (click)="createTeamsLink(appointment)"
-                        title="Utwórz Teams"
-                      >
-                        <i class="icon">💼</i>
-                        Teams
-                      </button>
-                      <button 
-                        class="btn btn-sm btn-zoom" 
-                        (click)="generateMeetingLink(appointment, 'zoom')"
-                        title="Utwórz Zoom"
-                      >
-                        <i class="icon">🎥</i>
-                        Zoom
-                      </button>
+              
+              <div class="calendar-body">
+                <div 
+                  *ngFor="let day of calendarDays" 
+                  class="calendar-day"
+                  [class.today]="day.isToday"
+                  [class.other-month]="!day.isCurrentMonth"
+                  [class.has-appointments]="day.appointments && day.appointments.length > 0"
+                >
+                  <div class="day-number">{{ day.day }}</div>
+                  <div class="day-appointments" *ngIf="day.appointments && day.appointments.length > 0">
+                    <div 
+                      *ngFor="let appointment of day.appointments.slice(0, 2)" 
+                      class="appointment-mini"
+                      [class]="appointment.status"
+                    >
+                      {{ appointment.startTime }}
                     </div>
-                  </div>
-
-                  <!-- Meeting Link Actions -->
-                  <div class="meeting-actions" *ngIf="appointment.meetingUrl">
-                    <div class="meeting-url">
-                      <span class="url-label">Link do spotkania:</span>
-                      <a [href]="appointment.meetingUrl" target="_blank" class="meeting-link">
-                        {{ appointment.meetingPlatform | titlecase }}
-                      </a>
-                      <button 
-                        class="btn btn-sm btn-copy" 
-                        (click)="copyMeetingUrl(appointment.meetingUrl)"
-                        title="Kopiuj link"
-                      >
-                        📋
-                      </button>
-                    </div>
-                    
-                    <div class="call-actions">
-                      <button 
-                        class="btn btn-sm btn-success" 
-                        (click)="startVideoCall(appointment)"
-                        *ngIf="!activeVideoCall || activeVideoCall.id !== appointment.id"
-                      >
-                        <i class="icon">🚀</i>
-                        Rozpocznij sesję
-                      </button>
-                      
-                      <button 
-                        class="btn btn-sm btn-danger" 
-                        (click)="endVideoCall()"
-                        *ngIf="activeVideoCall && activeVideoCall.id === appointment.id"
-                      >
-                        <i class="icon">⏹️</i>
-                        Zakończ sesję
-                      </button>
+                    <div *ngIf="day.appointments.length > 2" class="more-appointments">
+                      +{{ day.appointments.length - 2 }} więcej
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
-                <!-- Standard Actions -->
-                <div class="standard-actions">
-                  <button 
-                    class="btn btn-sm btn-primary" 
-                    (click)="completeAppointment(appointment)"
-                    *ngIf="appointment.status === 'scheduled'"
-                  >
-                    Zakończ
-                  </button>
-                  <button 
-                    class="btn btn-sm btn-secondary" 
-                    (click)="addNote(appointment)"
-                  >
-                    Dodaj notatkę
-                  </button>
+        <!-- Patients Tab -->
+        <section class="patients-section" *ngIf="activeTab === 'patients'">
+          <div class="section-header">
+            <h2>Lista pacjentów</h2>
+          </div>
+
+          <div class="patients-grid">
+            <div *ngFor="let patient of patients" class="patient-card">
+              <div class="patient-header">
+                <div class="patient-avatar">
+                  {{ patient.firstName.charAt(0) }}{{ patient.lastName.charAt(0) }}
                 </div>
+                <div class="patient-info">
+                  <h3>{{ patient.firstName }} {{ patient.lastName }}</h3>
+                  <p class="patient-email">{{ patient.email }}</p>
+                </div>
+              </div>
+              
+              <div class="patient-stats">
+                <div class="stat">
+                  <span class="label">Sesje:</span>
+                  <span class="value">{{ getPatientSessionCount(patient.id) }}</span>
+                </div>
+                <div class="stat">
+                  <span class="label">Ostatnia wizyta:</span>
+                  <span class="value">{{ getLastAppointmentDate(patient.id) }}</span>
+                </div>
+              </div>
+
+              <div class="patient-actions">
+                <button 
+                  class="btn btn-secondary" 
+                  (click)="viewPatientNotes(patient.id)"
+                >
+                  Notatki
+                </button>
+                <button 
+                  class="btn btn-primary" 
+                  (click)="scheduleAppointment(patient.id)"
+                >
+                  Umów wizytę
+                </button>
               </div>
             </div>
           </div>
@@ -315,513 +268,319 @@ import { PsychologistNote, PsychologistStats } from '../models/psychologist.mode
         <!-- Notes Tab -->
         <section class="notes-section" *ngIf="activeTab === 'notes'">
           <div class="section-header">
-            <h3>Notatki pacjentów</h3>
-            <button class="btn btn-primary" (click)="showAddNoteModal = true">
-              Dodaj notatkę
+            <h2>Notatki z sesji</h2>
+            <button class="btn btn-primary" (click)="addNote()">
+              Dodaj nową notatkę
             </button>
           </div>
 
-          <div class="notes-list">
-            <div 
-              *ngFor="let note of patientNotes" 
-              class="note-card"
-            >
+          <div class="notes-grid">
+            <div *ngFor="let note of notes" class="note-card">
               <div class="note-header">
-                <h4>{{ note.title }}</h4>
-                <span class="note-date">{{ note.createdAt | date:'short' }}</span>
+                <div class="note-date">{{ note.createdAt | date:'dd.MM.yyyy HH:mm' }}</div>
+                <div class="note-patient">
+                  Pacjent: {{ getPatientName(note.userId) }}
+                </div>
               </div>
+              
+              <div class="note-title">
+                <h4>{{ note.title }}</h4>
+              </div>
+              
               <div class="note-content">
                 <p>{{ note.content }}</p>
               </div>
-              <div class="note-footer">
-                <span class="note-patient">Pacjent: {{ note.userId }}</span>
-                <div class="note-actions">
-                  <button class="btn btn-sm btn-secondary" (click)="editNote(note)">
-                    Edytuj
-                  </button>
-                  <button class="btn btn-sm btn-danger" (click)="deleteNote(note.id)">
-                    Usuń
-                  </button>
-                </div>
+
+              <div class="note-tags" *ngIf="note.tags && note.tags.length > 0">
+                <span *ngFor="let tag of note.tags" class="tag">{{ tag }}</span>
+              </div>
+
+              <div class="note-actions">
+                <button class="btn btn-secondary" (click)="editNote(note)">
+                  Edytuj
+                </button>
+                <button class="btn btn-danger" (click)="deleteNote(note.id)">
+                  Usuń
+                </button>
               </div>
             </div>
           </div>
         </section>
       </main>
-
-      <!-- Add Note Modal -->
-      <div class="modal" *ngIf="showAddNoteModal" (click)="closeAddNoteModal()">
-        <div class="modal-content" (click)="$event.stopPropagation()">
-          <div class="modal-header">
-            <h3>{{ isEditingNote ? 'Edytuj notatkę' : 'Dodaj notatkę' }}</h3>
-            <button class="close-btn" (click)="closeAddNoteModal()">×</button>
-          </div>
-          
-          <div class="modal-body">
-            <form (ngSubmit)="saveNote()" #noteForm="ngForm">
-              <div class="form-group">
-                <label>Pacjent:</label>
-                <select [(ngModel)]="newNote.userId" name="userId" required>
-                  <option value="">Wybierz pacjenta</option>
-                  <option *ngFor="let patient of patients" [value]="patient.id">
-                    {{ patient.firstName }} {{ patient.lastName }}
-                  </option>
-                </select>
-              </div>
-              
-              <div class="form-group">
-                <label>Tytuł:</label>
-                <input 
-                  type="text" 
-                  [(ngModel)]="newNote.title" 
-                  name="title" 
-                  required
-                  placeholder="Tytuł notatki"
-                >
-              </div>
-              
-              <div class="form-group">
-                <label>Treść:</label>
-                <textarea 
-                  [(ngModel)]="newNote.content" 
-                  name="content" 
-                  required
-                  placeholder="Treść notatki..."
-                  rows="5"
-                ></textarea>
-              </div>
-              
-              <div class="form-group">
-                <label class="checkbox-label">
-                  <input 
-                    type="checkbox" 
-                    [(ngModel)]="newNote.isVisibleToUser" 
-                    name="isVisibleToUser"
-                  >
-                  Widoczne dla pacjenta
-                </label>
-              </div>
-              
-              <div class="modal-actions">
-                <button type="button" class="btn btn-secondary" (click)="closeAddNoteModal()">
-                  Anuluj
-                </button>
-                <button type="submit" class="btn btn-primary" [disabled]="!noteForm.valid">
-                  {{ isEditingNote ? 'Zapisz zmiany' : 'Dodaj notatkę' }}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
     </div>
-  `,
-    styleUrls: ['./psychologist-dashboard.component.scss']
+    `,
+  styleUrls: ['./psychologist-dashboard.component.scss']
 })
 export class PsychologistDashboardComponent implements OnInit {
-    currentUser: User | null = null;
-    activeTab = 'overview';
-    isLoading = false;
+  activeTab = 'overview';
+  isLoading = false;
+  isOnline = true;
+  selectedStatus = '';
+  showAddNoteModal = false;
+  editingNote = false;
+  currentNote: any = {};
+  tagsInput = '';
 
-    // Online Status
-    isOnline = false;
-    onlineStatus: OnlineStatus | null = null;
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private appointmentService: AppointmentService,
+    private psychologistService: PsychologistService,
+    private videoCallService: VideoCallService
+  ) { }
 
-    // Data
-    stats: PsychologistStats = {
-        totalSessions: 0,
-        totalRevenue: 0,
-        averageRating: 0,
-        activeClients: 0,
-        thisMonthSessions: 0,
-        thisMonthRevenue: 0,
-        upcomingAppointments: 0
+  ngOnInit() {
+    this.loadInitialData();
+  }
+
+  stats: PsychologistStats = {
+    totalSessions: 156,
+    totalRevenue: 12450,
+    averageRating: 4.7,
+    activeClients: 23,
+    upcomingAppointments: 8,
+    thisMonthSessions: 32,
+    thisMonthRevenue: 8500
+  };
+
+  patients: User[] = [
+    {
+      id: 'user1',
+      firstName: 'Anna',
+      lastName: 'Kowalska',
+      email: 'anna.kowalska@email.com',
+      role: 'user' as any,
+      isActive: true,
+      createdAt: new Date()
+    },
+    {
+      id: 'user2',
+      firstName: 'Piotr',
+      lastName: 'Nowak',
+      email: 'piotr.nowak@email.com',
+      role: 'user' as any,
+      isActive: true,
+      createdAt: new Date()
+    },
+    {
+      id: 'user3',
+      firstName: 'Maria',
+      lastName: 'Wiśniewska',
+      email: 'maria.wisniewska@email.com',
+      role: 'user' as any,
+      isActive: true,
+      createdAt: new Date()
+    }
+  ];
+
+  appointments: Appointment[] = [
+    {
+      id: 'apt1',
+      userId: 'user1',
+      psychologistId: 'psych1',
+      date: new Date('2024-01-15'),
+      startTime: '09:00',
+      endTime: '10:00',
+      status: 'scheduled',
+      notes: '',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      id: 'apt2',
+      userId: 'user2',
+      psychologistId: 'psych1',
+      date: new Date('2024-01-15'),
+      startTime: '10:30',
+      endTime: '11:30',
+      status: 'completed',
+      notes: 'Sesja przebiegła pomyślnie',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
+  ];
+
+  notes: PsychologistNote[] = [
+    {
+      id: 'note1',
+      userId: 'user1',
+      psychologistId: 'psych1',
+      title: 'Pierwsza sesja - diagnostyka',
+      content: 'Pacjentka zgłosiła się z problemami lękowymi. Obserwuje się objawy lęku uogólnionego.',
+      tags: ['diagnostyka', 'lęk', 'CBT'],
+      appointmentId: 'apt1',
+      isVisibleToUser: false,
+      createdAt: new Date('2024-01-10'),
+      updatedAt: new Date('2024-01-10')
+    },
+    {
+      id: 'note2',
+      userId: 'user2',
+      psychologistId: 'psych1',
+      title: 'Sesja kontrolna - postępy',
+      content: 'Pacjent wykazuje znaczną poprawę w radzeniu sobie ze stresem.',
+      tags: ['postęp', 'stres', 'relaksacja'],
+      appointmentId: 'apt2',
+      isVisibleToUser: false,
+      createdAt: new Date('2024-01-12'),
+      updatedAt: new Date('2024-01-12')
+    }
+  ];
+
+  currentDate = new Date();
+  calendarDays: any[] = [];
+  filteredAppointments: Appointment[] = [];
+  todayAppointments: Appointment[] = [];
+
+  loadInitialData() {
+    this.isLoading = true;
+
+    setTimeout(() => {
+      this.generateCalendar();
+      this.loadTodayAppointments();
+      this.isLoading = false;
+    }, 1000);
+  }
+
+  generateCalendar() {
+    const year = this.currentDate.getFullYear();
+    const month = this.currentDate.getMonth();
+
+    const firstDay = new Date(year, month, 1);
+    const startDate = new Date(firstDay);
+    startDate.setDate(startDate.getDate() - firstDay.getDay() + 1);
+
+    this.calendarDays = [];
+    const today = new Date();
+
+    for (let i = 0; i < 42; i++) {
+      const currentDay = new Date(startDate);
+      currentDay.setDate(startDate.getDate() + i);
+
+      const dayAppointments = this.getAppointmentsForDate(currentDay);
+
+      this.calendarDays.push({
+        day: currentDay.getDate(),
+        date: currentDay,
+        isCurrentMonth: currentDay.getMonth() === month,
+        isToday: currentDay.toDateString() === today.toDateString(),
+        appointments: dayAppointments
+      });
+    }
+  }
+
+  getAppointmentsForDate(date: Date): Appointment[] {
+    const dateStr = date.toISOString().split('T')[0];
+    return this.appointments.filter(apt => apt.date.toISOString().split('T')[0] === dateStr);
+  }
+
+  getCurrentMonthYear(): string {
+    const months = [
+      'Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec',
+      'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'
+    ];
+    return `${months[this.currentDate.getMonth()]} ${this.currentDate.getFullYear()}`;
+  }
+
+  previousMonth() {
+    this.currentDate.setMonth(this.currentDate.getMonth() - 1);
+    this.generateCalendar();
+  }
+
+  nextMonth() {
+    this.currentDate.setMonth(this.currentDate.getMonth() + 1);
+    this.generateCalendar();
+  }
+
+  loadTodayAppointments() {
+    const today = new Date().toISOString().split('T')[0];
+    this.todayAppointments = this.appointments.filter(apt => apt.date.toISOString().split('T')[0] === today);
+  }
+
+  setActiveTab(tab: string) {
+    this.activeTab = tab;
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
+  getStatusText(status: string): string {
+    const statusMap: { [key: string]: string } = {
+      'scheduled': 'Zaplanowana',
+      'in-progress': 'W trakcie',
+      'completed': 'Zakończona',
+      'cancelled': 'Anulowana'
     };
+    return statusMap[status] || status;
+  }
 
-    appointments: Appointment[] = [];
-    filteredAppointments: Appointment[] = [];
-    todayAppointments: Appointment[] = [];
-    patientNotes: PsychologistNote[] = [];
-    patients: User[] = [];
-    appointmentFilter = '';
+  getPatientName(userId: string): string {
+    const patient = this.patients.find(p => p.id === userId);
+    return patient ? `${patient.firstName} ${patient.lastName}` : 'Nieznany pacjent';
+  }
 
-    // Video Call
-    activeVideoCall: any = null;
+  getPatientSessionCount(userId: string): number {
+    return this.appointments.filter(apt => apt.userId === userId && apt.status === 'completed').length;
+  }
 
-    // Note modal
-    showAddNoteModal = false;
-    isEditingNote = false;
-    editingNoteId = '';
-    newNote = {
-        userId: '',
-        title: '',
-        content: '',
-        isVisibleToUser: false
+  getLastAppointmentDate(userId: string): string {
+    const userAppointments = this.appointments
+      .filter(apt => apt.userId === userId)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+    return userAppointments.length > 0 ? userAppointments[0].date.toISOString().split('T')[0] : 'Brak wizyt';
+  }
+
+  async startSession(appointment: Appointment) {
+    try {
+      appointment.status = 'completed'; // Używamy dozwolonego statusu
+      console.log('Starting session for appointment:', appointment.id);
+    } catch (error) {
+      console.error('Error starting session:', error);
+    }
+  }
+
+  viewPatientNotes(userId: string) {
+    this.setActiveTab('notes');
+  }
+
+  scheduleAppointment(patientId: string) {
+    console.log('Scheduling appointment for patient:', patientId);
+  }
+
+  addNote(appointment?: Appointment) {
+    this.currentNote = {
+      title: '',
+      content: '',
+      userId: appointment?.userId || '',
+      appointmentId: appointment?.id || ''
     };
+    this.tagsInput = '';
+    this.editingNote = false;
+    this.showAddNoteModal = true;
+  }
 
-    constructor(
-        private authService: AuthService,
-        private appointmentService: AppointmentService,
-        private psychologistService: PsychologistService,
-        private videoCallService: VideoCallService,
-        private router: Router
-    ) { }
+  editNote(note: PsychologistNote) {
+    this.currentNote = { ...note };
+    this.tagsInput = note.tags ? note.tags.join(', ') : '';
+    this.editingNote = true;
+    this.showAddNoteModal = true;
+  }
 
-    ngOnInit() {
-        this.currentUser = this.authService.getCurrentUser();
-
-        if (!this.currentUser || this.currentUser.role !== 'psychologist') {
-            this.router.navigate(['/dashboard']);
-            return;
-        }
-
-        this.loadDashboardData();
+  async deleteNote(noteId: string) {
+    try {
+      if (confirm('Czy na pewno chcesz usunąć tę notatkę?')) {
+        this.notes = this.notes.filter(note => note.id !== noteId);
+      }
+    } catch (error) {
+      console.error('Error deleting note:', error);
     }
+  }
 
-    async loadDashboardData() {
-        this.isLoading = true;
-        try {
-            if (this.currentUser) {
-                // Load stats
-                this.stats = await this.psychologistService.getPsychologistStats(this.currentUser.id);
-
-                // Load appointments
-                this.appointments = await this.appointmentService.getPsychologistAppointments(this.currentUser.id);
-                this.filteredAppointments = [...this.appointments];
-
-                // Filter today's appointments
-                const today = new Date();
-                this.todayAppointments = this.appointments.filter(apt => {
-                    const aptDate = new Date(apt.date);
-                    return aptDate.toDateString() === today.toDateString();
-                });
-
-                // Load notes
-                this.patientNotes = await this.psychologistService.getPsychologistNotes(this.currentUser.id);
-
-                // Load patients (unique users from appointments)
-                const patientIds = [...new Set(this.appointments.map(apt => apt.userId))];
-                // TODO: Load actual patient data
-                this.patients = patientIds.map(id => ({
-                    id,
-                    firstName: 'Pacjent',
-                    lastName: id.substring(0, 8),
-                    email: '',
-                    role: 'user' as any,
-                    isActive: true,
-                    createdAt: new Date()
-                }));
-            }
-        } catch (error) {
-            console.error('Error loading dashboard data:', error);
-        } finally {
-            this.isLoading = false;
-        }
-    }
-
-    setActiveTab(tab: string) {
-        this.activeTab = tab;
-    }
-
-    logout() {
-        this.authService.logout();
-    }
-
-    getStatusText(status: string): string {
-        switch (status) {
-            case 'scheduled': return 'Zaplanowana';
-            case 'completed': return 'Zakończona';
-            case 'cancelled': return 'Anulowana';
-            case 'no-show': return 'Niestawiennictwo';
-            default: return status;
-        }
-    }
-
-    filterAppointments() {
-        if (!this.appointmentFilter) {
-            this.filteredAppointments = [...this.appointments];
-        } else {
-            this.filteredAppointments = this.appointments.filter(apt =>
-                apt.status === this.appointmentFilter
-            );
-        }
-    }
-
-    async startSession(appointment: Appointment) {
-        try {
-            await this.appointmentService.updateAppointment(appointment.id, {
-                status: 'completed',
-                psychologistNotes: 'Sesja rozpoczęta',
-                updatedAt: new Date()
-            });
-
-            this.loadDashboardData(); // Refresh data
-            alert('Sesja została rozpoczęta');
-        } catch (error) {
-            console.error('Error starting session:', error);
-            alert('Wystąpił błąd podczas rozpoczynania sesji');
-        }
-    }
-
-    async completeAppointment(appointment: Appointment) {
-        const notes = prompt('Dodaj notatki z sesji:');
-        if (notes !== null) {
-            try {
-                await this.appointmentService.completeAppointment(appointment.id, notes);
-                this.loadDashboardData(); // Refresh data
-                alert('Wizyta została zakończona');
-            } catch (error) {
-                console.error('Error completing appointment:', error);
-                alert('Wystąpił błąd podczas kończenia wizyty');
-            }
-        }
-    }
-
-    viewPatientNotes(userId: string) {
-        this.setActiveTab('notes');
-        // Filter notes for specific patient
-        // TODO: Implement patient-specific notes filtering
-    }
-
-    addNote(appointment?: Appointment) {
-        this.isEditingNote = false;
-        this.newNote = {
-            userId: appointment?.userId || '',
-            title: '',
-            content: '',
-            isVisibleToUser: false
-        };
-        this.showAddNoteModal = true;
-    }
-
-    editNote(note: PsychologistNote) {
-        this.isEditingNote = true;
-        this.editingNoteId = note.id;
-        this.newNote = {
-            userId: note.userId,
-            title: note.title,
-            content: note.content,
-            isVisibleToUser: note.isVisibleToUser
-        };
-        this.showAddNoteModal = true;
-    }
-
-    closeAddNoteModal() {
-        this.showAddNoteModal = false;
-        this.isEditingNote = false;
-        this.editingNoteId = '';
-        this.newNote = {
-            userId: '',
-            title: '',
-            content: '',
-            isVisibleToUser: false
-        };
-    }
-
-    async saveNote() {
-        if (!this.currentUser) return;
-
-        try {
-            if (this.isEditingNote) {
-                await this.psychologistService.updateNote(this.editingNoteId, {
-                    title: this.newNote.title,
-                    content: this.newNote.content,
-                    isVisibleToUser: this.newNote.isVisibleToUser,
-                    updatedAt: new Date()
-                });
-            } else {
-                await this.psychologistService.addNote({
-                    psychologistId: this.currentUser.id,
-                    userId: this.newNote.userId,
-                    title: this.newNote.title,
-                    content: this.newNote.content,
-                    isVisibleToUser: this.newNote.isVisibleToUser,
-                    createdAt: new Date()
-                });
-            }
-
-            this.closeAddNoteModal();
-            this.loadDashboardData(); // Refresh data
-            alert('Notatka została zapisana');
-        } catch (error) {
-            console.error('Error saving note:', error);
-            alert('Wystąpił błąd podczas zapisywania notatki');
-        }
-    }
-
-    async deleteNote(noteId: string) {
-        if (confirm('Czy na pewno chcesz usunąć tę notatkę?')) {
-            try {
-                await this.psychologistService.deleteNote(noteId);
-                this.loadDashboardData(); // Refresh data
-                alert('Notatka została usunięta');
-            } catch (error) {
-                console.error('Error deleting note:', error);
-                alert('Wystąpił błąd podczas usuwania notatki');
-            }
-        }
-    }
-
-    // Online Status Management
-    toggleOnlineStatus(event: any) {
-        this.isOnline = event.target.checked;
-        this.videoCallService.setOnlineStatus(this.isOnline);
-    }
-
-    // Video Call Methods
-    async createGoogleMeetLink(appointment: Appointment): Promise<void> {
-        try {
-            const meetingUrl = await this.videoCallService.createGoogleMeetLink(appointment.id);
-
-            // Update appointment with meeting URL
-            await this.appointmentService.updateAppointment(appointment.id, {
-                meetingUrl,
-                meetingPlatform: 'google-meet'
-            });
-
-            // Add to calendar
-            await this.videoCallService.addToGoogleCalendar(
-                appointment.id,
-                meetingUrl,
-                appointment.date,
-                60
-            );
-
-            // Send invitation to client
-            await this.videoCallService.sendMeetingInvitation(
-                appointment.id,
-                meetingUrl,
-                appointment.userEmail || ''
-            );
-
-            alert(`Link do Google Meet został utworzony: ${meetingUrl}`);
-            await this.loadDashboardData(); // Refresh data
-        } catch (error) {
-            console.error('Error creating Google Meet link:', error);
-            alert('Wystąpił błąd podczas tworzenia linku Google Meet');
-        }
-    }
-
-    async createTeamsLink(appointment: Appointment): Promise<void> {
-        try {
-            const meetingUrl = await this.videoCallService.createTeamsLink(appointment.id);
-
-            // Update appointment with meeting URL
-            await this.appointmentService.updateAppointment(appointment.id, {
-                meetingUrl,
-                meetingPlatform: 'teams'
-            });
-
-            // Add to calendar
-            await this.videoCallService.addToOutlookCalendar(
-                appointment.id,
-                meetingUrl,
-                appointment.date,
-                60
-            );
-
-            // Send invitation to client
-            await this.videoCallService.sendMeetingInvitation(
-                appointment.id,
-                meetingUrl,
-                appointment.userEmail || ''
-            );
-
-            alert(`Link do Microsoft Teams został utworzony: ${meetingUrl}`);
-            await this.loadDashboardData(); // Refresh data
-        } catch (error) {
-            console.error('Error creating Teams link:', error);
-            alert('Wystąpił błąd podczas tworzenia linku Teams');
-        }
-    }
-
-    async startVideoCall(appointment: Appointment): Promise<void> {
-        if (!appointment.meetingUrl) {
-            alert('Najpierw utwórz link do spotkania');
-            return;
-        }
-
-        try {
-            // Mark as active session
-            this.activeVideoCall = appointment;
-
-            // Update online status
-            this.isOnline = true;
-            this.videoCallService.setOnlineStatus(true);
-
-            // Open meeting in new tab
-            window.open(appointment.meetingUrl, '_blank');
-
-            // Send reminder to client
-            await this.videoCallService.sendMeetingReminder(
-                appointment.id,
-                appointment.meetingUrl,
-                appointment.userEmail || '',
-                5 // 5 minutes before
-            );
-
-            alert('Sesja została rozpoczęta. Klient otrzyma powiadomienie.');
-        } catch (error) {
-            console.error('Error starting video call:', error);
-            alert('Wystąpił błąd podczas rozpoczynania sesji');
-        }
-    }
-
-    async endVideoCall(): Promise<void> {
-        if (!this.activeVideoCall) return;
-
-        try {
-            // Update appointment status
-            await this.appointmentService.updateAppointment(this.activeVideoCall.id, {
-                status: 'completed'
-            });
-
-            // Clear active session
-            this.activeVideoCall = null;
-
-            // Update online status
-            this.isOnline = false;
-            this.videoCallService.setOnlineStatus(false);
-
-            await this.loadDashboardData(); // Refresh data
-            alert('Sesja została zakończona');
-        } catch (error) {
-            console.error('Error ending video call:', error);
-            alert('Wystąpił błąd podczas kończenia sesji');
-        }
-    }
-
-    async generateMeetingLink(appointment: Appointment, platform: 'google-meet' | 'teams' | 'zoom'): Promise<void> {
-        switch (platform) {
-            case 'google-meet':
-                await this.createGoogleMeetLink(appointment);
-                break;
-            case 'teams':
-                await this.createTeamsLink(appointment);
-                break;
-            case 'zoom':
-                try {
-                    const meetingUrl = await this.videoCallService.createZoomMeeting(appointment.id, appointment.date);
-                    await this.appointmentService.updateAppointment(appointment.id, {
-                        meetingUrl,
-                        meetingPlatform: 'zoom'
-                    });
-                    alert(`Link do Zoom został utworzony: ${meetingUrl}`);
-                    await this.loadDashboardData();
-                } catch (error) {
-                    console.error('Error creating Zoom meeting:', error);
-                    alert('Wystąpił błąd podczas tworzenia spotkania Zoom');
-                }
-                break;
-        }
-    }
-
-    copyMeetingUrl(url: string): void {
-        navigator.clipboard.writeText(url).then(() => {
-            alert('Link został skopiowany do schowka');
-        }).catch(err => {
-            console.error('Error copying to clipboard:', err);
-            alert('Nie udało się skopiować linku');
-        });
-    }
+  toggleOnlineStatus(event: any) {
+    this.isOnline = event.target.checked;
+    console.log('Online status changed to:', this.isOnline);
+  }
 }
