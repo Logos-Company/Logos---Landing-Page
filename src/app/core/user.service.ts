@@ -86,17 +86,36 @@ export class UserService {
 
     async requestPsychologistAssignment(userId: string, psychologistId: string, reason?: string): Promise<void> {
         try {
-            // Update user with assignment request
+            console.log(`Requesting assignment for user ${userId} to psychologist ${psychologistId}`);
+
+            // Check if user exists first
             const userRef = doc(this.db, 'users', userId);
-            await updateDoc(userRef, {
+            const userDoc = await getDoc(userRef);
+
+            if (!userDoc.exists()) {
+                throw new Error(`User with ID ${userId} does not exist`);
+            }
+
+            // Check if psychologist exists
+            const psychRef = doc(this.db, 'users', psychologistId);
+            const psychDoc = await getDoc(psychRef);
+
+            if (!psychDoc.exists()) {
+                throw new Error(`Psychologist with ID ${psychologistId} does not exist`);
+            }
+
+            // Update user with assignment request
+            await setDoc(userRef, {
                 assignedPsychologistId: psychologistId,
                 assignmentStatus: 'pending',
                 assignmentRequestedAt: Timestamp.now(),
                 updatedAt: Timestamp.now()
-            });
+            }, { merge: true });
 
             // Create assignment request record
-            await addDoc(collection(this.db, 'assignment_requests'), {
+            const requestId = `${userId}_${psychologistId}_${Date.now()}`;
+            await setDoc(doc(this.db, 'assignment_requests', requestId), {
+                id: requestId,
                 userId,
                 psychologistId,
                 reason: reason || '',
@@ -104,8 +123,10 @@ export class UserService {
                 requestedAt: Timestamp.now()
             });
 
-            // Notify admin about the request
-            await addDoc(collection(this.db, 'notifications'), {
+            // Create notification for admin
+            const notificationId = `assign_${userId}_${Date.now()}`;
+            await setDoc(doc(this.db, 'notifications', notificationId), {
+                id: notificationId,
                 type: 'assignment_request',
                 title: 'Nowa prośba o przypisanie psychologa',
                 message: `Użytkownik ${userId} prosi o przypisanie do psychologa ${psychologistId}`,
@@ -114,6 +135,9 @@ export class UserService {
                 isRead: false,
                 metadata: { userId, psychologistId }
             });
+
+            console.log('Assignment request created successfully');
+
         } catch (error) {
             console.error('Error requesting psychologist assignment:', error);
             throw error;
@@ -185,24 +209,18 @@ export class UserService {
                 new Date(apt.date) >= startOfMonth && apt.status === 'completed'
             ).length;
 
-            // Calculate total spent (assuming 100 PLN per session)
-            const totalSpent = completedSessions * 100;
-
             // Get next appointment
             const upcomingAppointment = appointments
                 .filter(apt => new Date(apt.date) > now && apt.status === 'scheduled')
                 .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0];
 
             // Get current psychologist
-            const user = await this.getUserProfile(userId);
-
-            return {
+            const user = await this.getUserProfile(userId); return {
                 totalSessions: appointments.length,
                 completedSessions,
                 cancelledSessions,
                 upcomingAppointments,
                 currentPsychologist: user?.assignedPsychologistId,
-                totalSpent,
                 sessionsThisMonth,
                 nextAppointment: upcomingAppointment ? new Date(upcomingAppointment.date) : undefined
             };
@@ -213,7 +231,6 @@ export class UserService {
                 completedSessions: 0,
                 cancelledSessions: 0,
                 upcomingAppointments: 0,
-                totalSpent: 0,
                 sessionsThisMonth: 0
             };
         }
@@ -395,20 +412,60 @@ export class UserService {
     // ===== PSYCHOLOGIST LISTING =====
 
     async getAllPsychologists(): Promise<User[]> {
+        console.log('🔍 getAllPsychologists() CALLED');
+
         try {
+            console.log('🔥 Testing Firebase connection...');
+            console.log('Database instance:', this.db);
+
+            console.log('🔍 Getting all psychologists from Firebase...');
+
+            // First, let's test if we can read the users collection at all
+            console.log('📋 Testing basic collection access...');
+            const allUsersQuery = query(collection(this.db, 'users'));
+            console.log('Query created:', allUsersQuery);
+
+            console.log('🚀 Executing getDocs...');
+            const allUsersSnapshot = await getDocs(allUsersQuery);
+            console.log('✅ getDocs completed');
+            console.log(`📊 Total documents in users collection: ${allUsersSnapshot.docs.length}`);
+
+            if (allUsersSnapshot.docs.length === 0) {
+                console.log('❌ NO DOCUMENTS FOUND IN USERS COLLECTION');
+                return [];
+            }
+
+            allUsersSnapshot.docs.forEach(doc => {
+                const data = doc.data();
+                console.log(`👤 User ID: ${doc.id}, Role: ${data['role']}, Name: ${data['firstName']} ${data['lastName']}`);
+            });
+
+            // Now try the filtered query
+            console.log('🔍 Filtering for psychologists...');
             const q = query(
                 collection(this.db, 'users'),
-                where('role', '==', 'psychologist'),
-                where('isActive', '==', true),
-                where('verificationStatus', '==', 'verified')
+                where('role', '==', 'psychologist')
             );
             const snapshot = await getDocs(q);
+            console.log(`🧠 Found ${snapshot.docs.length} users with role psychologist in database`);
 
-            let psychologists = snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data(),
-                createdAt: doc.data()['createdAt']?.toDate()
-            })) as User[];
+            let psychologists = snapshot.docs.map(doc => {
+                const data = doc.data();
+                console.log(`✅ Found psychologist: ${data['firstName']} ${data['lastName']}, isActive: ${data['isActive']}, verification: ${data['verificationStatus']}`);
+                return {
+                    id: doc.id,
+                    ...data,
+                    createdAt: data['createdAt']?.toDate()
+                };
+            }) as User[];
+
+            // Filter in memory instead of in Firestore query
+            psychologists = psychologists.filter(p =>
+                p.isActive === true &&
+                (p.verificationStatus === 'verified' || !p.verificationStatus) // Allow missing verificationStatus
+            );
+
+            console.log(`✅ After filtering: ${psychologists.length} active verified psychologists`);
 
             // Sort by premium listing first, then by rating
             psychologists = psychologists.sort((a, b) => {
@@ -417,9 +474,12 @@ export class UserService {
                 return (b.rating || 0) - (a.rating || 0);
             });
 
+            console.log('🎯 Returning sorted psychologists:', psychologists.length);
+            console.log('📋 Final psychologists list:', psychologists);
             return psychologists;
         } catch (error) {
-            console.error('Error fetching psychologists:', error);
+            console.error('💥 Error fetching psychologists:', error);
+            console.error('Error details:', error);
             return [];
         }
     }
@@ -487,6 +547,78 @@ export class UserService {
     }
 
     // ===== ADMIN FUNCTIONS =====
+
+    async enablePsychologistSelection(userId: string, adminId: string): Promise<void> {
+        try {
+            const userRef = doc(this.db, 'users', userId);
+            await updateDoc(userRef, {
+                canSelectPsychologist: true,
+                updatedAt: Timestamp.now()
+            });
+
+            // Notify user about activation
+            await addDoc(collection(this.db, 'notifications'), {
+                type: 'account_activated',
+                title: 'Konto aktywowane',
+                message: 'Twoje konto zostało aktywowane. Możesz teraz wybierać psychologów.',
+                recipientId: userId,
+                createdAt: Timestamp.now(),
+                isRead: false
+            });
+
+            console.log(`User ${userId} can now select psychologists (activated by ${adminId})`);
+        } catch (error) {
+            console.error('Error enabling psychologist selection:', error);
+            throw error;
+        }
+    }
+
+    async disablePsychologistSelection(userId: string, adminId: string, reason: string): Promise<void> {
+        try {
+            const userRef = doc(this.db, 'users', userId);
+            await updateDoc(userRef, {
+                canSelectPsychologist: false,
+                updatedAt: Timestamp.now()
+            });
+
+            // Notify user about deactivation
+            await addDoc(collection(this.db, 'notifications'), {
+                type: 'account_deactivated',
+                title: 'Wybór psychologa zablokowany',
+                message: `Możliwość wyboru psychologa została zablokowana. Powód: ${reason}`,
+                recipientId: userId,
+                createdAt: Timestamp.now(),
+                isRead: false
+            });
+
+            console.log(`User ${userId} can no longer select psychologists (deactivated by ${adminId})`);
+        } catch (error) {
+            console.error('Error disabling psychologist selection:', error);
+            throw error;
+        }
+    }
+
+    async getPendingActivations(): Promise<User[]> {
+        try {
+            const q = query(
+                collection(this.db, 'users'),
+                where('role', '==', 'user'),
+                where('canSelectPsychologist', '==', false),
+                where('isActive', '==', true)
+            );
+            const snapshot = await getDocs(q);
+
+            return snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+                createdAt: doc.data()['createdAt']?.toDate(),
+                updatedAt: doc.data()['updatedAt']?.toDate()
+            })) as User[];
+        } catch (error) {
+            console.error('Error fetching pending activations:', error);
+            return [];
+        }
+    }
 
     async approveAssignment(userId: string, adminId: string): Promise<void> {
         try {

@@ -62,16 +62,21 @@ export class AuthService {
     }
 
     private async handleFirebaseUser(firebaseUser: any): Promise<void> {
-        // Check if user exists in Firestore
+        console.log('=== HANDLING FIREBASE USER ===');
+        console.log('Firebase user:', firebaseUser);
+
+        // Check if user exists in Firestore (using 'users' collection)
         const userQuery = query(
-            collection(this.db, 'customers'),
+            collection(this.db, 'users'),
             where('email', '==', firebaseUser.email)
         );
         const snapshot = await getDocs(userQuery);
+        console.log('User query result:', snapshot.size, 'documents');
 
         let userData: User;
 
         if (snapshot.empty) {
+            console.log('Creating new user in Firestore...');
             // Create new user from Google data
             userData = {
                 id: firebaseUser.uid,
@@ -80,24 +85,29 @@ export class AuthService {
                 email: firebaseUser.email || '',
                 role: 'user' as UserRole,
                 isActive: true,
+                canSelectPsychologist: false, // Requires admin approval
                 createdAt: new Date(),
                 loginMethod: 'google'
             };
 
-            // Save to Firestore
-            await setDoc(doc(this.db, 'customers', firebaseUser.uid), userData);
+            // Save to Firestore in 'users' collection
+            await setDoc(doc(this.db, 'users', firebaseUser.uid), userData);
+            console.log('New user created in Firestore:', userData);
         } else {
+            console.log('User found in Firestore, updating...');
             userData = snapshot.docs[0].data() as User;
 
             // Update login method if needed
             if (userData.loginMethod !== 'google') {
                 userData.loginMethod = 'google';
-                await setDoc(doc(this.db, 'customers', userData.id), userData, { merge: true });
+                await setDoc(doc(this.db, 'users', userData.id), userData, { merge: true });
             }
+            console.log('User data loaded:', userData);
         }
 
         this.currentUserSubject.next(userData);
         localStorage.setItem('user', JSON.stringify(userData));
+        console.log('User set in currentUserSubject and localStorage');
     }
 
     async login(email: string, password: string, remember: boolean = false): Promise<{ success: boolean; message: string }> {
@@ -244,7 +254,7 @@ export class AuthService {
 
             // Get additional user data from Firestore
             const userQuery = query(
-                collection(this.db, 'customers'),
+                collection(this.db, 'users'),
                 where('email', '==', email)
             );
             const snapshot = await getDocs(userQuery);
@@ -291,7 +301,7 @@ export class AuthService {
         try {
             // Check if email already exists in Firestore
             const emailQuery = query(
-                collection(this.db, 'customers'),
+                collection(this.db, 'users'),
                 where('email', '==', userData.email)
             );
             const emailSnapshot = await getDocs(emailQuery);
@@ -313,12 +323,13 @@ export class AuthService {
                 phone: userData.phone,
                 role: 'user' as UserRole,
                 isActive: true,
+                canSelectPsychologist: false, // Requires admin approval
                 createdAt: new Date(),
                 loginMethod: 'email'
             };
 
             // Save to Firestore
-            await setDoc(doc(this.db, 'customers', firebaseUser.uid), newUser);
+            await setDoc(doc(this.db, 'users', firebaseUser.uid), newUser);
 
             return { success: true, message: 'Konto zostało utworzone pomyślnie!' };
 

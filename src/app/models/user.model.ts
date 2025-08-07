@@ -18,6 +18,7 @@ export interface User {
     assignmentStatus?: AssignmentStatus;
     assignmentRequestedAt?: Date;
     assignmentApprovedAt?: Date;
+    canSelectPsychologist?: boolean; // Permission to select psychologist
     activePackageId?: string;
     packageId?: string;
     packagePurchaseDate?: Date;
@@ -131,7 +132,6 @@ export interface UserStats {
     cancelledSessions: number;
     upcomingAppointments: number;
     currentPsychologist?: string;
-    totalSpent: number;
     averageSessionRating?: number;
     sessionsThisMonth: number;
     nextAppointment?: Date;

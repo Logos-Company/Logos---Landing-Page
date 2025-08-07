@@ -5,6 +5,9 @@ import { environment } from './environments/environment';
 import { CookieConsentService } from './app/services/cookie-content.service';
 import posthog from 'posthog-js';
 
+// Import the compiler to ensure JIT compilation works
+import '@angular/compiler';
+
 posthog.init(environment.posthogApiKey, {
   api_host: environment.posthogHost, // lub Twój self-hosted URL
   autocapture: true,

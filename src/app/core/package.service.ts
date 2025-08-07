@@ -48,16 +48,21 @@ export class PackageService {
 
     private async loadPackages(): Promise<void> {
         try {
+            // Simplified query to avoid index requirement
             const q = query(
                 collection(this.db, 'packages'),
-                where('isActive', '==', true),
-                orderBy('price', 'asc')
+                where('isActive', '==', true)
             );
             const snapshot = await getDocs(q);
+
+            // Sort in memory instead of using orderBy in Firestore
             const packages = snapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
             })) as Package[];
+
+            // Sort by price in ascending order
+            packages.sort((a, b) => (a.price || 0) - (b.price || 0));
 
             this.packagesSubject.next(packages);
         } catch (error) {
@@ -67,16 +72,20 @@ export class PackageService {
 
     async getAllPackages(): Promise<Package[]> {
         try {
+            // Simplified query to avoid index requirement
             const q = query(
                 collection(this.db, 'packages'),
-                where('isActive', '==', true),
-                orderBy('price', 'asc')
+                where('isActive', '==', true)
             );
             const snapshot = await getDocs(q);
-            return snapshot.docs.map(doc => ({
+
+            // Sort in memory instead of using orderBy in Firestore
+            const packages = snapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
             })) as Package[];
+
+            return packages.sort((a, b) => (a.price || 0) - (b.price || 0));
         } catch (error) {
             console.error('Error fetching packages:', error);
             return [];
