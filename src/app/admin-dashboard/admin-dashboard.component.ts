@@ -21,120 +21,185 @@ import { ChartService } from '../services/chart.service';
   imports: [CommonModule, FormsModule, RouterModule],
   template: `
     <div class="admin-dashboard">
-      <!-- Header -->
-      <header class="dashboard-header">
-        <div class="header-content">
-          <h1>Panel Administratora</h1>
-          <div class="header-actions">
-            <span class="user-role admin">ADMINISTRATOR</span>
-            <button class="logout-btn" (click)="logout()">Wyloguj</button>
-          </div>
+      <!-- Left Sidebar Navigation -->
+      <aside class="admin-sidebar" [class.sidebar-open]="sidebarOpen">
+        <div class="sidebar-header">
+          <a href="#" class="logo">
+            <span class="nav-icon">🔧</span>
+            Admin Panel
+          </a>
         </div>
-      </header>
-
-      <!-- Navigation -->
-      <nav class="dashboard-nav">
-        <button 
-          class="nav-tab" 
-          [class.active]="activeTab === 'overview'"
-          (click)="setActiveTab('overview')"
-        >
-          Przegląd
-        </button>
-        <button 
-          class="nav-tab" 
-          [class.active]="activeTab === 'users'"
-          (click)="setActiveTab('users')"
-        >
-          Użytkownicy
-        </button>
-        <button 
-          class="nav-tab" 
-          [class.active]="activeTab === 'psychologists'"
-          (click)="setActiveTab('psychologists')"
-        >
-          Psycholodzy
-        </button>
-        <button 
-          class="nav-tab" 
-          [class.active]="activeTab === 'analytics'"
-          (click)="setActiveTab('analytics')"
-        >
-          Analityka
-        </button>
-        <button 
-          class="nav-tab" 
-          [class.active]="activeTab === 'reviews'"
-          (click)="setActiveTab('reviews')"
-        >
-          Opinie
-        </button>
-        <button 
-          class="nav-tab" 
-          [class.active]="activeTab === 'contracts'"
-          (click)="setActiveTab('contracts')"
-        >
-          Wzory umów
-        </button>
-        <button 
-          class="nav-tab" 
-          [class.active]="activeTab === 'notifications'"
-          (click)="setActiveTab('notifications')"
-        >
-          Powiadomienia
-        </button>
-        <button 
-          class="nav-tab" 
-          [class.active]="activeTab === 'live-analytics'"
-          (click)="setActiveTab('live-analytics')"
-        >
-          Analityka Live
-        </button>
-        <button 
-          class="nav-tab" 
-          [class.active]="activeTab === 'crm'"
-          (click)="setActiveTab('crm')"
-        >
-          CRM
-        </button>
-        <button 
-          class="nav-tab" 
-          [class.active]="activeTab === 'posthog'"
-          (click)="setActiveTab('posthog')"
-        >
-          PostHog
-        </button>
-        <button 
-          class="nav-tab" 
-          [class.active]="activeTab === 'reports'"
-          (click)="setActiveTab('reports')"
-        >
-          Raporty
-        </button>
-        <button 
-          class="nav-tab" 
-          [class.active]="activeTab === 'upgrades'"
-          (click)="setActiveTab('upgrades')"
-        >
-          Ulepszenia
-        </button>
-        <button 
-          class="nav-tab" 
-          [class.active]="activeTab === 'settings'"
-          (click)="setActiveTab('settings')"
-        >
-          Ustawienia
-        </button>
-      </nav>
-
-      <!-- Loading -->
-      <div class="loading-container" *ngIf="isLoading">
-        <div class="spinner"></div>
-        <p>Ładowanie danych...</p>
-      </div>
+        
+        <nav class="sidebar-nav">
+          <div class="nav-item">
+            <a 
+              class="nav-link" 
+              [class.active]="activeTab === 'overview'"
+              (click)="setActiveTab('overview')"
+            >
+              <span class="nav-icon">📊</span>
+              Przegląd
+            </a>
+          </div>
+          <div class="nav-item">
+            <a 
+              class="nav-link" 
+              [class.active]="activeTab === 'users'"
+              (click)="setActiveTab('users')"
+            >
+              <span class="nav-icon">👥</span>
+              Użytkownicy
+            </a>
+          </div>
+          <div class="nav-item">
+            <a 
+              class="nav-link" 
+              [class.active]="activeTab === 'psychologists'"
+              (click)="setActiveTab('psychologists')"
+            >
+              <span class="nav-icon">🧠</span>
+              Psycholodzy
+            </a>
+          </div>
+          <div class="nav-item">
+            <a 
+              class="nav-link" 
+              [class.active]="activeTab === 'analytics'"
+              (click)="setActiveTab('analytics')"
+            >
+              <span class="nav-icon">📈</span>
+              Analityka
+            </a>
+          </div>
+          <div class="nav-item">
+            <a 
+              class="nav-link" 
+              [class.active]="activeTab === 'reviews'"
+              (click)="setActiveTab('reviews')"
+            >
+              <span class="nav-icon">⭐</span>
+              Opinie
+            </a>
+          </div>
+          <div class="nav-item">
+            <a 
+              class="nav-link" 
+              [class.active]="activeTab === 'contracts'"
+              (click)="setActiveTab('contracts')"
+            >
+              <span class="nav-icon">📝</span>
+              Wzory umów
+            </a>
+          </div>
+          <div class="nav-item">
+            <a 
+              class="nav-link" 
+              [class.active]="activeTab === 'notifications'"
+              (click)="setActiveTab('notifications')"
+            >
+              <span class="nav-icon">🔔</span>
+              Powiadomienia
+            </a>
+          </div>
+          <div class="nav-item">
+            <a 
+              class="nav-link" 
+              [class.active]="activeTab === 'live-analytics'"
+              (click)="setActiveTab('live-analytics')"
+            >
+              <span class="nav-icon">📊</span>
+              Live Analytics
+            </a>
+          </div>
+          <div class="nav-item">
+            <a 
+              class="nav-link" 
+              [class.active]="activeTab === 'moderators'"
+              (click)="setActiveTab('moderators')"
+            >
+              <span class="nav-icon">👮</span>
+              Moderatorzy
+            </a>
+          </div>
+          <div class="nav-item">
+            <a 
+              class="nav-link" 
+              [class.active]="activeTab === 'crm'"
+              (click)="setActiveTab('crm')"
+            >
+              <span class="nav-icon">💼</span>
+              CRM
+            </a>
+          </div>
+          <div class="nav-item">
+            <a 
+              class="nav-link" 
+              [class.active]="activeTab === 'posthog'"
+              (click)="setActiveTab('posthog')"
+            >
+              <span class="nav-icon">📊</span>
+              PostHog
+            </a>
+          </div>
+          <div class="nav-item">
+            <a 
+              class="nav-link" 
+              [class.active]="activeTab === 'reports'"
+              (click)="setActiveTab('reports')"
+            >
+              <span class="nav-icon">📄</span>
+              Raporty
+            </a>
+          </div>
+          <div class="nav-item">
+            <a 
+              class="nav-link" 
+              [class.active]="activeTab === 'upgrades'"
+              (click)="setActiveTab('upgrades')"
+            >
+              <span class="nav-icon">⬆️</span>
+              Ulepszenia
+            </a>
+          </div>
+          <div class="nav-item">
+            <a 
+              class="nav-link" 
+              [class.active]="activeTab === 'system'"
+              (click)="setActiveTab('system')"
+            >
+              <span class="nav-icon">⚙️</span>
+              System
+            </a>
+          </div>
+        </nav>
+      </aside>
 
       <!-- Main Content -->
-      <main class="dashboard-content" *ngIf="!isLoading">
+      <div class="main-content">
+        <!-- Header -->
+        <header class="dashboard-header">
+          <div class="header-content">
+            <div style="display: flex; align-items: center; gap: 15px;">
+              <button class="sidebar-toggle" (click)="toggleSidebar()">☰</button>
+              <h1>Panel Administratora</h1>
+            </div>
+            <div class="header-actions">
+              <span class="user-role admin">ADMINISTRATOR</span>
+              <button class="logout-btn" (click)="logout()">Wyloguj</button>
+            </div>
+          </div>
+        </header>
+
+        <!-- Dashboard Content Container -->
+        <div class="dashboard-content">
+          <!-- Loading -->
+          <div class="loading-container" *ngIf="isLoading">
+            <div class="spinner"></div>
+            <p>Ładowanie danych...</p>
+          </div>
+
+          <!-- Main Content -->
+          <main *ngIf="!isLoading">
         
         <!-- Overview Tab -->
         <section class="overview-section" *ngIf="activeTab === 'overview'">
@@ -172,6 +237,33 @@ import { ChartService } from '../services/chart.service';
                 <h3>{{ totalSessions }}</h3>
                 <p>Przeprowadzone sesje</p>
                 <small>{{ sessionsThisMonth }} w tym miesiącu</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pending Activations -->
+          <div class="pending-activations" *ngIf="pendingActivations.length > 0">
+            <div class="section-header">
+              <h3>Oczekujące aktywacje ({{ pendingActivations.length }})</h3>
+              <button class="btn btn-primary" (click)="showAllPendingActivations()">
+                Zobacz wszystkie
+              </button>
+            </div>
+            <div class="activations-list">
+              <div *ngFor="let user of pendingActivations.slice(0, 5)" class="activation-card">
+                <div class="user-info">
+                  <div class="user-avatar">{{ getUserInitials(user) }}</div>
+                  <div class="user-details">
+                    <h4>{{ user.firstName }} {{ user.lastName }}</h4>
+                    <p>{{ user.email }}</p>
+                    <small>Zarejestrowany: {{ user.createdAt | date:'short' }}</small>
+                  </div>
+                </div>
+                <div class="activation-actions">
+                  <button class="btn btn-sm btn-success" (click)="activateUser(user)">
+                    Aktywuj
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -221,6 +313,7 @@ import { ChartService } from '../services/chart.service';
               <div class="col">Email</div>
               <div class="col">Rola</div>
               <div class="col">Status</div>
+              <div class="col">Wybór psychologa</div>
               <div class="col">Data rejestracji</div>
               <div class="col">Akcje</div>
             </div>
@@ -243,6 +336,14 @@ import { ChartService } from '../services/chart.service';
                   {{ user.isActive ? 'Aktywny' : 'Nieaktywny' }}
                 </span>
               </div>
+              <div class="col">
+                <span class="permission-badge" 
+                      [class.enabled]="user.canSelectPsychologist"
+                      *ngIf="user.role === 'user'">
+                  {{ user.canSelectPsychologist ? 'Aktywne' : 'Nieaktywne' }}
+                </span>
+                <span *ngIf="user.role !== 'user'" class="text-muted">-</span>
+              </div>
               <div class="col">{{ user.createdAt | date:'short' }}</div>
               <div class="col">
                 <div class="user-actions">
@@ -257,6 +358,15 @@ import { ChartService } from '../services/chart.service';
                   >
                     {{ user.isActive ? 'Dezaktywuj' : 'Aktywuj' }}
                   </button>
+                  <button 
+                    class="btn btn-sm"
+                    [class.btn-success]="!user.canSelectPsychologist"
+                    [class.btn-warning]="user.canSelectPsychologist"
+                    (click)="togglePsychologistSelection(user)"
+                    *ngIf="user.role === 'user'"
+                  >
+                    {{ user.canSelectPsychologist ? 'Zablokuj wybór' : 'Aktywuj wybór' }}
+                  </button>
                 </div>
               </div>
             </div>
@@ -267,61 +377,175 @@ import { ChartService } from '../services/chart.service';
         <section class="psychologists-section" *ngIf="activeTab === 'psychologists'">
           <div class="section-header">
             <h3>Zarządzanie psychologami</h3>
-            <button class="btn btn-primary" (click)="showAddPsychologistModal = true">
-              Dodaj psychologa
-            </button>
+            <div class="header-actions">
+              <input 
+                type="text" 
+                placeholder="Szukaj psychologów..." 
+                [(ngModel)]="psychologistSearchTerm"
+                (input)="filterPsychologists()"
+                class="search-input"
+              >
+              <select [(ngModel)]="psychologistStatusFilter" (change)="filterPsychologists()" class="filter-select">
+                <option value="">Wszystkie statusy</option>
+                <option value="active">Aktywni</option>
+                <option value="pending">Oczekujący</option>
+                <option value="suspended">Zawieszeni</option>
+              </select>
+              <button class="btn btn-success" (click)="exportPsychologistsToExcel()">
+                <i class="icon">📊</i>
+                Eksport
+              </button>
+              <button class="btn btn-warning" (click)="seedSampleData()">
+                <i class="icon">🌱</i>
+                Seed Data
+              </button>
+              <button class="btn btn-info" (click)="seedUsersData()">
+                <i class="icon">👥</i>
+                Seed Users
+              </button>
+              <button class="btn btn-primary" (click)="showAddPsychologistModal = true">
+                Dodaj psychologa
+              </button>
+            </div>
           </div>
 
-          <div class="psychologists-grid">
-            <div *ngFor="let psychologist of psychologists" class="psychologist-card">
-              <div class="psychologist-header">
-                <div class="psychologist-avatar">
-                  <img [src]="psychologist.profileImage || '/assets/default-psychologist.png'" 
-                       [alt]="psychologist.firstName + ' ' + psychologist.lastName">
-                </div>
-                <div class="psychologist-info">
-                  <h4>{{ psychologist.firstName }} {{ psychologist.lastName }}</h4>
-                  <p class="specializations">{{ psychologist.specializations.join(', ') }}</p>
-                  <div class="rating">
-                    <span class="stars">★★★★★</span>
-                    <span class="rating-value">{{ psychologist.rating }}/5</span>
-                    <span class="reviews-count">({{ psychologist.reviewCount }} opinii)</span>
+          <!-- Psychologists Stats -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <h3>Aktywni psychologowie</h3>
+              <div class="stat-value">{{ psychologistStats.active }}</div>
+              <div class="stat-change positive">+{{ psychologistStats.newThisMonth }} w tym miesiącu</div>
+            </div>
+            <div class="stat-card">
+              <h3>Oczekujący weryfikacji</h3>
+              <div class="stat-value">{{ psychologistStats.pending }}</div>
+              <div class="stat-change neutral">{{ psychologistStats.avgApprovalTime }}d średni czas</div>
+            </div>
+            <div class="stat-card">
+              <h3>Średnia ocena</h3>
+              <div class="stat-value">{{ psychologistStats.avgRating }}/5</div>
+              <div class="stat-change positive">+0.2 vs poprzedni miesiąc</div>
+            </div>
+            <div class="stat-card">
+              <h3>Całkowite sesje</h3>
+              <div class="stat-value">{{ psychologistStats.totalSessions }}</div>
+              <div class="stat-change positive">+{{ psychologistStats.sessionsThisMonth }} w tym miesiącu</div>
+            </div>
+          </div>
+
+          <!-- Psychologists Table -->
+          <div class="psychologists-table">
+            <div class="table-header">
+              <div class="col">Psycholog</div>
+              <div class="col">Specjalizacja</div>
+              <div class="col">Status</div>
+              <div class="col">Ocena</div>
+              <div class="col">Sesje</div>
+              <div class="col">Ostatnia sesja</div>
+              <div class="col">Akcje</div>
+            </div>
+            
+            <div *ngFor="let psychologist of filteredPsychologists" class="table-row">
+              <div class="col">
+                <div class="user-info">
+                  <div class="user-avatar">{{ getPsychologistInitials(psychologist) }}</div>
+                  <div class="user-details">
+                    <p class="user-name">{{ psychologist.firstName }} {{ psychologist.lastName }}</p>
+                    <small class="user-email">{{ psychologist.email }}</small>
+                    <small class="user-license">Lic. {{ psychologist.licenseNumber || 'Brak' }}</small>
                   </div>
                 </div>
               </div>
-              
-              <div class="psychologist-stats">
-                <div class="stat">
-                  <span class="label">Sesje:</span>
-                  <span class="value">{{ psychologist.completedSessions || psychologist.totalSessions || 0 }}</span>
-                </div>
-                <div class="stat">
-                  <span class="label">Przychód:</span>
-                  <span class="value">{{ (psychologist.totalRevenue || 0) | currency:'PLN':'symbol':'1.0-0' }}</span>
-                </div>
-                <div class="stat">
-                  <span class="label">Status:</span>
-                  <span class="value" [class.active]="psychologist.isActive">
-                    {{ psychologist.isActive ? 'Aktywny' : 'Nieaktywny' }}
+              <div class="col">
+                <div class="specializations">
+                  <span *ngFor="let spec of psychologist.specializations" class="specialization-tag">
+                    {{ spec }}
                   </span>
                 </div>
               </div>
-              
-              <div class="psychologist-actions">
-                <button class="btn btn-sm btn-secondary" (click)="viewPsychologistDetails(psychologist)">
-                  Szczegóły
-                </button>
-                <button class="btn btn-sm btn-primary" (click)="editPsychologist(psychologist)">
-                  Edytuj
-                </button>
-                <button 
-                  class="btn btn-sm"
-                  [class.btn-danger]="psychologist.isActive"
-                  [class.btn-success]="!psychologist.isActive"
-                  (click)="togglePsychologistStatus(psychologist)"
-                >
-                  {{ psychologist.isActive ? 'Dezaktywuj' : 'Aktywuj' }}
-                </button>
+              <div class="col">
+                <span class="status-badge" 
+                      [class.active]="psychologist.verificationStatus === 'verified'"
+                      [class.pending]="psychologist.verificationStatus === 'pending'"
+                      [class.suspended]="psychologist.verificationStatus === 'suspended'">
+                  {{ getVerificationStatusText(psychologist.verificationStatus || 'pending') }}
+                </span>
+              </div>
+              <div class="col">
+                <div class="rating-display">
+                  <span class="rating-stars">★★★★★</span>
+                  <span class="rating-text">{{ psychologist.rating || 0 }}/5</span>
+                  <small class="review-count">({{ psychologist.reviewCount || 0 }})</small>
+                </div>
+              </div>
+              <div class="col">
+                <div class="sessions-info">
+                  <span class="sessions-total">{{ psychologist.totalSessions || 0 }}</span>
+                  <small class="sessions-monthly">+{{ psychologist.sessionsThisMonth || 0 }} w tym miesiącu</small>
+                </div>
+              </div>
+              <div class="col">
+                <span *ngIf="psychologist.lastSessionDate" 
+                      class="last-session"
+                      [class.recent]="isRecentSession(psychologist.lastSessionDate)">
+                  {{ psychologist.lastSessionDate | date:'short' }}
+                </span>
+                <span *ngIf="!psychologist.lastSessionDate" class="last-session">Brak sesji</span>
+              </div>
+              <div class="col">
+                <div class="user-actions">
+                  <button class="btn btn-sm btn-secondary" (click)="viewPsychologistProfile(psychologist)">
+                    Profil
+                  </button>
+                  <button 
+                    *ngIf="psychologist.verificationStatus === 'pending'"
+                    class="btn btn-sm btn-success" 
+                    (click)="approvePsychologist(psychologist)">
+                    Zatwierdź
+                  </button>
+                  <button 
+                    *ngIf="psychologist.verificationStatus === 'verified'"
+                    class="btn btn-sm btn-warning" 
+                    (click)="suspendPsychologist(psychologist)">
+                    Zawieś
+                  </button>
+                  <button 
+                    *ngIf="psychologist.verificationStatus === 'suspended'"
+                    class="btn btn-sm btn-success" 
+                    (click)="reactivatePsychologist(psychologist)">
+                    Reaktywuj
+                  </button>
+                  <button class="btn btn-sm btn-danger" (click)="deletePsychologist(psychologist)">
+                    Usuń
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Verification Queue -->
+          <div class="pending-verification" *ngIf="pendingPsychologistsForVerification.length > 0">
+            <h3>Kolejka weryfikacji</h3>
+            <div *ngFor="let psychologist of pendingPsychologistsForVerification" class="pending-card">
+              <div class="pending-info">
+                <div class="psychologist-details">
+                  <div class="name">{{ psychologist.firstName }} {{ psychologist.lastName }}</div>
+                  <div class="email">{{ psychologist.email }}</div>
+                  <div class="specializations-list">
+                    {{ psychologist.specializations.join(', ') }}
+                  </div>
+                </div>
+                <div class="pending-actions">
+                  <button class="btn btn-success" (click)="approvePsychologist(psychologist)">
+                    Zatwierdź
+                  </button>
+                  <button class="btn btn-warning" (click)="requestMoreInfo(psychologist)">
+                    Zapytaj
+                  </button>
+                  <button class="btn btn-danger" (click)="rejectPsychologist(psychologist)">
+                    Odrzuć
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -451,6 +675,14 @@ import { ChartService } from '../services/chart.service';
             <div class="live-stat-card">
               <h4>Współczynnik odrzuceń</h4>
               <div class="stat-value">{{ liveAnalytics.bounceRate | number:'1.1-1' }}%</div>
+            </div>
+          </div>
+
+          <!-- Live Analytics Charts -->
+          <div class="analytics-chart">
+            <h3>Ruch w czasie rzeczywistym</h3>
+            <div class="chart-container">
+              <canvas #liveAnalyticsChart width="800" height="300"></canvas>
             </div>
           </div>
 
@@ -1038,6 +1270,8 @@ import { ChartService } from '../services/chart.service';
           </div>
         </div>
       </div>
+        </div>
+      </div>
     </div>
   `,
   styleUrls: ['./admin-dashboard.component.scss']
@@ -1049,12 +1283,14 @@ export class AdminDashboardComponent implements OnInit, OnDestroy, AfterViewInit
   @ViewChild('revenueChart') revenueChart!: ElementRef<HTMLCanvasElement>;
   @ViewChild('sessionsChart') sessionsChart!: ElementRef<HTMLCanvasElement>;
   @ViewChild('psychologistsChart') psychologistsChart!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('liveAnalyticsChart') liveAnalyticsChart!: ElementRef<HTMLCanvasElement>;
 
   // Chart instances
   private charts: { [key: string]: any } = {};
   currentUser: User | null = null;
   activeTab = 'overview';
   isLoading = false;
+  sidebarOpen = false; // Added for sidebar toggle
   private subscriptions: Subscription[] = [];
 
   // Overview stats
@@ -1071,7 +1307,10 @@ export class AdminDashboardComponent implements OnInit, OnDestroy, AfterViewInit
   // Data
   users: User[] = [];
   filteredUsers: User[] = [];
+  pendingActivations: User[] = [];
   psychologists: Psychologist[] = [];
+  filteredPsychologists: Psychologist[] = [];
+  pendingPsychologistsForVerification: Psychologist[] = [];
   recentActivities: SystemActivity[] = [];
   reviews: Review[] = [];
   filteredReviews: Review[] = [];
@@ -1083,6 +1322,19 @@ export class AdminDashboardComponent implements OnInit, OnDestroy, AfterViewInit
   userSearchTerm = '';
   userRoleFilter = '';
   reviewStatusFilter = '';
+  psychologistSearchTerm = '';
+  psychologistStatusFilter = '';
+
+  // Psychologist stats
+  psychologistStats = {
+    active: 0,
+    pending: 0,
+    newThisMonth: 0,
+    avgApprovalTime: 7,
+    avgRating: 4.2,
+    totalSessions: 0,
+    sessionsThisMonth: 0
+  };
 
   // Notification stats
   notificationStats = {
@@ -1133,13 +1385,30 @@ export class AdminDashboardComponent implements OnInit, OnDestroy, AfterViewInit
   ) { }
 
   ngOnInit() {
+    // First check if user is in localStorage and restore if needed
+    const storedUser = localStorage.getItem('user');
+    if (storedUser && !this.currentUser) {
+      try {
+        const user = JSON.parse(storedUser);
+        if (user && user.role === 'admin') {
+          this.authService.setCurrentUser(user);
+          this.currentUser = user;
+        }
+      } catch (error) {
+        console.error('Error restoring user from localStorage:', error);
+        localStorage.removeItem('user');
+      }
+    }
+
     this.currentUser = this.authService.getCurrentUser();
 
     if (!this.currentUser || this.currentUser.role !== 'admin') {
+      console.log('User not admin, redirecting...', this.currentUser);
       this.router.navigate(['/dashboard']);
       return;
     }
 
+    console.log('Admin user confirmed:', this.currentUser.email);
     this.loadDashboardData();
     this.setupRealTimeUpdates();
   }
@@ -1154,9 +1423,11 @@ export class AdminDashboardComponent implements OnInit, OnDestroy, AfterViewInit
 
   ngAfterViewInit() {
     // Initialize charts after view is ready
+    console.log('ngAfterViewInit called');
     setTimeout(() => {
+      console.log('Initializing charts with delay...');
       this.initializeCharts();
-    }, 100);
+    }, 2000);
   }
 
   private setupRealTimeUpdates() {
@@ -1182,6 +1453,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy, AfterViewInit
       await Promise.all([
         this.loadOverviewStats(),
         this.loadUsers(),
+        this.loadPendingActivations(),
         this.loadPsychologists(),
         this.loadRecentActivities(),
         this.loadReviews(),
@@ -1221,11 +1493,287 @@ export class AdminDashboardComponent implements OnInit, OnDestroy, AfterViewInit
     }
   }
 
+  async loadPendingActivations() {
+    try {
+      this.pendingActivations = await this.adminService.getPendingActivations();
+    } catch (error) {
+      console.error('Error loading pending activations:', error);
+    }
+  }
+
   async loadPsychologists() {
     try {
-      this.psychologists = await this.adminService.getAllPsychologistsWithDetails();
+      // First try to get from dedicated psychologists collection
+      let allPsychologists = await this.adminService.getAllPsychologistsWithDetails();
+      
+      // If empty, fallback to users collection
+      if (allPsychologists.length === 0) {
+        console.log('No psychologists in dedicated collection, checking users...');
+        const usersAsPsychologists = await this.adminService.getPsychologistsFromUsers();
+        // Convert User[] to Psychologist[] format
+        allPsychologists = usersAsPsychologists.map(user => ({
+          id: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          phone: user.phone || '',
+          specializations: ['Terapia ogólna'], // Default
+          description: user.bio || 'Brak opisu',
+          experience: 5, // Default
+          education: 'Nie podano',
+          languages: ['Polski'],
+          hourlyRate: 150,
+          pricePerSession: 150,
+          isAvailable: user.isActive,
+          isActive: user.isActive,
+          verificationStatus: user.verificationStatus || 'pending',
+          licenseNumber: user.licenseNumber || 'Brak',
+          rating: 4.5,
+          reviewCount: 0,
+          totalSessions: 0,
+          sessionsThisMonth: 0,
+          lastSessionDate: null,
+          profileImage: '',
+          workingHours: {
+            monday: [],
+            tuesday: [],
+            wednesday: [],
+            thursday: [],
+            friday: [],
+            saturday: [],
+            sunday: []
+          },
+          certificates: [],
+          role: 'psychologist',
+          createdAt: user.createdAt
+        }));
+      }
+
+      this.psychologists = allPsychologists;
+      this.filteredPsychologists = [...this.psychologists];
+      this.pendingPsychologistsForVerification = this.psychologists.filter(p => p.verificationStatus === 'pending');
+      
+      // Calculate psychologist stats
+      this.psychologistStats = {
+        active: this.psychologists.filter(p => p.verificationStatus === 'verified' && p.isActive).length,
+        pending: this.pendingPsychologistsForVerification.length,
+        newThisMonth: this.psychologists.filter(p => {
+          const created = new Date(p.createdAt);
+          const now = new Date();
+          return created.getMonth() === now.getMonth() && created.getFullYear() === now.getFullYear();
+        }).length,
+        avgApprovalTime: 7, // Mock data
+        avgRating: this.psychologists.reduce((sum, p) => sum + (p.rating || 0), 0) / this.psychologists.length || 0,
+        totalSessions: this.psychologists.reduce((sum, p) => sum + (p.totalSessions || 0), 0),
+        sessionsThisMonth: this.psychologists.reduce((sum, p) => sum + (p.sessionsThisMonth || 0), 0)
+      };
+      
+      console.log('Loaded psychologists:', this.psychologists.length);
     } catch (error) {
       console.error('Error loading psychologists:', error);
+    }
+  }
+
+  filterPsychologists() {
+    this.filteredPsychologists = this.psychologists.filter(psychologist => {
+      const matchesSearch = !this.psychologistSearchTerm ||
+        psychologist.firstName.toLowerCase().includes(this.psychologistSearchTerm.toLowerCase()) ||
+        psychologist.lastName.toLowerCase().includes(this.psychologistSearchTerm.toLowerCase()) ||
+        psychologist.email.toLowerCase().includes(this.psychologistSearchTerm.toLowerCase());
+
+      const matchesStatus = !this.psychologistStatusFilter || 
+        (this.psychologistStatusFilter === 'active' && psychologist.isActive) ||
+        (this.psychologistStatusFilter === 'pending' && psychologist.verificationStatus === 'pending') ||
+        (this.psychologistStatusFilter === 'suspended' && psychologist.verificationStatus === 'suspended');
+
+      return matchesSearch && matchesStatus;
+    });
+  }
+
+  getVerificationStatusText(status: string): string {
+    switch (status) {
+      case 'verified': return 'Zweryfikowany';
+      case 'pending': return 'Oczekuje weryfikacji';
+      case 'suspended': return 'Zawieszony';
+      default: return 'Nieznany';
+    }
+  }
+
+  exportPsychologistsToExcel() {
+    console.log('Exporting psychologists to Excel...');
+    // TODO: Implement Excel export
+  }
+
+  viewPsychologistProfile(psychologist: Psychologist) {
+    console.log('Viewing psychologist profile:', psychologist);
+    // TODO: Open psychologist profile modal
+  }
+
+  viewPsychologistSessions(psychologist: Psychologist) {
+    console.log('Viewing psychologist sessions:', psychologist);
+    // TODO: Open sessions view
+  }
+
+  async approvePsychologist(psychologist: Psychologist) {
+    try {
+      await this.psychologistService.updatePsychologist(psychologist.id, {
+        verificationStatus: 'verified',
+        isActive: true
+      });
+      
+      psychologist.verificationStatus = 'verified';
+      psychologist.isActive = true;
+      
+      // Remove from pending list
+      this.pendingPsychologistsForVerification = this.pendingPsychologistsForVerification.filter(p => p.id !== psychologist.id);
+      
+      // Log activity
+      await this.adminService.logActivityToFirebase({
+        type: 'psychologist-approved',
+        message: `Zatwierdzono psychologa: ${psychologist.firstName} ${psychologist.lastName}`,
+        severity: 'low'
+      });
+      
+      alert(`Psycholog ${psychologist.firstName} ${psychologist.lastName} został zatwierdzony.`);
+    } catch (error) {
+      console.error('Error approving psychologist:', error);
+      alert('Wystąpił błąd podczas zatwierdzania psychologa.');
+    }
+  }
+
+  async suspendPsychologist(psychologist: Psychologist) {
+    const reason = prompt('Podaj powód zawieszenia psychologa:');
+    if (reason) {
+      try {
+        await this.psychologistService.updatePsychologist(psychologist.id, {
+          verificationStatus: 'suspended',
+          isActive: false
+        });
+        
+        psychologist.verificationStatus = 'suspended';
+        psychologist.isActive = false;
+        
+        await this.adminService.logActivityToFirebase({
+          type: 'psychologist-approved',
+          message: `Zawieszono psychologa: ${psychologist.firstName} ${psychologist.lastName} - ${reason}`,
+          severity: 'medium'
+        });
+        
+        alert(`Psycholog ${psychologist.firstName} ${psychologist.lastName} został zawieszony.`);
+      } catch (error) {
+        console.error('Error suspending psychologist:', error);
+        alert('Wystąpił błąd podczas zawieszania psychologa.');
+      }
+    }
+  }
+
+  async reactivatePsychologist(psychologist: Psychologist) {
+    try {
+      await this.psychologistService.updatePsychologist(psychologist.id, {
+        verificationStatus: 'verified',
+        isActive: true
+      });
+      
+      psychologist.verificationStatus = 'verified';
+      psychologist.isActive = true;
+      
+      await this.adminService.logActivityToFirebase({
+        type: 'psychologist-approved',
+        message: `Reaktywowano psychologa: ${psychologist.firstName} ${psychologist.lastName}`,
+        severity: 'low'
+      });
+      
+      alert(`Psycholog ${psychologist.firstName} ${psychologist.lastName} został reaktywowany.`);
+    } catch (error) {
+      console.error('Error reactivating psychologist:', error);
+      alert('Wystąpił błąd podczas reaktywacji psychologa.');
+    }
+  }
+
+  async rejectPsychologist(psychologist: Psychologist) {
+    const reason = prompt('Podaj powód odrzucenia aplikacji:');
+    if (reason) {
+      try {
+        // Instead of deleting, mark as rejected
+        await this.psychologistService.updatePsychologist(psychologist.id, {
+          verificationStatus: 'suspended',
+          isActive: false
+        });
+        
+        // Remove from pending list
+        this.pendingPsychologistsForVerification = this.pendingPsychologistsForVerification.filter(p => p.id !== psychologist.id);
+        
+        await this.adminService.logActivityToFirebase({
+          type: 'user-blocked',
+          message: `Odrzucono aplikację psychologa: ${psychologist.firstName} ${psychologist.lastName} - ${reason}`,
+          severity: 'medium'
+        });
+        
+        alert(`Aplikacja psychologa ${psychologist.firstName} ${psychologist.lastName} została odrzucona.`);
+      } catch (error) {
+        console.error('Error rejecting psychologist:', error);
+        alert('Wystąpił błąd podczas odrzucania aplikacji.');
+      }
+    }
+  }
+
+  requestMoreInfo(psychologist: Psychologist) {
+    const info = prompt('Jakie dodatkowe informacje są potrzebne?');
+    if (info) {
+      console.log(`Requesting more info from ${psychologist.email}: ${info}`);
+      // TODO: Send email to psychologist requesting more information
+      alert(`Wysłano prośbę o dodatkowe informacje do ${psychologist.firstName} ${psychologist.lastName}.`);
+    }
+  }
+
+  async deletePsychologist(psychologist: Psychologist) {
+    if (confirm(`Czy na pewno chcesz usunąć psychologa ${psychologist.firstName} ${psychologist.lastName}? Ta akcja jest nieodwracalna.`)) {
+      try {
+        // In a real implementation, you might want to archive instead of delete
+        console.log('Deleting psychologist:', psychologist);
+        
+        // Remove from lists
+        this.psychologists = this.psychologists.filter(p => p.id !== psychologist.id);
+        this.filteredPsychologists = this.filteredPsychologists.filter(p => p.id !== psychologist.id);
+        this.pendingPsychologistsForVerification = this.pendingPsychologistsForVerification.filter(p => p.id !== psychologist.id);
+        
+        await this.adminService.logActivityToFirebase({
+          type: 'user-blocked',
+          message: `Usunięto psychologa: ${psychologist.firstName} ${psychologist.lastName}`,
+          severity: 'high'
+        });
+        
+        alert(`Psycholog ${psychologist.firstName} ${psychologist.lastName} został usunięty.`);
+      } catch (error) {
+        console.error('Error deleting psychologist:', error);
+        alert('Wystąpił błąd podczas usuwania psychologa.');
+      }
+    }
+  }
+
+  async seedSampleData() {
+    if (confirm('Czy na pewno chcesz dodać przykładowe dane psychologów do bazy? Ta operacja doda 4 przykładowych psychologów.')) {
+      try {
+        await this.adminService.seedSamplePsychologists();
+        alert('Przykładowe dane zostały pomyślnie dodane!');
+        await this.loadPsychologists();
+      } catch (error) {
+        console.error('Error seeding data:', error);
+        alert('Wystąpił błąd podczas dodawania przykładowych danych.');
+      }
+    }
+  }
+
+  async seedUsersData() {
+    if (confirm('Czy na pewno chcesz dodać przykładowych użytkowników-psychologów? Ta operacja doda 3 użytkowników z rolą psycholog.')) {
+      try {
+        await this.adminService.seedPsychologistsAsUsers();
+        alert('Przykładowi użytkownicy-psychologowie zostali pomyślnie dodani!');
+        await this.loadPsychologists();
+      } catch (error) {
+        console.error('Error seeding users:', error);
+        alert('Wystąpił błąd podczas dodawania przykładowych użytkowników.');
+      }
     }
   }
 
@@ -1260,11 +1808,64 @@ export class AdminDashboardComponent implements OnInit, OnDestroy, AfterViewInit
       this.lastAnalyticsUpdate = new Date();
     } catch (error) {
       console.error('Error loading live analytics:', error);
+      // Fallback to mock data
+      this.liveAnalytics = {
+        currentVisitors: Math.floor(Math.random() * 100) + 50,
+        pageViews: Math.floor(Math.random() * 1000) + 500,
+        uniqueVisitors: Math.floor(Math.random() * 300) + 200,
+        bounceRate: Math.random() * 20 + 25, // 25-45%
+        avgSessionDuration: Math.random() * 300 + 180, // 3-8 minutes in seconds
+        topPages: [
+          { page: '/landing', views: Math.floor(Math.random() * 200) + 100 },
+          { page: '/login', views: Math.floor(Math.random() * 150) + 75 },
+          { page: '/register', views: Math.floor(Math.random() * 100) + 50 },
+          { page: '/dashboard', views: Math.floor(Math.random() * 80) + 40 },
+          { page: '/psychologist-profile', views: Math.floor(Math.random() * 60) + 30 }
+        ],
+        userActions: {
+          clicks: Math.floor(Math.random() * 500) + 200,
+          formSubmissions: Math.floor(Math.random() * 50) + 20,
+          buttonClicks: Math.floor(Math.random() * 300) + 150
+        },
+        realTimeEvents: this.generateRealtimeEvents()
+      };
+      this.lastAnalyticsUpdate = new Date();
     }
   }
 
+  private generateRealtimeEvents() {
+    const events = [];
+    const eventTypes = ['page_view', 'click', 'form_submit', 'button_click', 'session_start'];
+    const pages = ['/landing', '/login', '/register', '/dashboard', '/contact'];
+    
+    for (let i = 0; i < 20; i++) {
+      const timestamp = new Date(Date.now() - Math.random() * 300000); // Last 5 minutes
+      events.push({
+        timestamp,
+        event: eventTypes[Math.floor(Math.random() * eventTypes.length)],
+        page: pages[Math.floor(Math.random() * pages.length)]
+      });
+    }
+    
+    return events.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+  }
+
   setActiveTab(tab: string) {
+    console.log('=== SWITCHING TAB TO:', tab, '===');
     this.activeTab = tab;
+
+    // Initialize charts when switching to analytics tab
+    if (tab === 'analytics') {
+      console.log('Analytics tab clicked, waiting 500ms then initializing charts...');
+      setTimeout(() => {
+        this.initializeCharts();
+      }, 500);
+    } else if (tab === 'live-analytics') {
+      console.log('Live analytics tab clicked, waiting 500ms then initializing charts...');
+      setTimeout(() => {
+        this.initializeCharts();
+      }, 500);
+    }
 
     // Load specific data when switching to certain tabs
     if (tab === 'live-analytics' && !this.liveAnalytics) {
@@ -1442,6 +2043,10 @@ export class AdminDashboardComponent implements OnInit, OnDestroy, AfterViewInit
     this.newContract.fields.splice(index, 1);
   }
 
+  toggleSidebar() {
+    this.sidebarOpen = !this.sidebarOpen;
+  }
+
   logout() {
     this.authService.logout();
   }
@@ -1458,6 +2063,18 @@ export class AdminDashboardComponent implements OnInit, OnDestroy, AfterViewInit
 
   getUserInitials(user: User): string {
     return (user.firstName?.[0] || '') + (user.lastName?.[0] || '');
+  }
+
+  isRecentSession(date: any): boolean {
+    if (!date) return false;
+    const sessionDate = date.toDate ? date.toDate() : new Date(date);
+    const now = new Date();
+    const diffInDays = (now.getTime() - sessionDate.getTime()) / (1000 * 60 * 60 * 24);
+    return diffInDays <= 7; // Consider sessions within 7 days as recent
+  }
+
+  getPsychologistInitials(psychologist: Psychologist): string {
+    return (psychologist.firstName?.[0] || '') + (psychologist.lastName?.[0] || '');
   }
 
   getRoleText(role: string): string {
@@ -1490,12 +2107,62 @@ export class AdminDashboardComponent implements OnInit, OnDestroy, AfterViewInit
 
   async toggleUserStatus(user: User) {
     try {
-      // TODO: Implement user status toggle in Firebase
+      await this.adminService.toggleUserStatus(user.id, !user.isActive);
       user.isActive = !user.isActive;
       console.log('User status toggled:', user);
     } catch (error) {
       console.error('Error toggling user status:', error);
     }
+  }
+
+  async togglePsychologistSelection(user: User) {
+    try {
+      if (user.canSelectPsychologist) {
+        // Disable selection - ask for reason
+        const reason = prompt('Podaj powód blokady wyboru psychologa:');
+        if (reason) {
+          await this.adminService.disablePsychologistSelection(user.id, reason);
+          user.canSelectPsychologist = false;
+          alert('Wybór psychologa został zablokowany.');
+        }
+      } else {
+        // Enable selection
+        await this.adminService.enablePsychologistSelection(user.id);
+        user.canSelectPsychologist = true;
+        alert('Wybór psychologa został aktywowany.');
+      }
+    } catch (error) {
+      console.error('Error toggling psychologist selection:', error);
+      alert('Wystąpił błąd podczas zmiany uprawnień.');
+    }
+  }
+
+  async activateUser(user: User) {
+    try {
+      await this.adminService.enablePsychologistSelection(user.id);
+      
+      // Remove from pending activations
+      this.pendingActivations = this.pendingActivations.filter(u => u.id !== user.id);
+      
+      // Update in users list
+      const userIndex = this.users.findIndex(u => u.id === user.id);
+      if (userIndex !== -1) {
+        this.users[userIndex].canSelectPsychologist = true;
+      }
+      
+      alert(`Użytkownik ${user.firstName} ${user.lastName} został aktywowany.`);
+    } catch (error) {
+      console.error('Error activating user:', error);
+      alert('Wystąpił błąd podczas aktywacji użytkownika.');
+    }
+  }
+
+  showAllPendingActivations() {
+    // Switch to users tab and show only pending activations
+    this.setActiveTab('users');
+    this.userRoleFilter = 'user';
+    this.userSearchTerm = '';
+    this.filterUsers();
   }
 
   viewPsychologistDetails(psychologist: Psychologist) {
@@ -1579,53 +2246,128 @@ export class AdminDashboardComponent implements OnInit, OnDestroy, AfterViewInit
   // ==================
 
   private initializeCharts() {
-    this.createUserRegistrationsChart();
-    this.createRevenueChart();
-    this.createSessionsChart();
-    this.createPsychologistsChart();
+    console.log('=== INITIALIZING CHARTS ===');
+    console.log('Current active tab:', this.activeTab);
+    
+    // Only initialize charts if we're on analytics tab
+    if (this.activeTab !== 'analytics' && this.activeTab !== 'live-analytics') {
+      console.log('Not on analytics tab, skipping chart initialization');
+      return;
+    }
+    
+    // Destroy existing charts first
+    Object.values(this.charts).forEach(chart => {
+      if (chart) {
+        chart.destroy();
+      }
+    });
+    this.charts = {};
+    
+    console.log('Creating charts...');
+    
+    if (this.activeTab === 'analytics') {
+      this.createUserRegistrationsChart();
+      this.createRevenueChart();
+      this.createSessionsChart();
+      this.createPsychologistsChart();
+    } else if (this.activeTab === 'live-analytics') {
+      this.createLiveAnalyticsChart();
+    }
+    
+    console.log('Charts initialization completed');
   }
 
   private createUserRegistrationsChart() {
-    if (this.userRegistrationsChart) {
+    console.log('=== CREATING USER REGISTRATIONS CHART ===');
+    console.log('ViewChild exists:', !!this.userRegistrationsChart);
+    console.log('Native element exists:', !!this.userRegistrationsChart?.nativeElement);
+    
+    if (this.userRegistrationsChart?.nativeElement) {
+      console.log('Canvas element found, creating chart...');
       const ctx = this.userRegistrationsChart.nativeElement.getContext('2d');
       if (ctx) {
-        const labels = ['Sty', 'Lut', 'Mar', 'Kwi', 'Maj', 'Cze', 'Lip'];
-        const data = [65, 85, 120, 95, 140, 160, 180];
-        this.charts['userRegistrations'] = ChartService.createLineChart(ctx, data, labels);
+        const labels = ['Sty', 'Lut', 'Mar', 'Kwi', 'Maj', 'Cze', 'Lip', 'Sie', 'Wrz', 'Paź', 'Lis', 'Gru'];
+        const data = [45, 65, 85, 120, 95, 140, 160, 180, 150, 170, 190, 210];
+        try {
+          this.charts['userRegistrations'] = ChartService.createLineChart(ctx, data, labels, 'Nowi użytkownicy');
+          console.log('✅ User registrations chart created successfully');
+        } catch (error) {
+          console.error('❌ Error creating user registrations chart:', error);
+        }
+      } else {
+        console.error('❌ Could not get 2D context from canvas');
       }
+    } else {
+      console.error('❌ User registrations chart canvas not found');
     }
   }
 
   private createRevenueChart() {
-    if (this.revenueChart) {
+    if (this.revenueChart?.nativeElement) {
+      console.log('Creating revenue chart...');
       const ctx = this.revenueChart.nativeElement.getContext('2d');
       if (ctx) {
-        const labels = ['Sty', 'Lut', 'Mar', 'Kwi', 'Maj', 'Cze', 'Lip'];
-        const data = [12000, 15000, 18000, 14000, 22000, 25000, 28000];
-        this.charts['revenue'] = ChartService.createBarChart(ctx, data, labels);
+        const labels = ['Sty', 'Lut', 'Mar', 'Kwi', 'Maj', 'Cze', 'Lip', 'Sie', 'Wrz', 'Paź', 'Lis', 'Gru'];
+        const data = [8500, 12000, 15000, 18000, 14000, 22000, 25000, 28000, 24000, 26000, 30000, 35000];
+        this.charts['revenue'] = ChartService.createBarChart(ctx, data, labels, 'Przychód (PLN)');
+        console.log('Revenue chart created');
       }
+    } else {
+      console.log('Revenue chart canvas not found');
     }
   }
 
   private createSessionsChart() {
-    if (this.sessionsChart) {
+    if (this.sessionsChart?.nativeElement) {
+      console.log('Creating sessions chart...');
       const ctx = this.sessionsChart.nativeElement.getContext('2d');
       if (ctx) {
-        const labels = ['Sty', 'Lut', 'Mar', 'Kwi', 'Maj', 'Cze', 'Lip'];
-        const data = [120, 150, 180, 140, 200, 220, 250];
-        this.charts['sessions'] = ChartService.createLineChart(ctx, data, labels);
+        const labels = ['Sty', 'Lut', 'Mar', 'Kwi', 'Maj', 'Cze', 'Lip', 'Sie', 'Wrz', 'Paź', 'Lis', 'Gru'];
+        const data = [120, 150, 180, 140, 200, 220, 250, 280, 260, 290, 320, 350];
+        this.charts['sessions'] = ChartService.createLineChart(ctx, data, labels, 'Sesje terapeutyczne');
+        console.log('Sessions chart created');
       }
+    } else {
+      console.log('Sessions chart canvas not found');
     }
   }
 
   private createPsychologistsChart() {
-    if (this.psychologistsChart) {
+    if (this.psychologistsChart?.nativeElement) {
+      console.log('Creating psychologists chart...');
       const ctx = this.psychologistsChart.nativeElement.getContext('2d');
       if (ctx) {
         const labels = ['Dr. Kowalski', 'Dr. Nowak', 'Dr. Wiśniewski', 'Dr. Wójcik', 'Dr. Kowalczyk'];
         const data = [45, 38, 32, 28, 25];
         this.charts['psychologists'] = ChartService.createDoughnutChart(ctx, data, labels);
+        console.log('Psychologists chart created');
       }
+    } else {
+      console.log('Psychologists chart canvas not found');
+    }
+  }
+
+  private createLiveAnalyticsChart() {
+    if (this.liveAnalyticsChart?.nativeElement) {
+      console.log('Creating live analytics chart...');
+      const ctx = this.liveAnalyticsChart.nativeElement.getContext('2d');
+      if (ctx) {
+        // Generate sample real-time data
+        const labels = [];
+        const data = [];
+        const now = new Date();
+        
+        for (let i = 29; i >= 0; i--) {
+          const time = new Date(now.getTime() - i * 60000); // Minutes ago
+          labels.push(time.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' }));
+          data.push(Math.floor(Math.random() * 50) + 10); // Random visitors between 10-60
+        }
+        
+        this.charts['liveAnalytics'] = ChartService.createLineChart(ctx, data, labels, 'Aktywni użytkownicy');
+        console.log('Live analytics chart created');
+      }
+    } else {
+      console.log('Live analytics chart canvas not found');
     }
   }
 

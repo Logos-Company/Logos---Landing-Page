@@ -41,7 +41,13 @@ export class AuthService {
         if (storedUser) {
             try {
                 const user = JSON.parse(storedUser);
-                this.currentUserSubject.next(user);
+                if (user && user.id && user.email && user.role) {
+                    this.currentUserSubject.next(user);
+                    console.log('Restored user from localStorage:', user.email, user.role);
+                } else {
+                    console.log('Invalid stored user data, removing from localStorage');
+                    localStorage.removeItem('user');
+                }
             } catch (error) {
                 console.error('Error parsing stored user:', error);
                 localStorage.removeItem('user');
@@ -218,6 +224,7 @@ export class AuthService {
                     email: 'user@logos.pl',
                     role: 'user' as UserRole,
                     isActive: true,
+                    canSelectPsychologist: true, // User can select psychologist
                     createdAt: new Date(),
                     loginMethod: 'email',
                     // User-specific fields
@@ -331,7 +338,7 @@ export class AuthService {
             // Save to Firestore
             await setDoc(doc(this.db, 'users', firebaseUser.uid), newUser);
 
-            return { success: true, message: 'Konto zostało utworzone pomyślnie!' };
+            return { success: true, message: 'Konto zostało utworzone pomyślnie! Skontaktuj się z administratorem w celu aktywacji.' };
 
         } catch (error: any) {
             console.error('Registration error:', error);
@@ -407,6 +414,10 @@ export class AuthService {
 
     getCurrentUser(): User | null {
         return this.currentUserSubject.value;
+    }
+
+    setCurrentUser(user: User | null): void {
+        this.currentUserSubject.next(user);
     }
 
     hasRole(role: UserRole): boolean {

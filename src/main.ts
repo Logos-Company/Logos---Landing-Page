@@ -5,8 +5,14 @@ import { environment } from './environments/environment';
 import { CookieConsentService } from './app/services/cookie-content.service';
 import posthog from 'posthog-js';
 
+// Import Chart.js
+import { Chart, registerables } from 'chart.js';
+
 // Import the compiler to ensure JIT compilation works
 import '@angular/compiler';
+
+// Register Chart.js components
+Chart.register(...registerables);
 
 posthog.init(environment.posthogApiKey, {
   api_host: environment.posthogHost, // lub Twój self-hosted URL

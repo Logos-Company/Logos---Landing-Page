@@ -17,6 +17,22 @@ export class RoleGuard implements CanActivate {
         route: ActivatedRouteSnapshot,
         state: RouterStateSnapshot
     ): boolean {
+        // Check if we have a stored user first
+        const storedUser = localStorage.getItem('user');
+        
+        if (storedUser) {
+            try {
+                const user = JSON.parse(storedUser);
+                if (user && user.id) {
+                    // Update the auth service with stored user
+                    this.authService.setCurrentUser(user);
+                }
+            } catch (error) {
+                console.error('Error parsing stored user:', error);
+                localStorage.removeItem('user');
+            }
+        }
+
         const currentUser = this.authService.getCurrentUser();
 
         if (!currentUser) {

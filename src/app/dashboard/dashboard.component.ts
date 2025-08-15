@@ -120,19 +120,20 @@ import { Package } from '../models/user.model';
               </div>
             </div>
             
-            <!-- Assignment Status -->
-            <div class="assignment-status" *ngIf="currentUser?.assignedPsychologistId">
-              <div class="status-card" [ngClass]="currentUser?.assignmentStatus">
-                <h4>Status przypisania do psychologa</h4>
-                <p *ngIf="currentUser?.assignmentStatus === 'pending'">
-                  🟡 Oczekuje na zatwierdzenie przez administratora
-                </p>
-                <p *ngIf="currentUser?.assignmentStatus === 'approved'">
-                  ✅ Przypisanie zatwierdzone - możesz umówić się na wizytę
-                </p>
-                <p *ngIf="currentUser?.assignmentStatus === 'rejected'">
-                  ❌ Przypisanie odrzucone - wybierz innego psychologa
-                </p>
+            <!-- Permission Status -->
+            <div class="permission-status" *ngIf="!currentUser?.canSelectPsychologist">
+              <div class="status-card warning">
+                <h4>Oczekuje na aktywację konta</h4>
+                <p>⏳ Twoje konto zostało utworzone, ale wymaga aktywacji przez administratora, aby móc wybierać psychologów.</p>
+                <p>Skontaktuj się z nami w celu aktywacji: <strong>kontakt&#64;logos.pl</strong></p>
+              </div>
+            </div>
+            
+            <!-- Assignment Status - Only show if user has psychologist -->
+            <div class="assignment-status" *ngIf="assignedPsychologist">
+              <div class="status-card approved">
+                <h4>✅ Psycholog przypisany</h4>
+                <p>Możesz umówić się na wizytę z przypisanym psychologiem.</p>
               </div>
             </div>
           </div>
@@ -164,7 +165,7 @@ import { Package } from '../models/user.model';
           </div>
 
           <!-- Assigned Psychologist Info -->
-          <div class="psychologist-card" *ngIf="assignedPsychologist && currentUser?.assignmentStatus === 'approved'">
+          <div class="psychologist-card" *ngIf="assignedPsychologist">
             <h3>Twój psycholog</h3>
             <div class="psychologist-info">
               <div class="psychologist-avatar">
@@ -222,7 +223,7 @@ import { Package } from '../models/user.model';
             <h3>Szybkie akcje</h3>
             <div class="actions-grid">
               <button class="action-btn" (click)="setActiveTab('calendar')" 
-                      [disabled]="currentUser?.assignmentStatus !== 'approved'">
+                      [disabled]="!assignedPsychologist">
                 <div class="action-icon">📅</div>
                 <span>Umów wizytę</span>
               </button>
@@ -355,7 +356,7 @@ import { Package } from '../models/user.model';
           </div>
 
           <!-- When has assigned psychologist -->
-          <div class="psychologist-details-card" *ngIf="assignedPsychologist && currentUser?.assignmentStatus === 'approved'; else noAssignedPsychologist">
+          <div class="psychologist-details-card" *ngIf="assignedPsychologist; else noAssignedPsychologist">
             <div class="psychologist-profile">
               <div class="profile-header">
                 <div class="profile-avatar">
@@ -442,18 +443,11 @@ import { Package } from '../models/user.model';
             </div>
           </div>
 
-          <!-- When no assigned psychologist -->
           <ng-template #noAssignedPsychologist>
             <div class="empty-state">
               <div class="empty-icon">👨‍⚕️</div>
               <h4>Nie masz przypisanego psychologa</h4>
-              <p *ngIf="!currentUser?.assignedPsychologistId">Wybierz psychologa z listy dostępnych specjalistów</p>
-              <p *ngIf="currentUser?.assignedPsychologistId && currentUser?.assignmentStatus === 'pending'">
-                Oczekuje na zatwierdzenie przypisania przez administratora
-              </p>
-              <p *ngIf="currentUser?.assignedPsychologistId && currentUser?.assignmentStatus === 'rejected'">
-                Przypisanie zostało odrzucone. Wybierz innego psychologa.
-              </p>
+              <p>Wybierz psychologa z listy dostępnych specjalistów</p>
               <button class="btn btn-primary" (click)="setActiveTab('psychologists')">
                 Znajdź psychologa
               </button>
@@ -681,9 +675,9 @@ import { Package } from '../models/user.model';
 
         <!-- Calendar Tab -->
         <section class="calendar-section" *ngIf="activeTab === 'calendar'">
-          <div class="calendar-header" *ngIf="currentUser?.assignmentStatus !== 'approved'">
+          <div class="calendar-header" *ngIf="!assignedPsychologist">
             <div class="warning-message">
-              <p>⚠️ Aby umówić wizytę, musisz najpierw wybrać psychologa i otrzymać zatwierdzenie od administratora.</p>
+              <p>⚠️ Aby umówić wizytę, musisz najpierw wybrać psychologa.</p>
               <button class="btn btn-primary" (click)="setActiveTab('psychologists')">
                 Wybierz psychologa
               </button>
@@ -1208,7 +1202,7 @@ export class DashboardComponent implements OnInit {
 
     try {
       this.isLoading = true;
-      console.log(`Selecting psychologist ${psychologist.firstName} ${psychologist.lastName} for user ${this.currentUser.id}`);
+      console.log(`Assigning psychologist ${psychologist.firstName} ${psychologist.lastName} to user ${this.currentUser.id}`);
 
       await this.userService.requestPsychologistAssignment(
         this.currentUser.id,
@@ -1216,16 +1210,19 @@ export class DashboardComponent implements OnInit {
         `Użytkownik wybrał psychologa: ${psychologist.firstName} ${psychologist.lastName}`
       );
 
-      // Update current user data
+      // Update current user data - psychologist is now immediately assigned
       this.currentUser.assignedPsychologistId = psychologist.id;
-      this.currentUser.assignmentStatus = 'pending';
+      this.currentUser.assignmentStatus = 'approved';
       this.assignedPsychologist = psychologist;
 
       // Show success message
-      alert('Prośba o przypisanie do psychologa została wysłana. Oczekuj na zatwierdzenie przez administratora.');
+      alert(`Psycholog ${psychologist.firstName} ${psychologist.lastName} został przypisany. Możesz teraz umówić się na wizytę!`);
 
       // Refresh data to show updated status
       await this.loadDashboardData();
+
+      // Switch to "My Psychologist" tab to show the assigned psychologist
+      this.setActiveTab('my-psychologist');
 
     } catch (error) {
       console.error('Error selecting psychologist:', error);
@@ -1308,12 +1305,27 @@ export class DashboardComponent implements OnInit {
         this.changeRequest.urgency
       );
 
+      // Update local data - change is immediate
+      this.currentUser.assignedPsychologistId = this.changeRequest.newPsychologistId;
+      this.currentUser.assignmentStatus = 'approved';
+      
+      // Find the new psychologist from the list
+      const newPsychologist = this.allPsychologists.find(p => p.id === this.changeRequest.newPsychologistId);
+      if (newPsychologist) {
+        this.assignedPsychologist = newPsychologist;
+      }
+
       this.closeChangePsychologistModal();
-      alert('Prośba o zmianę psychologa została wysłana. Otrzymasz powiadomienie o decyzji administratora.');
+      alert(`Psycholog został zmieniony na ${newPsychologist?.firstName} ${newPsychologist?.lastName}!`);
+
+      // Refresh data and switch to psychologist tab
+      await this.loadDashboardData();
+      this.setActiveTab('my-psychologist');
 
     } catch (error) {
       console.error('Error submitting psychologist change:', error);
-      alert('Wystąpił błąd podczas wysyłania prośby o zmianę psychologa');
+      const errorMessage = error instanceof Error ? error.message : 'Nieznany błąd';
+      alert(`Wystąpił błąd podczas zmiany psychologa: ${errorMessage}`);
     } finally {
       this.isLoading = false;
     }

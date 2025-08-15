@@ -22,6 +22,14 @@ export interface Psychologist {
     updatedAt?: Date;
     totalSessions?: number;
     isActive: boolean;
+    
+    // Admin fields
+    verificationStatus?: 'pending' | 'verified' | 'suspended';
+    licenseNumber?: string;
+    sessionsThisMonth?: number;
+    lastSessionDate?: Date;
+    certificates?: string[];
+    role?: string; // For getUserInitials compatibility
 }
 
 export interface WorkingHours {

@@ -86,7 +86,7 @@ export class UserService {
 
     async requestPsychologistAssignment(userId: string, psychologistId: string, reason?: string): Promise<void> {
         try {
-            console.log(`Requesting assignment for user ${userId} to psychologist ${psychologistId}`);
+            console.log(`Directly assigning user ${userId} to psychologist ${psychologistId}`);
 
             // Check if user exists first
             const userRef = doc(this.db, 'users', userId);
@@ -94,6 +94,13 @@ export class UserService {
 
             if (!userDoc.exists()) {
                 throw new Error(`User with ID ${userId} does not exist`);
+            }
+
+            const userData = userDoc.data() as User;
+            
+            // Check if user has permission to select psychologist
+            if (!userData.canSelectPsychologist) {
+                throw new Error('Użytkownik nie ma uprawnień do wyboru psychologa. Skontaktuj się z administratorem.');
             }
 
             // Check if psychologist exists
@@ -104,77 +111,101 @@ export class UserService {
                 throw new Error(`Psychologist with ID ${psychologistId} does not exist`);
             }
 
-            // Update user with assignment request
+            // Directly assign psychologist without admin approval
             await setDoc(userRef, {
                 assignedPsychologistId: psychologistId,
-                assignmentStatus: 'pending',
+                assignmentStatus: 'approved', // Automatically approved
                 assignmentRequestedAt: Timestamp.now(),
+                assignmentApprovedAt: Timestamp.now(), // Immediate approval
                 updatedAt: Timestamp.now()
             }, { merge: true });
 
-            // Create assignment request record
-            const requestId = `${userId}_${psychologistId}_${Date.now()}`;
-            await setDoc(doc(this.db, 'assignment_requests', requestId), {
-                id: requestId,
+            // Create assignment record for history
+            const assignmentId = `${userId}_${psychologistId}_${Date.now()}`;
+            await setDoc(doc(this.db, 'assignments', assignmentId), {
+                id: assignmentId,
                 userId,
                 psychologistId,
-                reason: reason || '',
-                status: 'pending',
-                requestedAt: Timestamp.now()
+                reason: reason || 'Użytkownik wybrał psychologa',
+                status: 'active',
+                assignedAt: Timestamp.now()
             });
 
-            // Create notification for admin
-            const notificationId = `assign_${userId}_${Date.now()}`;
+            // Notify user about successful assignment
+            const notificationId = `assign_success_${userId}_${Date.now()}`;
             await setDoc(doc(this.db, 'notifications', notificationId), {
                 id: notificationId,
-                type: 'assignment_request',
-                title: 'Nowa prośba o przypisanie psychologa',
-                message: `Użytkownik ${userId} prosi o przypisanie do psychologa ${psychologistId}`,
-                recipientRole: 'admin',
+                type: 'assignment_confirmed',
+                title: 'Psycholog został przypisany',
+                message: `Pomyślnie przypisano Cię do psychologa. Możesz teraz umówić się na wizytę.`,
+                recipientId: userId,
                 createdAt: Timestamp.now(),
                 isRead: false,
-                metadata: { userId, psychologistId }
+                metadata: { psychologistId }
             });
 
-            console.log('Assignment request created successfully');
+            console.log('Direct assignment completed successfully');
 
         } catch (error) {
-            console.error('Error requesting psychologist assignment:', error);
+            console.error('Error assigning psychologist:', error);
             throw error;
         }
     }
 
     async changePsychologist(userId: string, newPsychologistId: string, reason: string, urgency: 'low' | 'medium' | 'high' = 'medium'): Promise<void> {
         try {
+            console.log(`Directly changing psychologist for user ${userId} to ${newPsychologistId}`);
+
+            // Check if user has permission
             const currentUser = await this.getUserProfile(userId);
+            if (!currentUser?.canSelectPsychologist) {
+                throw new Error('Użytkownik nie ma uprawnień do zmiany psychologa.');
+            }
 
-            const changeRequest: Omit<PsychologistChangeRequest, 'id'> = {
-                userId,
-                currentPsychologistId: currentUser?.assignedPsychologistId,
-                requestedPsychologistId: newPsychologistId,
-                reason,
-                status: 'pending',
-                requestedAt: new Date(),
-                urgency
-            };
+            // Check if new psychologist exists
+            const psychRef = doc(this.db, 'users', newPsychologistId);
+            const psychDoc = await getDoc(psychRef);
 
-            await addDoc(collection(this.db, 'psychologist_change_requests'), {
-                ...changeRequest,
-                requestedAt: Timestamp.fromDate(changeRequest.requestedAt)
+            if (!psychDoc.exists()) {
+                throw new Error(`Psychologist with ID ${newPsychologistId} does not exist`);
+            }
+
+            // Directly change psychologist assignment
+            const userRef = doc(this.db, 'users', userId);
+            await updateDoc(userRef, {
+                assignedPsychologistId: newPsychologistId,
+                assignmentStatus: 'approved',
+                assignmentRequestedAt: Timestamp.now(),
+                assignmentApprovedAt: Timestamp.now(),
+                updatedAt: Timestamp.now()
             });
 
-            // Notify admin about change request
+            // Create change record for history
+            const changeId = `${userId}_change_${Date.now()}`;
+            await setDoc(doc(this.db, 'psychologist_changes', changeId), {
+                id: changeId,
+                userId,
+                previousPsychologistId: currentUser?.assignedPsychologistId,
+                newPsychologistId,
+                reason,
+                urgency,
+                status: 'completed',
+                changedAt: Timestamp.now()
+            });
+
+            // Notify user about successful change
             await addDoc(collection(this.db, 'notifications'), {
-                type: 'psychologist_change',
-                title: 'Prośba o zmianę psychologa',
-                message: `Użytkownik prosi o zmianę psychologa. Priorytet: ${urgency}`,
-                recipientRole: 'admin',
+                type: 'psychologist_changed',
+                title: 'Psycholog został zmieniony',
+                message: 'Twój psycholog został pomyślnie zmieniony. Możesz umówić się na wizytę.',
+                recipientId: userId,
                 createdAt: Timestamp.now(),
                 isRead: false,
-                metadata: { userId, newPsychologistId, urgency }
+                metadata: { newPsychologistId, reason }
             });
+
         } catch (error) {
-            console.error('Error requesting psychologist change:', error);
+            console.error('Error changing psychologist:', error);
             throw error;
         }
     }

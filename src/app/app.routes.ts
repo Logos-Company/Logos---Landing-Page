@@ -4,7 +4,7 @@ import { ContactComponent } from './contact/contact.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { AdminComponent } from './admin/admin.component';
+// import { AdminComponent } from './admin/admin.component';
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import { ModeratorDashboardComponent } from './moderator-dashboard/moderator-dashboard.component';
 import { PsychologistDashboardComponent } from './psychologist-dashboard/psychologist-dashboard.component';
@@ -27,16 +27,16 @@ export const routes: Routes = [
     },
     {
         path: 'admin',
-        component: AdminComponent,
-        canActivate: [AuthGuard, RoleGuard],
-        data: { expectedRole: 'admin' }
-    },
-    {
-        path: 'admin-dashboard',
         component: AdminDashboardComponent,
         canActivate: [AuthGuard, RoleGuard],
         data: { expectedRole: 'admin' }
     },
+    // {
+    //     path: 'admin-dashboard',
+    //     component: AdminDashboardComponent,
+    //     canActivate: [AuthGuard, RoleGuard],
+    //     data: { expectedRole: 'admin' }
+    // },
     {
         path: 'moderator-dashboard',
         component: ModeratorDashboardComponent,

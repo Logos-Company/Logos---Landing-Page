@@ -39,7 +39,7 @@
 - **Status:** 
   - Przypisany do psychologa (Dr Anna Kowalska)
   - Pakiet standardowy (3/8 sesji wykorzystane)
-  - Zatwierdzony przez administratora
+  - Może wybierać psychologów (aktywne konto)
 
 ## Jak się zalogować:
 
@@ -51,13 +51,13 @@
 ## Funkcjonalności do testowania:
 
 ### Panel użytkownika:
-- ✅ Możliwość wyboru psychologa (wymaga zatwierdzenia przez admina)
+- ✅ Natychmiastowy wybór psychologa (po aktywacji przez administratora)
 - ✅ Przeglądanie listy psychologów
 - ✅ Własny kalendarz wizyt
 - ✅ Przeglądanie notatek zostawionych przez psychologa
 - ✅ Edycja profilu i danych osobowych
 - ✅ Wystawianie opinii psychologowi
-- ✅ Możliwość zmiany psychologa w trakcie sesji
+- ✅ Możliwość natychmiastowej zmiany psychologa (po aktywacji)
 
 ### Panel psychologa:
 - ✅ Kalendarz z wizytami
@@ -69,7 +69,7 @@
 - ✅ Zakup lepszego pozycjonowania na liście (premium listing)
 
 ### Panel administratora:
-- ✅ Zatwierdzanie przypisań użytkowników do psychologów
+- ✅ Aktywacja/dezaktywacja uprawnień użytkowników do wyboru psychologów
 - ✅ Zarządzanie wszystkimi użytkownikami
 - ✅ Moderowanie opinii
 - ✅ Statystyki systemu

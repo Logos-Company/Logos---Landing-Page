@@ -1,6 +1,19 @@
 /* You can add global styles to this file, and also import other style files */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;700&display=swap");
 
+// SCSS Variables for consistent styling
+$primary-color: #6366f1;
+$secondary-color: #f59e0b;
+$success-color: #10b981;
+$danger-color: #ef4444;
+$warning-color: #f59e0b;
+$white: #ffffff;
+$text-dark: #1f2937;
+$text-light: #6b7280;
+$border-color: #e5e7eb;
+$border-light: #f3f4f6;
+$shadow-light: rgba(0, 0, 0, 0.05);
+
 body {
     width: auto;
     height: auto;
@@ -23,4 +36,222 @@ router-outlet.loading {
 .dark-mode {
     background-color: #333;
     color: #fff;
+}
+
+/* Global Admin Dashboard Psychologists Table Styles */
+.psychologists-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: $white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+
+    .table-header {
+        display: grid;
+        grid-template-columns: 2fr 2fr 1fr 1fr 1.5fr 1.5fr 2fr;
+        background: linear-gradient(135deg, $primary-color, lighten($primary-color, 10%));
+        color: $white;
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+
+        div {
+            padding: 16px 12px;
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            
+            &:last-child {
+                border-right: none;
+            }
+        }
+    }
+
+    .table-row {
+        display: grid;
+        grid-template-columns: 2fr 2fr 1fr 1fr 1.5fr 1.5fr 2fr;
+        border-bottom: 1px solid $border-light;
+        transition: all 0.3s ease;
+
+        &:hover {
+            background: lighten($primary-color, 48%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        > div {
+            padding: 16px 12px;
+            display: flex;
+            align-items: center;
+        }
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, $primary-color, $secondary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: $white;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .user-details {
+            .user-name {
+                font-weight: 600;
+                color: $text-dark;
+                margin-bottom: 4px;
+                font-size: 14px;
+            }
+
+            .user-email {
+                color: $text-light;
+                font-size: 12px;
+            }
+        }
+    }
+
+    .specializations {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+
+        .specialization-tag {
+            background: lighten($secondary-color, 40%);
+            color: darken($secondary-color, 15%);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            border: 1px solid lighten($secondary-color, 25%);
+        }
+    }
+
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-align: center;
+        
+        &.active {
+            background: lighten($success-color, 35%);
+            color: darken($success-color, 15%);
+            border: 1px solid lighten($success-color, 20%);
+        }
+
+        &.inactive {
+            background: lighten($text-light, 35%);
+            color: darken($text-light, 15%);
+            border: 1px solid lighten($text-light, 20%);
+        }
+    }
+
+    .rating-display {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-weight: 500;
+
+        .stars {
+            color: #ffc107;
+            font-size: 14px;
+        }
+
+        .rating-number {
+            color: $text-dark;
+            font-size: 13px;
+        }
+    }
+
+    .sessions-info {
+        text-align: center;
+        font-weight: 500;
+        color: $text-dark;
+        font-size: 14px;
+    }
+
+    .last-session {
+        color: $text-light;
+        font-size: 12px;
+        text-align: center;
+    }
+
+    .user-actions {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            &.edit-btn {
+                background: $primary-color;
+                color: $white;
+
+                &:hover {
+                    background: darken($primary-color, 5%);
+                    transform: translateY(-1px);
+                    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+                }
+            }
+
+            &.suspend-btn {
+                background: $text-light;
+                color: $white;
+
+                &:hover {
+                    background: darken($text-light, 10%);
+                    transform: translateY(-1px);
+                    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+                }
+            }
+
+            &.delete-btn {
+                background: $secondary-color;
+                color: $white;
+
+                &:hover {
+                    background: darken($secondary-color, 5%);
+                    transform: translateY(-1px);
+                    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+                }
+            }
+
+            &.activate-btn {
+                background: $danger-color;
+                color: $white;
+
+                &:hover {
+                    background: darken($danger-color, 5%);
+                    transform: translateY(-1px);
+                    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+                }
+            }
+        }
+    }
 }

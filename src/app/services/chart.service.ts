@@ -5,26 +5,55 @@ Chart.register(...registerables);
 
 export class ChartService {
 
-    static createLineChart(ctx: CanvasRenderingContext2D, data: any[], labels: string[]): Chart {
+    static createLineChart(ctx: CanvasRenderingContext2D, data: any[], labels: string[], label: string = 'Dane'): Chart {
         const config: ChartConfiguration = {
             type: 'line' as ChartType,
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Dane',
+                    label: label,
                     data: data,
-                    borderColor: '#3b82f6',
-                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                    borderWidth: 2,
-                    fill: true
+                    borderColor: '#17a2b8',
+                    backgroundColor: 'rgba(23, 162, 184, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#17a2b8',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            color: '#333'
+                        }
+                    }
+                },
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        grid: {
+                            color: '#e9ecef'
+                        },
+                        ticks: {
+                            color: '#6c757d'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: '#e9ecef'
+                        },
+                        ticks: {
+                            color: '#6c757d'
+                        }
                     }
                 }
             }
@@ -33,35 +62,51 @@ export class ChartService {
         return new Chart(ctx, config);
     }
 
-    static createBarChart(ctx: CanvasRenderingContext2D, data: any[], labels: string[]): Chart {
+    static createBarChart(ctx: CanvasRenderingContext2D, data: any[], labels: string[], label: string = 'Wartości'): Chart {
         const config: ChartConfiguration = {
             type: 'bar' as ChartType,
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Wartości',
+                    label: label,
                     data: data,
-                    backgroundColor: [
-                        'rgba(59, 130, 246, 0.8)',
-                        'rgba(16, 185, 129, 0.8)',
-                        'rgba(245, 158, 11, 0.8)',
-                        'rgba(239, 68, 68, 0.8)'
-                    ],
-                    borderColor: [
-                        'rgba(59, 130, 246, 1)',
-                        'rgba(16, 185, 129, 1)',
-                        'rgba(245, 158, 11, 1)',
-                        'rgba(239, 68, 68, 1)'
-                    ],
-                    borderWidth: 1
+                    backgroundColor: 'rgba(23, 162, 184, 0.8)',
+                    borderColor: '#17a2b8',
+                    borderWidth: 1,
+                    borderRadius: 4,
+                    borderSkipped: false,
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            color: '#333'
+                        }
+                    }
+                },
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        grid: {
+                            color: '#e9ecef'
+                        },
+                        ticks: {
+                            color: '#6c757d'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: '#6c757d'
+                        }
                     }
                 }
             }
@@ -78,20 +123,15 @@ export class ChartService {
                 datasets: [{
                     data: data,
                     backgroundColor: [
-                        'rgba(59, 130, 246, 0.8)',
-                        'rgba(16, 185, 129, 0.8)',
-                        'rgba(245, 158, 11, 0.8)',
-                        'rgba(239, 68, 68, 0.8)',
-                        'rgba(168, 85, 247, 0.8)'
+                        '#17a2b8',
+                        '#28a745',
+                        '#ffc107',
+                        '#dc3545',
+                        '#6f42c1'
                     ],
-                    borderColor: [
-                        'rgba(59, 130, 246, 1)',
-                        'rgba(16, 185, 129, 1)',
-                        'rgba(245, 158, 11, 1)',
-                        'rgba(239, 68, 68, 1)',
-                        'rgba(168, 85, 247, 1)'
-                    ],
-                    borderWidth: 1
+                    borderColor: '#ffffff',
+                    borderWidth: 2,
+                    hoverBorderWidth: 3
                 }]
             },
             options: {
@@ -99,7 +139,12 @@ export class ChartService {
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        position: 'bottom'
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            color: '#333',
+                            padding: 15
+                        }
                     }
                 }
             }

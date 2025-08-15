@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 
 @Injectable({
@@ -11,7 +13,25 @@ export class AuthGuard {
         private router: Router
     ) { }
 
-    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | boolean {
+        // Check if we have a stored user first
+        const storedUser = localStorage.getItem('user');
+        
+        if (storedUser) {
+            try {
+                const user = JSON.parse(storedUser);
+                if (user && user.id) {
+                    // Update the auth service with stored user
+                    this.authService.setCurrentUser(user);
+                    return true;
+                }
+            } catch (error) {
+                console.error('Error parsing stored user:', error);
+                localStorage.removeItem('user');
+            }
+        }
+
+        // If no stored user, check current user from service
         const user = this.authService.getCurrentUser();
 
         if (user) {

@@ -416,7 +416,40 @@ export class AdminService {
         }
     }
 
-    // Psychologist Management
+    // Psychologist Management from Users collection
+    async getPsychologistsFromUsers(): Promise<User[]> {
+        try {
+            console.log('🔍 getPsychologistsFromUsers: Fetching all users...');
+            const usersRef = collection(db, 'users');
+            const querySnapshot = await getDocs(usersRef);
+
+            console.log('📊 Total users found:', querySnapshot.docs.length);
+
+            const psychologists: User[] = [];
+            querySnapshot.docs.forEach(doc => {
+                const userData = doc.data();
+                console.log('👤 User:', doc.id, 'Role:', userData['role']);
+                
+                if (userData['role'] === 'psychologist') {
+                    psychologists.push({
+                        id: doc.id,
+                        ...userData,
+                        createdAt: userData['createdAt']?.toDate() || new Date(),
+                        updatedAt: userData['updatedAt']?.toDate() || new Date()
+                    } as User);
+                }
+            });
+
+            console.log('👨‍⚕️ Psychologists found:', psychologists.length);
+            console.log('Psychologists:', psychologists);
+            return psychologists;
+        } catch (error) {
+            console.error('Error fetching psychologists from users:', error);
+            return [];
+        }
+    }
+
+    // Psychologist Management from Psychologists collection
     async getAllPsychologistsWithDetails(): Promise<any[]> {
         try {
             const psychologistsRef = collection(db, 'psychologists');
@@ -469,13 +502,239 @@ export class AdminService {
             const q = query(collection(db, 'contract_templates'), where('isActive', '==', true));
             const querySnapshot = await getDocs(q);
 
-            return querySnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            })) as ContractTemplate[];
+            return querySnapshot.docs.map(doc => {
+                const data = doc.data();
+                return {
+                    id: doc.id,
+                    name: data['name'] || '',
+                    type: data['type'] || '',
+                    content: data['content'] || '',
+                    fields: data['fields'] || [],
+                    isActive: data['isActive'] || false
+                } as ContractTemplate;
+            });
         } catch (error) {
             console.error('Error fetching contract templates:', error);
             return [];
+        }
+    }
+
+    // Seed sample psychologists data
+    async seedSamplePsychologists(): Promise<void> {
+        try {
+            const samplePsychologists = [
+                {
+                    firstName: 'Anna',
+                    lastName: 'Kowalska',
+                    email: 'anna.kowalska@logos.com',
+                    phone: '+48 123 456 789',
+                    specializations: ['Terapia kognitywno-behawioralna', 'Terapia par', 'Leczenie depresji'],
+                    description: 'Doświadczony psycholog z 8-letnim stażem w terapii kognitywno-behawioralnej.',
+                    experience: 8,
+                    education: 'Uniwersytet Warszawski - Psychologia',
+                    languages: ['Polski', 'Angielski'],
+                    hourlyRate: 180,
+                    pricePerSession: 180,
+                    isAvailable: true,
+                    isActive: true,
+                    verificationStatus: 'verified',
+                    licenseNumber: 'PSY-2024-001',
+                    rating: 4.8,
+                    reviewCount: 45,
+                    totalSessions: 120,
+                    sessionsThisMonth: 18,
+                    lastSessionDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+                    profileImage: '',
+                    workingHours: {
+                        monday: [{ start: '09:00', end: '17:00' }],
+                        tuesday: [{ start: '09:00', end: '17:00' }],
+                        wednesday: [{ start: '09:00', end: '17:00' }],
+                        thursday: [{ start: '09:00', end: '17:00' }],
+                        friday: [{ start: '09:00', end: '15:00' }],
+                        saturday: [],
+                        sunday: []
+                    },
+                    certificates: ['CBT Certificate', 'Couples Therapy Certificate']
+                },
+                {
+                    firstName: 'Marcin',
+                    lastName: 'Nowak',
+                    email: 'marcin.nowak@logos.com',
+                    phone: '+48 987 654 321',
+                    specializations: ['Psychoterapia psychodynamiczna', 'Terapia uzależnień', 'Konsultacje psychiatryczne'],
+                    description: 'Specjalista w dziedzinie psychoterapii psychodynamicznej i leczenia uzależnień.',
+                    experience: 12,
+                    education: 'Uniwersytet Jagielloński - Psychologia Kliniczna',
+                    languages: ['Polski', 'Niemiecki', 'Angielski'],
+                    hourlyRate: 220,
+                    pricePerSession: 220,
+                    isAvailable: true,
+                    isActive: true,
+                    verificationStatus: 'verified',
+                    licenseNumber: 'PSY-2024-002',
+                    rating: 4.9,
+                    reviewCount: 78,
+                    totalSessions: 205,
+                    sessionsThisMonth: 25,
+                    lastSessionDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+                    profileImage: '',
+                    workingHours: {
+                        monday: [{ start: '10:00', end: '18:00' }],
+                        tuesday: [{ start: '10:00', end: '18:00' }],
+                        wednesday: [{ start: '10:00', end: '18:00' }],
+                        thursday: [{ start: '10:00', end: '18:00' }],
+                        friday: [{ start: '10:00', end: '16:00' }],
+                        saturday: [{ start: '09:00', end: '13:00' }],
+                        sunday: []
+                    },
+                    certificates: ['Psychodynamic Therapy Certificate', 'Addiction Treatment Specialist']
+                },
+                {
+                    firstName: 'Katarzyna',
+                    lastName: 'Wiśniewska',
+                    email: 'katarzyna.wisniewska@logos.com',
+                    phone: '+48 555 777 999',
+                    specializations: ['Terapia dzieci i młodzieży', 'ADHD', 'Terapia rodzinna'],
+                    description: 'Psycholog dziecięcy z doświadczeniem w pracy z ADHD i problemami rozwojowymi.',
+                    experience: 6,
+                    education: 'SWPS Uniwersytet Humanistycznospołeczny - Psychologia Dziecięca',
+                    languages: ['Polski', 'Angielski'],
+                    hourlyRate: 160,
+                    pricePerSession: 160,
+                    isAvailable: true,
+                    isActive: false,
+                    verificationStatus: 'pending',
+                    licenseNumber: 'PSY-2024-003',
+                    rating: 4.6,
+                    reviewCount: 32,
+                    totalSessions: 85,
+                    sessionsThisMonth: 12,
+                    lastSessionDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+                    profileImage: '',
+                    workingHours: {
+                        monday: [{ start: '14:00', end: '20:00' }],
+                        tuesday: [{ start: '14:00', end: '20:00' }],
+                        wednesday: [{ start: '14:00', end: '20:00' }],
+                        thursday: [{ start: '14:00', end: '20:00' }],
+                        friday: [{ start: '14:00', end: '18:00' }],
+                        saturday: [],
+                        sunday: []
+                    },
+                    certificates: ['Child Psychology Certificate', 'ADHD Specialist']
+                },
+                {
+                    firstName: 'Piotr',
+                    lastName: 'Kaczmarek',
+                    email: 'piotr.kaczmarek@logos.com',
+                    phone: '+48 111 222 333',
+                    specializations: ['Terapia lęków', 'Mindfulness', 'Stress management'],
+                    description: 'Specjalista w dziedzinie terapii lęków i technik mindfulness.',
+                    experience: 4,
+                    education: 'Uniwersytet Gdański - Psychologia Kliniczna',
+                    languages: ['Polski', 'Angielski', 'Hiszpański'],
+                    hourlyRate: 140,
+                    pricePerSession: 140,
+                    isAvailable: true,
+                    isActive: true,
+                    verificationStatus: 'suspended',
+                    licenseNumber: 'PSY-2024-004',
+                    rating: 4.3,
+                    reviewCount: 18,
+                    totalSessions: 42,
+                    sessionsThisMonth: 6,
+                    lastSessionDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+                    profileImage: '',
+                    workingHours: {
+                        monday: [{ start: '08:00', end: '16:00' }],
+                        tuesday: [{ start: '08:00', end: '16:00' }],
+                        wednesday: [{ start: '08:00', end: '16:00' }],
+                        thursday: [{ start: '08:00', end: '16:00' }],
+                        friday: [{ start: '08:00', end: '14:00' }],
+                        saturday: [],
+                        sunday: []
+                    },
+                    certificates: ['Anxiety Disorders Certificate', 'Mindfulness Instructor']
+                }
+            ];
+
+            const batch = writeBatch(db);
+            
+            for (const psychologist of samplePsychologists) {
+                const docRef = doc(collection(db, 'psychologists'));
+                batch.set(docRef, {
+                    ...psychologist,
+                    createdAt: Timestamp.now(),
+                    updatedAt: Timestamp.now(),
+                    lastSessionDate: psychologist.lastSessionDate ? Timestamp.fromDate(psychologist.lastSessionDate) : null
+                });
+            }
+
+            await batch.commit();
+            console.log('Sample psychologists seeded successfully');
+        } catch (error) {
+            console.error('Error seeding psychologists:', error);
+            throw error;
+        }
+    }
+
+    // Seed sample psychologists as users (in users collection)
+    async seedPsychologistsAsUsers(): Promise<void> {
+        try {
+            const sampleUsers = [
+                {
+                    firstName: 'Anna',
+                    lastName: 'Kowalska',
+                    email: 'anna.kowalska@logos.com',
+                    phone: '+48 123 456 789',
+                    role: 'psychologist',
+                    bio: 'Doświadczony psycholog z 8-letnim stażem w terapii kognitywno-behawioralnej.',
+                    isActive: true,
+                    verificationStatus: 'verified',
+                    licenseNumber: 'PSY-2024-001',
+                    specializations: ['Terapia kognitywno-behawioralna', 'Terapia par']
+                },
+                {
+                    firstName: 'Marcin',
+                    lastName: 'Nowak',
+                    email: 'marcin.nowak@logos.com',
+                    phone: '+48 987 654 321',
+                    role: 'psychologist',
+                    bio: 'Specjalista w dziedzinie psychoterapii psychodynamicznej i leczenia uzależnień.',
+                    isActive: true,
+                    verificationStatus: 'verified',
+                    licenseNumber: 'PSY-2024-002',
+                    specializations: ['Psychoterapia psychodynamiczna', 'Terapia uzależnień']
+                },
+                {
+                    firstName: 'Katarzyna',
+                    lastName: 'Wiśniewska',
+                    email: 'katarzyna.wisniewska@logos.com',
+                    phone: '+48 555 777 999',
+                    role: 'psychologist',
+                    bio: 'Psycholog dziecięcy z doświadczeniem w pracy z ADHD i problemami rozwojowymi.',
+                    isActive: false,
+                    verificationStatus: 'pending',
+                    licenseNumber: 'PSY-2024-003',
+                    specializations: ['Terapia dzieci i młodzieży', 'ADHD']
+                }
+            ];
+
+            const batch = writeBatch(db);
+            
+            for (const user of sampleUsers) {
+                const docRef = doc(collection(db, 'users'));
+                batch.set(docRef, {
+                    ...user,
+                    createdAt: Timestamp.now(),
+                    updatedAt: Timestamp.now()
+                });
+            }
+
+            await batch.commit();
+            console.log('Sample psychologist users seeded successfully');
+        } catch (error) {
+            console.error('Error seeding psychologist users:', error);
+            throw error;
         }
     }
 
@@ -1417,27 +1676,6 @@ export class AdminService {
 
     // ===== MODERATOR MANAGEMENT METHODS =====
 
-    async updateUserStatus(userId: string, isActive: boolean): Promise<void> {
-        try {
-            const userRef = doc(db, 'users', userId);
-            await updateDoc(userRef, {
-                isActive,
-                updatedAt: Timestamp.now()
-            });
-
-            // Log activity
-            await this.logActivity({
-                type: isActive ? 'user-registered' : 'user-blocked',
-                message: `User ${isActive ? 'activated' : 'deactivated'}`,
-                userId,
-                severity: 'low'
-            });
-        } catch (error) {
-            console.error('Error updating user status:', error);
-            throw error;
-        }
-    }
-
     async getModeratorStats(): Promise<any> {
         try {
             const moderatorsQuery = query(
@@ -1534,6 +1772,97 @@ export class AdminService {
         } catch (error) {
             console.error('Error rejecting report:', error);
             throw error;
+        }
+    }
+
+    // ===== USER PERMISSIONS MANAGEMENT =====
+
+    async enablePsychologistSelection(userId: string): Promise<void> {
+        try {
+            const userRef = doc(db, 'users', userId);
+            await updateDoc(userRef, {
+                canSelectPsychologist: true,
+                updatedAt: Timestamp.now()
+            });
+
+            // Create notification for user
+            await addDoc(collection(db, 'notifications'), {
+                type: 'account_activated',
+                title: 'Konto aktywowane',
+                message: 'Twoje konto zostało aktywowane. Możesz teraz wybierać psychologów.',
+                recipientId: userId,
+                createdAt: Timestamp.now(),
+                isRead: false
+            });
+
+            // Log activity
+            await this.logActivity({
+                type: 'user-registered',
+                message: `Activated psychologist selection for user ${userId}`,
+                metadata: { userId },
+                severity: 'low'
+            });
+
+        } catch (error) {
+            console.error('Error enabling psychologist selection:', error);
+            throw error;
+        }
+    }
+
+    async disablePsychologistSelection(userId: string, reason: string): Promise<void> {
+        try {
+            const userRef = doc(db, 'users', userId);
+            await updateDoc(userRef, {
+                canSelectPsychologist: false,
+                updatedAt: Timestamp.now()
+            });
+
+            // Create notification for user
+            await addDoc(collection(db, 'notifications'), {
+                type: 'account_deactivated',
+                title: 'Wybór psychologa zablokowany',
+                message: `Możliwość wyboru psychologa została zablokowana. Powód: ${reason}`,
+                recipientId: userId,
+                createdAt: Timestamp.now(),
+                isRead: false
+            });
+
+            // Log activity
+            await this.logActivity({
+                type: 'user-blocked',
+                message: `Disabled psychologist selection for user ${userId}. Reason: ${reason}`,
+                metadata: { userId, reason },
+                severity: 'medium'
+            });
+
+        } catch (error) {
+            console.error('Error disabling psychologist selection:', error);
+            throw error;
+        }
+    }
+
+    async getPendingActivations(): Promise<User[]> {
+        try {
+            const q = query(
+                collection(db, 'users'),
+                where('role', '==', 'user'),
+                where('canSelectPsychologist', '==', false),
+                where('isActive', '==', true)
+            );
+            const snapshot = await getDocs(q);
+
+            return snapshot.docs.map(doc => {
+                const data = doc.data();
+                return {
+                    id: doc.id,
+                    ...data,
+                    createdAt: data['createdAt']?.toDate() || new Date(),
+                    updatedAt: data['updatedAt']?.toDate()
+                } as User;
+            });
+        } catch (error) {
+            console.error('Error getting pending activations:', error);
+            return [];
         }
     }
 }
