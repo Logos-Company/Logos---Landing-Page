@@ -429,7 +429,7 @@ export class AdminService {
             querySnapshot.docs.forEach(doc => {
                 const userData = doc.data();
                 console.log('👤 User:', doc.id, 'Role:', userData['role']);
-                
+
                 if (userData['role'] === 'psychologist') {
                     psychologists.push({
                         id: doc.id,
@@ -658,7 +658,7 @@ export class AdminService {
             ];
 
             const batch = writeBatch(db);
-            
+
             for (const psychologist of samplePsychologists) {
                 const docRef = doc(collection(db, 'psychologists'));
                 batch.set(docRef, {
@@ -720,7 +720,7 @@ export class AdminService {
             ];
 
             const batch = writeBatch(db);
-            
+
             for (const user of sampleUsers) {
                 const docRef = doc(collection(db, 'users'));
                 batch.set(docRef, {

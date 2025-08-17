@@ -49,19 +49,60 @@ export class AppointmentService {
 
     async getUserAppointments(userId: string): Promise<Appointment[]> {
         try {
+            console.log(`📅 getUserAppointments called for userId: ${userId}`);
+
             const q = query(
                 collection(this.db, 'appointments'),
                 where('userId', '==', userId),
                 orderBy('date', 'desc')
             );
+
+            console.log('📅 Executing appointments query...');
             const snapshot = await getDocs(q);
-            return snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data(),
-                date: doc.data()['date'].toDate()
-            })) as Appointment[];
+            console.log(`📅 Found ${snapshot.docs.length} appointment documents`);
+
+            if (snapshot.docs.length === 0) {
+                console.log('📅 No appointments found - checking if collection exists...');
+                // Test if we can access the collection at all
+                const testQuery = query(collection(this.db, 'appointments'));
+                const testSnapshot = await getDocs(testQuery);
+                console.log(`📅 Total appointments in collection: ${testSnapshot.docs.length}`);
+
+                testSnapshot.docs.forEach(doc => {
+                    const data = doc.data();
+                    console.log(`📅 All appointment ${doc.id}:`, {
+                        userId: data['userId'],
+                        date: data['date']?.toDate()?.toDateString(),
+                        startTime: data['startTime'],
+                        status: data['status']
+                    });
+                });
+            }
+
+            const appointments = snapshot.docs.map(doc => {
+                const data = doc.data();
+                const appointment = {
+                    id: doc.id,
+                    ...data,
+                    date: data['date'].toDate()
+                } as Appointment;
+
+                console.log(`📅 User appointment ${doc.id}:`, {
+                    date: appointment.date.toDateString(),
+                    startTime: appointment.startTime,
+                    endTime: appointment.endTime,
+                    status: appointment.status,
+                    type: appointment.type,
+                    psychologistId: appointment.psychologistId
+                });
+
+                return appointment;
+            });
+
+            console.log(`📅 Returning ${appointments.length} appointments for user ${userId}`);
+            return appointments;
         } catch (error) {
-            console.error('Error fetching user appointments:', error);
+            console.error('❌ Error fetching user appointments:', error);
             return [];
         }
     }
@@ -237,23 +278,36 @@ export class AppointmentService {
 
     async getCalendarData(userId: string, month: number, year: number): Promise<any[]> {
         try {
+            console.log(`🗓️ getCalendarData called for userId: ${userId}, month: ${month} (${month + 1}), year: ${year}`);
+
             const startDate = new Date(year, month, 1);
             const endDate = new Date(year, month + 1, 0);
+
+            console.log(`🗓️ Date range: ${startDate.toISOString()} to ${endDate.toISOString()}`);
 
             const q = query(
                 collection(this.db, 'appointments'),
                 where('userId', '==', userId),
-                where('date', '>=', startDate),
-                where('date', '<=', endDate),
+                where('date', '>=', Timestamp.fromDate(startDate)),
+                where('date', '<=', Timestamp.fromDate(endDate)),
                 orderBy('date', 'asc')
             );
 
+            console.log('🗓️ Executing calendar query...');
             const snapshot = await getDocs(q);
-            const appointments = snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data(),
-                date: doc.data()['date'].toDate()
-            })) as Appointment[];
+            console.log(`🗓️ Found ${snapshot.docs.length} appointments for calendar`);
+
+            const appointments = snapshot.docs.map(doc => {
+                const data = doc.data();
+                const appointment = {
+                    id: doc.id,
+                    ...data,
+                    date: data['date'].toDate()
+                } as Appointment;
+
+                console.log(`🗓️ Calendar appointment: ${appointment.date.toDateString()} ${appointment.startTime}-${appointment.endTime} (${appointment.status})`);
+                return appointment;
+            });
 
             // Group appointments by date
             const calendarData: any[] = [];
@@ -263,23 +317,38 @@ export class AppointmentService {
                 const currentDate = new Date(year, month, day);
                 const dayAppointments = appointments.filter(apt => {
                     const aptDate = new Date(apt.date);
-                    return aptDate.getDate() === day &&
+                    const matches = aptDate.getDate() === day &&
                         aptDate.getMonth() === month &&
                         aptDate.getFullYear() === year;
+
+                    if (matches) {
+                        console.log(`🗓️ ✅ Day ${day}: Found appointment ${apt.startTime}-${apt.endTime}`);
+                    }
+
+                    return matches;
                 });
 
-                calendarData.push({
+                const dayData = {
                     date: currentDate,
                     day: day,
                     appointments: dayAppointments,
                     hasAppointment: dayAppointments.length > 0,
                     isToday: this.isToday(currentDate)
-                });
+                };
+
+                if (dayAppointments.length > 0) {
+                    console.log(`🗓️ 🎯 Day ${day} (${currentDate.toDateString()}) has ${dayAppointments.length} appointments`);
+                }
+
+                calendarData.push(dayData);
             }
+
+            console.log(`🗓️ Calendar data generated: ${calendarData.length} days`);
+            console.log(`🗓️ Days with appointments: ${calendarData.filter(d => d.hasAppointment).length}`);
 
             return calendarData;
         } catch (error) {
-            console.error('Error getting calendar data:', error);
+            console.error('❌ Error getting calendar data:', error);
             return [];
         }
     }

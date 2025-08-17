@@ -5,6 +5,7 @@ import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../core/auth.service';
 import { AdminService, AdminStats, SystemActivity, Review, LiveAnalytics } from '../core/admin.service';
 import { PsychologistService } from '../core/psychologist.service';
+import { SkeletonLoaderComponent } from '../shared/skeleton-loader/skeleton-loader.component';
 import { User } from '../models/user.model';
 import { Psychologist } from '../models/psychologist.model';
 import { ContractTemplate } from '../models/contract.model';
@@ -18,7 +19,7 @@ import { ChartService } from '../services/chart.service';
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, SkeletonLoaderComponent],
   template: `
     <div class="admin-dashboard">
       <!-- Left Sidebar Navigation -->
@@ -193,10 +194,10 @@ import { ChartService } from '../services/chart.service';
         <!-- Dashboard Content Container -->
         <div class="dashboard-content">
           <!-- Loading -->
-          <div class="loading-container" *ngIf="isLoading">
-            <div class="spinner"></div>
-            <p>Ładowanie danych...</p>
-          </div>
+          <app-skeleton-loader 
+            *ngIf="isLoading" 
+            type="dashboard">
+          </app-skeleton-loader>
 
           <!-- Main Content -->
           <main *ngIf="!isLoading">
@@ -1505,7 +1506,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy, AfterViewInit
     try {
       // First try to get from dedicated psychologists collection
       let allPsychologists = await this.adminService.getAllPsychologistsWithDetails();
-      
+
       // If empty, fallback to users collection
       if (allPsychologists.length === 0) {
         console.log('No psychologists in dedicated collection, checking users...');
@@ -1552,7 +1553,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy, AfterViewInit
       this.psychologists = allPsychologists;
       this.filteredPsychologists = [...this.psychologists];
       this.pendingPsychologistsForVerification = this.psychologists.filter(p => p.verificationStatus === 'pending');
-      
+
       // Calculate psychologist stats
       this.psychologistStats = {
         active: this.psychologists.filter(p => p.verificationStatus === 'verified' && p.isActive).length,
@@ -1567,7 +1568,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy, AfterViewInit
         totalSessions: this.psychologists.reduce((sum, p) => sum + (p.totalSessions || 0), 0),
         sessionsThisMonth: this.psychologists.reduce((sum, p) => sum + (p.sessionsThisMonth || 0), 0)
       };
-      
+
       console.log('Loaded psychologists:', this.psychologists.length);
     } catch (error) {
       console.error('Error loading psychologists:', error);
@@ -1581,7 +1582,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy, AfterViewInit
         psychologist.lastName.toLowerCase().includes(this.psychologistSearchTerm.toLowerCase()) ||
         psychologist.email.toLowerCase().includes(this.psychologistSearchTerm.toLowerCase());
 
-      const matchesStatus = !this.psychologistStatusFilter || 
+      const matchesStatus = !this.psychologistStatusFilter ||
         (this.psychologistStatusFilter === 'active' && psychologist.isActive) ||
         (this.psychologistStatusFilter === 'pending' && psychologist.verificationStatus === 'pending') ||
         (this.psychologistStatusFilter === 'suspended' && psychologist.verificationStatus === 'suspended');
@@ -1620,20 +1621,20 @@ export class AdminDashboardComponent implements OnInit, OnDestroy, AfterViewInit
         verificationStatus: 'verified',
         isActive: true
       });
-      
+
       psychologist.verificationStatus = 'verified';
       psychologist.isActive = true;
-      
+
       // Remove from pending list
       this.pendingPsychologistsForVerification = this.pendingPsychologistsForVerification.filter(p => p.id !== psychologist.id);
-      
+
       // Log activity
       await this.adminService.logActivityToFirebase({
         type: 'psychologist-approved',
         message: `Zatwierdzono psychologa: ${psychologist.firstName} ${psychologist.lastName}`,
         severity: 'low'
       });
-      
+
       alert(`Psycholog ${psychologist.firstName} ${psychologist.lastName} został zatwierdzony.`);
     } catch (error) {
       console.error('Error approving psychologist:', error);
@@ -1649,16 +1650,16 @@ export class AdminDashboardComponent implements OnInit, OnDestroy, AfterViewInit
           verificationStatus: 'suspended',
           isActive: false
         });
-        
+
         psychologist.verificationStatus = 'suspended';
         psychologist.isActive = false;
-        
+
         await this.adminService.logActivityToFirebase({
           type: 'psychologist-approved',
           message: `Zawieszono psychologa: ${psychologist.firstName} ${psychologist.lastName} - ${reason}`,
           severity: 'medium'
         });
-        
+
         alert(`Psycholog ${psychologist.firstName} ${psychologist.lastName} został zawieszony.`);
       } catch (error) {
         console.error('Error suspending psychologist:', error);
@@ -1673,16 +1674,16 @@ export class AdminDashboardComponent implements OnInit, OnDestroy, AfterViewInit
         verificationStatus: 'verified',
         isActive: true
       });
-      
+
       psychologist.verificationStatus = 'verified';
       psychologist.isActive = true;
-      
+
       await this.adminService.logActivityToFirebase({
         type: 'psychologist-approved',
         message: `Reaktywowano psychologa: ${psychologist.firstName} ${psychologist.lastName}`,
         severity: 'low'
       });
-      
+
       alert(`Psycholog ${psychologist.firstName} ${psychologist.lastName} został reaktywowany.`);
     } catch (error) {
       console.error('Error reactivating psychologist:', error);
@@ -1699,16 +1700,16 @@ export class AdminDashboardComponent implements OnInit, OnDestroy, AfterViewInit
           verificationStatus: 'suspended',
           isActive: false
         });
-        
+
         // Remove from pending list
         this.pendingPsychologistsForVerification = this.pendingPsychologistsForVerification.filter(p => p.id !== psychologist.id);
-        
+
         await this.adminService.logActivityToFirebase({
           type: 'user-blocked',
           message: `Odrzucono aplikację psychologa: ${psychologist.firstName} ${psychologist.lastName} - ${reason}`,
           severity: 'medium'
         });
-        
+
         alert(`Aplikacja psychologa ${psychologist.firstName} ${psychologist.lastName} została odrzucona.`);
       } catch (error) {
         console.error('Error rejecting psychologist:', error);
@@ -1731,18 +1732,18 @@ export class AdminDashboardComponent implements OnInit, OnDestroy, AfterViewInit
       try {
         // In a real implementation, you might want to archive instead of delete
         console.log('Deleting psychologist:', psychologist);
-        
+
         // Remove from lists
         this.psychologists = this.psychologists.filter(p => p.id !== psychologist.id);
         this.filteredPsychologists = this.filteredPsychologists.filter(p => p.id !== psychologist.id);
         this.pendingPsychologistsForVerification = this.pendingPsychologistsForVerification.filter(p => p.id !== psychologist.id);
-        
+
         await this.adminService.logActivityToFirebase({
           type: 'user-blocked',
           message: `Usunięto psychologa: ${psychologist.firstName} ${psychologist.lastName}`,
           severity: 'high'
         });
-        
+
         alert(`Psycholog ${psychologist.firstName} ${psychologist.lastName} został usunięty.`);
       } catch (error) {
         console.error('Error deleting psychologist:', error);
@@ -1837,7 +1838,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy, AfterViewInit
     const events = [];
     const eventTypes = ['page_view', 'click', 'form_submit', 'button_click', 'session_start'];
     const pages = ['/landing', '/login', '/register', '/dashboard', '/contact'];
-    
+
     for (let i = 0; i < 20; i++) {
       const timestamp = new Date(Date.now() - Math.random() * 300000); // Last 5 minutes
       events.push({
@@ -1846,7 +1847,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy, AfterViewInit
         page: pages[Math.floor(Math.random() * pages.length)]
       });
     }
-    
+
     return events.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
   }
 
@@ -2140,16 +2141,16 @@ export class AdminDashboardComponent implements OnInit, OnDestroy, AfterViewInit
   async activateUser(user: User) {
     try {
       await this.adminService.enablePsychologistSelection(user.id);
-      
+
       // Remove from pending activations
       this.pendingActivations = this.pendingActivations.filter(u => u.id !== user.id);
-      
+
       // Update in users list
       const userIndex = this.users.findIndex(u => u.id === user.id);
       if (userIndex !== -1) {
         this.users[userIndex].canSelectPsychologist = true;
       }
-      
+
       alert(`Użytkownik ${user.firstName} ${user.lastName} został aktywowany.`);
     } catch (error) {
       console.error('Error activating user:', error);
@@ -2248,13 +2249,13 @@ export class AdminDashboardComponent implements OnInit, OnDestroy, AfterViewInit
   private initializeCharts() {
     console.log('=== INITIALIZING CHARTS ===');
     console.log('Current active tab:', this.activeTab);
-    
+
     // Only initialize charts if we're on analytics tab
     if (this.activeTab !== 'analytics' && this.activeTab !== 'live-analytics') {
       console.log('Not on analytics tab, skipping chart initialization');
       return;
     }
-    
+
     // Destroy existing charts first
     Object.values(this.charts).forEach(chart => {
       if (chart) {
@@ -2262,9 +2263,9 @@ export class AdminDashboardComponent implements OnInit, OnDestroy, AfterViewInit
       }
     });
     this.charts = {};
-    
+
     console.log('Creating charts...');
-    
+
     if (this.activeTab === 'analytics') {
       this.createUserRegistrationsChart();
       this.createRevenueChart();
@@ -2273,7 +2274,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy, AfterViewInit
     } else if (this.activeTab === 'live-analytics') {
       this.createLiveAnalyticsChart();
     }
-    
+
     console.log('Charts initialization completed');
   }
 
@@ -2281,7 +2282,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy, AfterViewInit
     console.log('=== CREATING USER REGISTRATIONS CHART ===');
     console.log('ViewChild exists:', !!this.userRegistrationsChart);
     console.log('Native element exists:', !!this.userRegistrationsChart?.nativeElement);
-    
+
     if (this.userRegistrationsChart?.nativeElement) {
       console.log('Canvas element found, creating chart...');
       const ctx = this.userRegistrationsChart.nativeElement.getContext('2d');
@@ -2356,13 +2357,13 @@ export class AdminDashboardComponent implements OnInit, OnDestroy, AfterViewInit
         const labels = [];
         const data = [];
         const now = new Date();
-        
+
         for (let i = 29; i >= 0; i--) {
           const time = new Date(now.getTime() - i * 60000); // Minutes ago
           labels.push(time.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' }));
           data.push(Math.floor(Math.random() * 50) + 10); // Random visitors between 10-60
         }
-        
+
         this.charts['liveAnalytics'] = ChartService.createLineChart(ctx, data, labels, 'Aktywni użytkownicy');
         console.log('Live analytics chart created');
       }

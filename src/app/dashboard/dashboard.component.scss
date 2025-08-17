@@ -428,6 +428,263 @@ select {
     cursor: pointer;
 }
 
+// Psychologist Info Card (simplified design)
+.psychologist-info-card {
+    background: white;
+    border: 1px solid #e0e6ed;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+
+    &:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #f0f0f0;
+
+        h3 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+            background: #e8f5e8;
+            color: #2e7d2e;
+
+            &.active {
+                background: #d4edda;
+                color: #155724;
+            }
+        }
+    }
+
+    .psychologist-content {
+        margin-bottom: 24px;
+
+        .psychologist-details {
+            h4 {
+                margin: 0 0 8px 0;
+                font-size: 22px;
+                font-weight: 600;
+                color: #2c3e50;
+            }
+
+            .title {
+                margin: 0 0 16px 0;
+                color: #6c757d;
+                font-size: 14px;
+                font-weight: 500;
+            }
+
+            .specializations {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-bottom: 16px;
+
+                .specialization-tag {
+                    padding: 6px 12px;
+                    background: #f8f9fa;
+                    border: 1px solid #e9ecef;
+                    border-radius: 16px;
+                    font-size: 12px;
+                    font-weight: 500;
+                    color: #495057;
+                }
+            }
+
+            .rating-section {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 16px;
+
+                .rating {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+
+                    .stars {
+                        color: #ffc107;
+                        font-size: 16px;
+                    }
+
+                    .rating-text {
+                        font-weight: 600;
+                        color: #2c3e50;
+                    }
+                }
+
+                .review-count {
+                    color: #6c757d;
+                    font-size: 14px;
+                }
+            }
+
+            .contact-info {
+                .contact-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    margin-bottom: 8px;
+                    font-size: 14px;
+                    color: #495057;
+
+                    .icon {
+                        font-size: 16px;
+                        width: 20px;
+                    }
+                }
+            }
+        }
+    }
+
+    .psychologist-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+
+        .btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+
+            .icon {
+                font-size: 16px;
+            }
+
+            &.btn-primary {
+                background: $primary-color;
+                color: white;
+
+                &:hover {
+                    background: darken($primary-color, 10%);
+                    transform: translateY(-2px);
+                }
+            }
+
+            &.btn-secondary {
+                background: #6c757d;
+                color: white;
+
+                &:hover {
+                    background: darken(#6c757d, 10%);
+                    transform: translateY(-2px);
+                }
+            }
+
+            &.btn-outline {
+                background: transparent;
+                color: #6c757d;
+                border: 1px solid #dee2e6;
+
+                &:hover {
+                    background: #f8f9fa;
+                    color: #495057;
+                    transform: translateY(-2px);
+                }
+            }
+        }
+    }
+
+    // Mobile responsiveness
+    @media (max-width: 768px) {
+        padding: 16px;
+
+        .card-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .psychologist-actions {
+            flex-direction: column;
+
+            .btn {
+                justify-content: center;
+                width: 100%;
+            }
+        }
+    }
+}
+
+// No Psychologist Card
+.no-psychologist-card {
+    background: white;
+    border: 2px dashed #e0e0e0;
+    border-radius: 16px;
+    padding: 40px 24px;
+    text-align: center;
+    margin-bottom: 24px;
+
+    .empty-state {
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        h3 {
+            margin: 0 0 8px 0;
+            color: #333;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        p {
+            margin: 0 0 24px 0;
+            color: #666;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: $primary-color;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+
+            .icon {
+                font-size: 16px;
+            }
+
+            &:hover {
+                background: darken($primary-color, 10%);
+                transform: translateY(-2px);
+            }
+        }
+    }
+}
+
 // Psychologist cards
 .psychologist-grid {
     display: grid;
@@ -538,9 +795,22 @@ select {
 
 // Forms
 .profile-form {
-    display: flex;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
+    background: white;
+    border: 1px solid $border-color;
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 800px;
+    margin: 0 auto;
+
+    h3 {
+        margin: 0 0 24px 0;
+        color: $text-dark;
+        font-size: 20px;
+        font-weight: 600;
+        text-align: center;
+        padding-bottom: 16px;
+        border-bottom: 1px solid $border-color;
+    }
 }
 
 .form-group {
@@ -550,7 +820,7 @@ select {
         display: block;
         font-weight: 500;
         color: $text-dark;
-        margin-bottom: 8px;
+        margin-bottom: 6px;
         font-size: 14px;
     }
 
@@ -558,9 +828,9 @@ select {
     textarea,
     select {
         width: 100%;
-        padding: 12px 16px;
+        padding: 10px 14px;
         border: 1px solid $border-color;
-        border-radius: 8px;
+        border-radius: 6px;
         font-size: 14px;
         background: $white;
         color: $text-dark;
@@ -570,39 +840,129 @@ select {
         &:focus {
             outline: none;
             border-color: $primary-color;
-            box-shadow: 0 0 0 3px rgba(23, 162, 184, 0.1);
+            box-shadow: 0 0 0 2px rgba(23, 162, 184, 0.1);
+        }
+
+        &[readonly] {
+            background: #f8f9fa;
+            color: #6c757d;
+            cursor: not-allowed;
         }
     }
 
     textarea {
         resize: vertical;
-        min-height: 100px;
+        min-height: 80px;
     }
 }
 
 // Two-column form layout for better space utilization
 .form-row {
-    display: flex;
-    gap: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
 
     @media (max-width: 768px) {
-        flex-direction: column;
-        gap: 15px;
+        grid-template-columns: 1fr;
+        gap: 12px;
     }
 }
 
 .section-subtitle {
     color: $text-dark;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
-    margin: 30px 0 20px 0;
-    padding-top: 20px;
+    margin: 24px 0 16px 0;
+    padding-top: 16px;
     border-top: 1px solid $border-color;
 
     &:first-of-type {
-        margin-top: 20px;
+        margin-top: 16px;
         padding-top: 0;
         border-top: none;
+    }
+}
+
+// Submit button styles
+.profile-form .btn {
+    margin-top: 20px;
+    padding: 12px 32px;
+    font-weight: 500;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+
+    &.btn-primary {
+        background: $primary-color;
+        color: white;
+
+        &:hover:not(:disabled) {
+            background: darken($primary-color, 10%);
+            transform: translateY(-1px);
+        }
+
+        &:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+    }
+}
+
+// Checkbox styles for forms
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: $text-dark;
+    cursor: pointer;
+
+    input[type="checkbox"] {
+        width: auto !important;
+        margin: 0;
+        cursor: pointer;
+    }
+}
+
+// Profile section responsiveness
+.profile-section {
+    padding: 20px;
+
+    @media (max-width: 768px) {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .profile-form {
+        padding: 16px;
+        margin: 0;
+
+        h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+
+        input,
+        textarea,
+        select {
+            padding: 8px 12px;
+        }
+    }
+
+    .section-subtitle {
+        font-size: 14px;
+        margin: 20px 0 12px 0;
+        padding-top: 12px;
     }
 }
 
@@ -671,6 +1031,127 @@ select {
     }
 
     .psychologist-status {
+        .psychologist-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .psychologist-avatar {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 2px solid $border-color;
+        }
+
+        .psychologist-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .avatar-fallback {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, $primary-color, lighten($primary-color, 20%));
+            color: white;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .psychologist-details {
+            flex: 1;
+            min-width: 0; // Allow text to truncate
+
+            h4 {
+                margin: 0 0 5px 0;
+                font-size: 16px;
+                font-weight: 600;
+                color: $text-dark;
+            }
+
+            .specializations {
+                margin: 0 0 8px 0;
+                font-size: 13px;
+                color: $text-light;
+                line-height: 1.3;
+            }
+
+            .rating {
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                font-size: 13px;
+
+                .stars {
+                    color: #ffc107;
+                    font-size: 14px;
+                }
+
+                .rating-text {
+                    color: $text-light;
+                    font-weight: 500;
+                }
+            }
+        }
+
+        .no-psychologist {
+            text-align: center;
+            padding: 20px;
+            color: $text-light;
+
+            .no-psychologist-icon {
+                font-size: 40px;
+                margin-bottom: 10px;
+                opacity: 0.5;
+            }
+
+            p {
+                margin: 0;
+                font-size: 14px;
+                font-style: italic;
+            }
+        }
+
+        .card-actions {
+            margin-top: 15px;
+
+            .btn {
+                width: 100%;
+                padding: 10px;
+                font-size: 14px;
+                font-weight: 500;
+                border-radius: 8px;
+                border: none;
+                cursor: pointer;
+                transition: all 0.2s ease;
+
+                &.btn-primary {
+                    background: $primary-color;
+                    color: white;
+
+                    &:hover {
+                        background: darken($primary-color, 8%);
+                        transform: translateY(-1px);
+                        box-shadow: 0 4px 8px rgba($primary-color, 0.3);
+                    }
+                }
+            }
+        }
+
+        // Legacy styles - keeping them for now
         display: flex;
         align-items: center;
         gap: 8px;
@@ -1120,5 +1601,497 @@ select {
         flex-direction: column;
         gap: 10px;
         align-items: flex-end;
+    }
+}
+
+// ===== CALENDAR STYLES =====
+.calendar-section {
+    background: $white;
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px solid $border-color;
+    margin-bottom: 30px;
+}
+
+.calendar-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 0 10px;
+
+    .btn {
+        padding: 10px 16px;
+        border-radius: 8px;
+        border: 1px solid $border-color;
+        background: $white;
+        color: $text-dark;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background: $background-light;
+            border-color: $primary-color;
+            color: $primary-color;
+        }
+
+        &.btn-secondary {
+            background: $background-light;
+        }
+    }
+
+    .current-month {
+        font-size: 24px;
+        font-weight: 600;
+        color: $text-dark;
+        margin: 0;
+        text-transform: capitalize;
+    }
+}
+
+.calendar-grid {
+    border: 1px solid $border-color;
+    border-radius: 12px;
+    overflow: hidden;
+    background: $white;
+    margin-bottom: 30px;
+}
+
+.calendar-header-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background: $background-light;
+    border-bottom: 1px solid $border-color;
+
+    .day-header {
+        padding: 16px 8px;
+        text-align: center;
+        font-weight: 600;
+        color: $text-dark;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-right: 1px solid $border-color;
+
+        &:last-child {
+            border-right: none;
+        }
+    }
+}
+
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+
+.calendar-day {
+    min-height: 100px;
+    padding: 8px;
+    border-right: 1px solid $border-color;
+    border-bottom: 1px solid $border-color;
+    background: $white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+
+    &:nth-child(7n) {
+        border-right: none;
+    }
+
+    &.empty-day {
+        background: transparent;
+        cursor: default;
+        border: none;
+    }
+
+    &:hover:not(.empty-day) {
+        background: lighten($primary-color, 45%);
+    }
+
+    &.today {
+        background: lighten($primary-color, 40%);
+
+        .day-number {
+            background: $primary-color;
+            color: $white;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+    }
+
+    &.has-appointment {
+        background: lighten($secondary-color, 45%);
+        border: 2px solid $secondary-color;
+
+        &:hover {
+            background: lighten($secondary-color, 35%);
+        }
+
+        .day-number {
+            font-weight: 700;
+            color: $secondary-color;
+        }
+    }
+
+    &.past {
+        background: #f8f9fa;
+        color: #adb5bd;
+
+        &.has-appointment {
+            background: #e9ecef;
+        }
+    }
+
+    .day-number {
+        font-size: 14px;
+        font-weight: 500;
+        color: $text-dark;
+        margin-bottom: 4px;
+        align-self: flex-start;
+    }
+
+    .appointment-indicators {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        flex: 1;
+    }
+
+    .appointment-indicator {
+        background: $secondary-color;
+        color: $white;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 500;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &.scheduled {
+            background: $primary-color;
+        }
+
+        &.completed {
+            background: $secondary-color;
+        }
+
+        &.cancelled {
+            background: $danger-color;
+        }
+
+        &.no-show {
+            background: $warning-color;
+            color: $text-dark;
+        }
+    }
+
+    .more-appointments {
+        font-size: 10px;
+        color: $text-light;
+        text-align: center;
+        padding: 2px;
+        background: $background-light;
+        border-radius: 4px;
+        margin-top: 2px;
+    }
+}
+
+// Selected day details
+.selected-day-details {
+    background: $background-light;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+
+    h4 {
+        margin: 0 0 16px 0;
+        color: $text-dark;
+        font-weight: 600;
+        font-size: 18px;
+    }
+
+    .no-appointments {
+        color: $text-light;
+        font-style: italic;
+        text-align: center;
+        padding: 20px;
+    }
+}
+
+.day-appointments {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.appointment-detail-card {
+    background: $white;
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    padding: 16px;
+    border-left: 4px solid $primary-color;
+
+    &.completed {
+        border-left-color: $secondary-color;
+    }
+
+    &.cancelled {
+        border-left-color: $danger-color;
+    }
+
+    &.no-show {
+        border-left-color: $warning-color;
+    }
+
+    .appointment-time {
+        font-weight: 600;
+        color: $text-dark;
+        margin-bottom: 8px;
+        font-size: 16px;
+    }
+
+    .appointment-type {
+        color: $text-light;
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    .appointment-status {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+        margin-bottom: 8px;
+
+        &.scheduled {
+            background: lighten($primary-color, 40%);
+            color: $primary-color;
+        }
+
+        &.completed {
+            background: lighten($secondary-color, 40%);
+            color: $secondary-color;
+        }
+
+        &.cancelled {
+            background: lighten($danger-color, 40%);
+            color: $danger-color;
+        }
+    }
+
+    .appointment-notes {
+        background: $background-light;
+        padding: 12px;
+        border-radius: 6px;
+        margin-top: 8px;
+        font-size: 14px;
+        color: $text-dark;
+        line-height: 1.4;
+    }
+
+    .appointment-psychologist {
+        margin-top: 8px;
+        font-size: 14px;
+        color: $text-light;
+    }
+}
+
+// Upcoming and past appointments
+.upcoming-appointments,
+.past-appointments {
+    margin-bottom: 30px;
+
+    h4 {
+        color: $text-dark;
+        font-weight: 600;
+        margin-bottom: 16px;
+        font-size: 18px;
+    }
+
+    .appointments-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .more-appointments-note {
+        text-align: center;
+        color: $text-light;
+        font-style: italic;
+        margin-top: 12px;
+        font-size: 14px;
+    }
+}
+
+.appointment-card {
+    background: $white;
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    padding: 16px;
+    border-left: 4px solid $primary-color;
+    transition: all 0.2s ease;
+
+    &:hover {
+        box-shadow: 0 2px 8px $shadow-light;
+        transform: translateY(-1px);
+    }
+
+    &.scheduled {
+        border-left-color: $primary-color;
+    }
+
+    &.completed {
+        border-left-color: $secondary-color;
+    }
+
+    &.cancelled {
+        border-left-color: $danger-color;
+    }
+
+    &.past {
+        opacity: 0.8;
+    }
+
+    .appointment-date {
+        font-weight: 600;
+        color: $text-dark;
+        margin-bottom: 4px;
+        font-size: 16px;
+    }
+
+    .appointment-time {
+        color: $primary-color;
+        font-weight: 500;
+        margin-bottom: 4px;
+    }
+
+    .appointment-type {
+        color: $text-light;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .appointment-status {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+        margin-bottom: 8px;
+    }
+
+    .appointment-notes {
+        background: $background-light;
+        padding: 8px 12px;
+        border-radius: 4px;
+        margin-top: 8px;
+        font-size: 13px;
+        color: $text-dark;
+        line-height: 1.4;
+
+        strong {
+            color: $text-dark;
+        }
+    }
+
+    .appointment-psychologist {
+        margin-top: 8px;
+        font-size: 13px;
+        color: $text-light;
+
+        strong {
+            color: $text-dark;
+        }
+    }
+}
+
+// Warning messages
+.warning-message {
+    background: lighten($warning-color, 40%);
+    border: 1px solid lighten($warning-color, 20%);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 30px;
+
+    p {
+        margin: 0 0 15px 0;
+        color: darken($warning-color, 20%);
+        font-weight: 500;
+    }
+
+    .btn {
+        background: $warning-color;
+        color: $text-dark;
+        border: none;
+
+        &:hover {
+            background: darken($warning-color, 10%);
+        }
+    }
+}
+
+// Calendar responsive styles
+@media (max-width: 768px) {
+    .calendar-section {
+        padding: 20px;
+    }
+
+    .calendar-day {
+        min-height: 80px;
+        padding: 4px;
+
+        .day-number {
+            font-size: 12px;
+        }
+
+        .appointment-indicator {
+            font-size: 9px;
+            padding: 1px 4px;
+        }
+    }
+
+    .calendar-navigation {
+        margin-bottom: 20px;
+
+        .current-month {
+            font-size: 20px;
+        }
+    }
+
+    .appointment-detail-card,
+    .appointment-card {
+        padding: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .calendar-day {
+        min-height: 60px;
+        padding: 2px;
+
+        .day-number {
+            font-size: 11px;
+        }
+
+        .appointment-indicators {
+            display: none; // Hide indicators on very small screens
+        }
+    }
+
+    .calendar-header-row .day-header {
+        padding: 12px 4px;
+        font-size: 12px;
     }
 }

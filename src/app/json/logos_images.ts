@@ -22,7 +22,7 @@ export class LogosImages {
     startIcon2 = "assets/icons/star-2.png";
     thunderIcon = "assets/icons/thunder.png";
     weatherIcon = "assets/icons/weather.svg";
-    psychologistImage = "assets/psychologist.png";
+    psychologistImage = "assets/psychologist1.png";
     reviewImage1 = "assets/reviews/review.png";
     flexedArmIcon = "assets/icons/flexedarm.png";
     testimonialImage1 = "assets/testimonials/testimonial1.jpg";
@@ -30,7 +30,7 @@ export class LogosImages {
     testimonialImage3 = "assets/testimonials/testimonial3.jpg";
     testimonialImage4 = "assets/testimonials/testimonial4.jpg";
     videoConferenceIcon = "assets/icons/videoconference.png";
-    psychologistIcon = "assets/icons/psychologist.png";
+    psychologistIcon = "assets/icons/psychologist1.png";
     laptopIcon = "assets/icons/laptop.png";
     bookingIcon = "assets/icons/booking.png";
     arrowRightIcon = "assets/icons/arrow-right.png";

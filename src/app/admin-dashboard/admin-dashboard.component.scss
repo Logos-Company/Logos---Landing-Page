@@ -34,7 +34,7 @@ $shadow-light: rgba(0, 0, 0, 0.05);
     .sidebar-header {
         padding: 30px 20px;
         border-bottom: 1px solid $border-color;
-        
+
         .logo {
             font-size: 24px;
             font-weight: 700;
@@ -48,10 +48,10 @@ $shadow-light: rgba(0, 0, 0, 0.05);
 
     .sidebar-nav {
         padding: 20px 0;
-        
+
         .nav-item {
             margin: 2px 15px;
-            
+
             .nav-link {
                 display: flex;
                 align-items: center;
@@ -62,18 +62,18 @@ $shadow-light: rgba(0, 0, 0, 0.05);
                 border-radius: 8px;
                 transition: all 0.2s ease;
                 font-weight: 500;
-                
+
                 .nav-icon {
                     font-size: 18px;
                     width: 20px;
                     text-align: center;
                 }
-                
+
                 &:hover {
                     background: $background-light;
                     color: $text-dark;
                 }
-                
+
                 &.active {
                     background: $primary-color;
                     color: $white;
@@ -181,6 +181,7 @@ $shadow-light: rgba(0, 0, 0, 0.05);
     0% {
         transform: rotate(0deg);
     }
+
     100% {
         transform: rotate(360deg);
     }
@@ -243,11 +244,11 @@ $shadow-light: rgba(0, 0, 0, 0.05);
         .stat-change {
             font-size: 12px;
             font-weight: 500;
-            
+
             &.positive {
                 color: $secondary-color;
             }
-            
+
             &.negative {
                 color: $danger-color;
             }
@@ -328,7 +329,7 @@ $shadow-light: rgba(0, 0, 0, 0.05);
 /* Charts Section */
 .charts-section {
     margin-bottom: 30px;
-    
+
     .charts-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -351,7 +352,7 @@ $shadow-light: rgba(0, 0, 0, 0.05);
             .chart-wrapper {
                 position: relative;
                 height: 300px;
-                
+
                 canvas {
                     max-height: 300px !important;
                 }
@@ -918,16 +919,16 @@ $shadow-light: rgba(0, 0, 0, 0.05);
     .admin-sidebar {
         transform: translateX(-100%);
         transition: transform 0.3s ease;
-        
+
         &.sidebar-open {
             transform: translateX(0);
         }
     }
-    
+
     .main-content {
         margin-left: 0;
     }
-    
+
     .sidebar-toggle {
         display: block !important;
     }
@@ -1259,7 +1260,7 @@ $shadow-light: rgba(0, 0, 0, 0.05);
 
                 &:hover {
                     transform: translateY(-2px);
-                    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+                    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
                 }
 
                 h3 {
@@ -1285,17 +1286,26 @@ $shadow-light: rgba(0, 0, 0, 0.05);
 
                     &.positive {
                         color: $success-color;
-                        &:before { content: "↗ "; }
+
+                        &:before {
+                            content: "↗ ";
+                        }
                     }
 
                     &.negative {
                         color: $danger-color;
-                        &:before { content: "↘ "; }
+
+                        &:before {
+                            content: "↘ ";
+                        }
                     }
 
                     &.neutral {
                         color: $text-light;
-                        &:before { content: "→ "; }
+
+                        &:before {
+                            content: "→ ";
+                        }
                     }
                 }
             }
@@ -1412,7 +1422,7 @@ $shadow-light: rgba(0, 0, 0, 0.05);
                     .col {
                         display: block;
                         margin-bottom: 15px;
-                        
+
                         &:last-child {
                             margin-bottom: 0;
                         }
@@ -1438,7 +1448,7 @@ $shadow-light: rgba(0, 0, 0, 0.05);
 
                     .user-actions {
                         justify-content: center;
-                        
+
                         .btn {
                             flex: 1;
                             max-width: 100px;

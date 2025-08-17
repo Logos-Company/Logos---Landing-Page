@@ -7,6 +7,7 @@ import { AppointmentService } from '../core/appointment.service';
 import { PsychologistService } from '../core/psychologist.service';
 import { UserService } from '../core/user.service';
 import { VideoCallService, OnlineStatus } from '../core/video-call.service';
+import { SkeletonLoaderComponent } from '../shared/skeleton-loader/skeleton-loader.component';
 import { User } from '../models/user.model';
 import { Appointment } from '../models/appointment.model';
 import { PsychologistNote, PsychologistStats } from '../models/psychologist.model';
@@ -14,7 +15,7 @@ import { PsychologistNote, PsychologistStats } from '../models/psychologist.mode
 @Component({
   selector: 'app-psychologist-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, SkeletonLoaderComponent],
   styleUrls: ['./psychologist-dashboard.component.scss'],
   template: `
     <div class="dashboard">
@@ -90,10 +91,10 @@ import { PsychologistNote, PsychologistStats } from '../models/psychologist.mode
       </nav>
 
       <!-- Loading -->
-      <div class="loading-container" *ngIf="isLoading">
-        <div class="spinner"></div>
-        <p>Ładowanie danych...</p>
-      </div>
+      <app-skeleton-loader 
+        *ngIf="isLoading" 
+        type="dashboard">
+      </app-skeleton-loader>
 
       <!-- Main Content -->
       <main class="dashboard-content" *ngIf="!isLoading">
@@ -1066,7 +1067,7 @@ export class PsychologistDashboardComponent implements OnInit {
         startTime: this.newAppointment.startTime,
         endTime: this.newAppointment.endTime,
         status: 'scheduled' as any,
-        type: this.newAppointment.type,
+        type: this.newAppointment.type as 'individual' | 'group' | 'consultation',
         notes: this.newAppointment.notes,
         createdBy: 'psychologist',
         createdAt: new Date(),

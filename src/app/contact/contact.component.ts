@@ -16,28 +16,33 @@ import { LogosImages } from "../json/logos_images";
 })
 export class ContactComponent {
   logosImages = new LogosImages();
-
   contactForm: FormGroup;
+  isSubmitting = false;
 
   constructor(private fb: FormBuilder) {
     this.contactForm = this.fb.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      phone: ['', [
-        Validators.required,
-        Validators.pattern(/^\d{9}$/)
-      ]],
-      message: [''], // Optional field
-      acceptPrivacy: [false, Validators.requiredTrue]
+      phone: [''],
+      subject: [''],
+      message: [''],
+      privacyAccepted: [false, Validators.requiredTrue]
     });
   }
 
-  submitForm() {
+  onSubmit() {
     if (this.contactForm.valid) {
+      this.isSubmitting = true;
+
       console.log('Form submitted:', this.contactForm.value);
-      alert('Wysłano formularz!');
-      this.contactForm.reset();
+
+      // Symulacja wysyłania
+      setTimeout(() => {
+        alert('Wiadomość została wysłana! Skontaktujemy się z Tobą wkrótce.');
+        this.contactForm.reset();
+        this.isSubmitting = false;
+      }, 1500);
     } else {
       this.contactForm.markAllAsTouched();
     }

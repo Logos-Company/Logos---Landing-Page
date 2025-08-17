@@ -8,10 +8,10 @@ import { Psychologist } from '../../models/psychologist.model';
 import { Review, User } from '../../models/user.model';
 
 @Component({
-    selector: 'app-psychologist-search',
-    standalone: true,
-    imports: [CommonModule, FormsModule],
-    template: `
+  selector: 'app-psychologist-search',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  template: `
     <div class="search-container">
       <div class="search-header">
         <h2>Znajdź swojego psychologa</h2>
@@ -111,7 +111,7 @@ import { Review, User } from '../../models/user.model';
           >
             <div class="psychologist-image">
               <img 
-                [src]="psychologist.profileImage || '/assets/psychologist.png'" 
+                [src]="psychologist.profileImage || '/assets/psychologist1.png'" 
                 [alt]="psychologist.firstName + ' ' + psychologist.lastName"
                 (error)="onImageError($event)"
               >
@@ -185,7 +185,7 @@ import { Review, User } from '../../models/user.model';
             <div class="profile-content">
               <div class="profile-image">
                 <img 
-                  [src]="selectedPsychologist.profileImage || '/assets/psychologist.png'" 
+                  [src]="selectedPsychologist.profileImage || '/assets/psychologist1.png'" 
                   [alt]="selectedPsychologist.firstName + ' ' + selectedPsychologist.lastName"
                   (error)="onImageError($event)"
                 >
@@ -304,305 +304,305 @@ import { Review, User } from '../../models/user.model';
       </div>
     </div>
   `,
-    styleUrls: ['./psychologist-search.component.scss']
+  styleUrls: ['./psychologist-search.component.scss']
 })
 export class PsychologistSearchComponent implements OnInit {
-    searchTerm = '';
-    allPsychologists: Psychologist[] = [];
-    filteredPsychologists: Psychologist[] = [];
-    isLoading = false;
+  searchTerm = '';
+  allPsychologists: Psychologist[] = [];
+  filteredPsychologists: Psychologist[] = [];
+  isLoading = false;
 
-    // Filters
-    selectedSpecialization = '';
-    minRating = '';
-    availabilityFilter = '';
-    availableSpecializations: string[] = [];
+  // Filters
+  selectedSpecialization = '';
+  minRating = '';
+  availabilityFilter = '';
+  availableSpecializations: string[] = [];
 
-    // Selected psychologist for profile view
-    selectedPsychologist: Psychologist | null = null;
-    selectedPsychologistReviews: Review[] = [];
+  // Selected psychologist for profile view
+  selectedPsychologist: Psychologist | null = null;
+  selectedPsychologistReviews: Review[] = [];
 
-    // User package info
-    currentUser: User | null = null;
-    userPackage: UserPackage | null = null;
-    hasActivePackage = false;
+  // User package info
+  currentUser: User | null = null;
+  userPackage: UserPackage | null = null;
+  hasActivePackage = false;
 
-    // Review form
-    newReview = {
-        rating: 5,
-        comment: '',
-        isAnonymous: false
+  // Review form
+  newReview = {
+    rating: 5,
+    comment: '',
+    isAnonymous: false
+  };
+
+  private searchTimeout: any;
+
+  constructor(
+    private psychologistService: PsychologistService,
+    private authService: AuthService,
+    private packageService: PackageService
+  ) { }
+
+  ngOnInit() {
+    this.currentUser = this.authService.getCurrentUser();
+    this.loadAllPsychologists();
+    this.checkUserPackage();
+  }
+
+  async checkUserPackage() {
+    if (!this.currentUser) return;
+
+    try {
+      this.userPackage = await this.packageService.getUserPackage(this.currentUser.id);
+      this.hasActivePackage = this.userPackage?.status === 'active' &&
+        this.userPackage?.sessionsRemaining > 0;
+    } catch (error) {
+      console.error('Error checking user package:', error);
+      this.hasActivePackage = false;
+    }
+  }
+
+  async loadAllPsychologists() {
+    this.isLoading = true;
+    try {
+      this.allPsychologists = await this.psychologistService.getAllPsychologists();
+      this.extractSpecializations();
+      this.applyFilters();
+    } catch (error) {
+      console.error('Error loading psychologists:', error);
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  async loadRandomPsychologists() {
+    this.isLoading = true;
+    try {
+      this.filteredPsychologists = await this.psychologistService.getRandomPsychologists(10);
+    } catch (error) {
+      console.error('Error loading random psychologists:', error);
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  onSearchInput() {
+    // Debounce search
+    clearTimeout(this.searchTimeout);
+    this.searchTimeout = setTimeout(() => {
+      this.search();
+    }, 300);
+  }
+
+  async search() {
+    if (!this.searchTerm.trim()) {
+      this.applyFilters();
+      return;
+    }
+
+    this.isLoading = true;
+    try {
+      const results = await this.psychologistService.searchPsychologists(this.searchTerm);
+      this.filteredPsychologists = this.applyCurrentFilters(results);
+    } catch (error) {
+      console.error('Error searching psychologists:', error);
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  applyFilters() {
+    this.filteredPsychologists = this.applyCurrentFilters(this.allPsychologists);
+  }
+
+  private applyCurrentFilters(psychologists: Psychologist[]): Psychologist[] {
+    let filtered = [...psychologists];
+
+    // Specialization filter
+    if (this.selectedSpecialization) {
+      filtered = filtered.filter(p =>
+        p.specializations.includes(this.selectedSpecialization)
+      );
+    }
+
+    // Rating filter
+    if (this.minRating) {
+      const minRatingNum = parseFloat(this.minRating);
+      filtered = filtered.filter(p => p.rating >= minRatingNum);
+    }
+
+    // Availability filter
+    if (this.availabilityFilter === 'available') {
+      filtered = filtered.filter(p => p.isAvailable);
+    }
+
+    return filtered;
+  }
+
+  private extractSpecializations() {
+    const specializations = new Set<string>();
+    this.allPsychologists.forEach(p => {
+      p.specializations.forEach(spec => specializations.add(spec));
+    });
+    this.availableSpecializations = Array.from(specializations).sort();
+  }
+
+  selectPsychologist(psychologist: Psychologist) {
+    // This is handled by card click for basic selection
+    // Profile viewing is handled by viewProfile method
+  }
+
+  async viewProfile(psychologist: Psychologist, event: Event) {
+    event.stopPropagation();
+    this.selectedPsychologist = psychologist;
+
+    // Load reviews for this psychologist
+    try {
+      this.selectedPsychologistReviews = await this.psychologistService.getPsychologistReviews(psychologist.id);
+    } catch (error) {
+      console.error('Error loading reviews:', error);
+      this.selectedPsychologistReviews = [];
+    }
+  }
+
+  closeProfile() {
+    this.selectedPsychologist = null;
+    this.selectedPsychologistReviews = [];
+    this.resetReviewForm();
+  }
+
+  bookAppointment(psychologist: Psychologist, event: Event) {
+    event.stopPropagation();
+
+    if (!this.currentUser) {
+      alert('Musisz być zalogowany, aby umówić wizytę.');
+      return;
+    }
+
+    if (!this.hasActivePackage) {
+      const message = this.userPackage
+        ? 'Twój pakiet jest nieaktywny lub wykorzystałeś wszystkie sesje. Skontaktuj się z administratorem, aby aktywować nowy pakiet.'
+        : 'Nie masz aktywnego pakietu. Skontaktuj się z administratorem, aby aktywować pakiet sesji.';
+
+      alert(message);
+      return;
+    }
+
+    // TODO: Implement appointment booking for users with active packages
+    console.log('Book appointment with:', psychologist.firstName, psychologist.lastName);
+    alert(`Umawianie wizyty z ${psychologist.firstName} ${psychologist.lastName} - funkcja w rozwoju. Masz dostępne ${this.userPackage?.sessionsRemaining} sesji.`);
+  }
+
+  getStars(rating: number): { class: string }[] {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+
+    for (let i = 0; i < fullStars; i++) {
+      stars.push({ class: 'full' });
+    }
+
+    if (hasHalfStar) {
+      stars.push({ class: 'half' });
+    }
+
+    const remainingStars = 5 - stars.length;
+    for (let i = 0; i < remainingStars; i++) {
+      stars.push({ class: 'empty' });
+    }
+
+    return stars;
+  }
+
+  onImageError(event: any) {
+    event.target.src = '/assets/psychologist1.png';
+  }
+
+  canLeaveReview(psychologist: Psychologist): boolean {
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser) return false;
+
+    // TODO: Check if user has had at least 3 sessions with this psychologist
+    // This would require querying appointments
+    return true; // For now, allow all logged-in users to review
+  }
+
+  async submitReview() {
+    if (!this.selectedPsychologist) return;
+
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser) {
+      alert('Musisz być zalogowany, aby dodać opinię.');
+      return;
+    }
+
+    try {
+      await this.psychologistService.addReview({
+        userId: currentUser.id,
+        psychologistId: this.selectedPsychologist.id,
+        rating: this.newReview.rating,
+        comment: this.newReview.comment || undefined,
+        isAnonymous: this.newReview.isAnonymous,
+        sessionCount: 3, // TODO: Get actual session count
+        createdAt: new Date()
+      });
+
+      // Reload reviews
+      this.selectedPsychologistReviews = await this.psychologistService.getPsychologistReviews(this.selectedPsychologist.id);
+
+      // Update psychologist rating in the list
+      const updatedPsychologist = await this.psychologistService.getPsychologistById(this.selectedPsychologist.id);
+      if (updatedPsychologist) {
+        this.selectedPsychologist = updatedPsychologist;
+        // Update in the lists
+        const index = this.allPsychologists.findIndex(p => p.id === updatedPsychologist.id);
+        if (index !== -1) {
+          this.allPsychologists[index] = updatedPsychologist;
+        }
+        const filteredIndex = this.filteredPsychologists.findIndex(p => p.id === updatedPsychologist.id);
+        if (filteredIndex !== -1) {
+          this.filteredPsychologists[filteredIndex] = updatedPsychologist;
+        }
+      }
+
+      this.resetReviewForm();
+      alert('Opinia została dodana pomyślnie!');
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      alert('Wystąpił błąd podczas dodawania opinii.');
+    }
+  }
+
+  private resetReviewForm() {
+    this.newReview = {
+      rating: 5,
+      comment: '',
+      isAnonymous: false
     };
+  }
 
-    private searchTimeout: any;
-
-    constructor(
-        private psychologistService: PsychologistService,
-        private authService: AuthService,
-        private packageService: PackageService
-    ) { }
-
-    ngOnInit() {
-        this.currentUser = this.authService.getCurrentUser();
-        this.loadAllPsychologists();
-        this.checkUserPackage();
+  getBookingButtonText(): string {
+    if (!this.currentUser) {
+      return 'Zaloguj się';
     }
-
-    async checkUserPackage() {
-        if (!this.currentUser) return;
-
-        try {
-            this.userPackage = await this.packageService.getUserPackage(this.currentUser.id);
-            this.hasActivePackage = this.userPackage?.status === 'active' &&
-                this.userPackage?.sessionsRemaining > 0;
-        } catch (error) {
-            console.error('Error checking user package:', error);
-            this.hasActivePackage = false;
-        }
+    if (!this.hasActivePackage) {
+      return 'Brak pakietu';
     }
+    return 'Umów wizytę';
+  }
 
-    async loadAllPsychologists() {
-        this.isLoading = true;
-        try {
-            this.allPsychologists = await this.psychologistService.getAllPsychologists();
-            this.extractSpecializations();
-            this.applyFilters();
-        } catch (error) {
-            console.error('Error loading psychologists:', error);
-        } finally {
-            this.isLoading = false;
-        }
+  getBookingButtonTitle(psychologist: Psychologist): string {
+    if (!this.currentUser) {
+      return 'Musisz być zalogowany, aby umówić wizytę';
     }
-
-    async loadRandomPsychologists() {
-        this.isLoading = true;
-        try {
-            this.filteredPsychologists = await this.psychologistService.getRandomPsychologists(10);
-        } catch (error) {
-            console.error('Error loading random psychologists:', error);
-        } finally {
-            this.isLoading = false;
-        }
+    if (!this.hasActivePackage) {
+      const message = this.userPackage
+        ? 'Twój pakiet jest nieaktywny lub wykorzystałeś wszystkie sesje. Skontaktuj się z administratorem.'
+        : 'Nie masz aktywnego pakietu. Skontaktuj się z administratorem.';
+      return message;
     }
-
-    onSearchInput() {
-        // Debounce search
-        clearTimeout(this.searchTimeout);
-        this.searchTimeout = setTimeout(() => {
-            this.search();
-        }, 300);
+    if (!psychologist.isAvailable) {
+      return 'Psycholog jest obecnie niedostępny';
     }
-
-    async search() {
-        if (!this.searchTerm.trim()) {
-            this.applyFilters();
-            return;
-        }
-
-        this.isLoading = true;
-        try {
-            const results = await this.psychologistService.searchPsychologists(this.searchTerm);
-            this.filteredPsychologists = this.applyCurrentFilters(results);
-        } catch (error) {
-            console.error('Error searching psychologists:', error);
-        } finally {
-            this.isLoading = false;
-        }
-    }
-
-    applyFilters() {
-        this.filteredPsychologists = this.applyCurrentFilters(this.allPsychologists);
-    }
-
-    private applyCurrentFilters(psychologists: Psychologist[]): Psychologist[] {
-        let filtered = [...psychologists];
-
-        // Specialization filter
-        if (this.selectedSpecialization) {
-            filtered = filtered.filter(p =>
-                p.specializations.includes(this.selectedSpecialization)
-            );
-        }
-
-        // Rating filter
-        if (this.minRating) {
-            const minRatingNum = parseFloat(this.minRating);
-            filtered = filtered.filter(p => p.rating >= minRatingNum);
-        }
-
-        // Availability filter
-        if (this.availabilityFilter === 'available') {
-            filtered = filtered.filter(p => p.isAvailable);
-        }
-
-        return filtered;
-    }
-
-    private extractSpecializations() {
-        const specializations = new Set<string>();
-        this.allPsychologists.forEach(p => {
-            p.specializations.forEach(spec => specializations.add(spec));
-        });
-        this.availableSpecializations = Array.from(specializations).sort();
-    }
-
-    selectPsychologist(psychologist: Psychologist) {
-        // This is handled by card click for basic selection
-        // Profile viewing is handled by viewProfile method
-    }
-
-    async viewProfile(psychologist: Psychologist, event: Event) {
-        event.stopPropagation();
-        this.selectedPsychologist = psychologist;
-
-        // Load reviews for this psychologist
-        try {
-            this.selectedPsychologistReviews = await this.psychologistService.getPsychologistReviews(psychologist.id);
-        } catch (error) {
-            console.error('Error loading reviews:', error);
-            this.selectedPsychologistReviews = [];
-        }
-    }
-
-    closeProfile() {
-        this.selectedPsychologist = null;
-        this.selectedPsychologistReviews = [];
-        this.resetReviewForm();
-    }
-
-    bookAppointment(psychologist: Psychologist, event: Event) {
-        event.stopPropagation();
-
-        if (!this.currentUser) {
-            alert('Musisz być zalogowany, aby umówić wizytę.');
-            return;
-        }
-
-        if (!this.hasActivePackage) {
-            const message = this.userPackage
-                ? 'Twój pakiet jest nieaktywny lub wykorzystałeś wszystkie sesje. Skontaktuj się z administratorem, aby aktywować nowy pakiet.'
-                : 'Nie masz aktywnego pakietu. Skontaktuj się z administratorem, aby aktywować pakiet sesji.';
-
-            alert(message);
-            return;
-        }
-
-        // TODO: Implement appointment booking for users with active packages
-        console.log('Book appointment with:', psychologist.firstName, psychologist.lastName);
-        alert(`Umawianie wizyty z ${psychologist.firstName} ${psychologist.lastName} - funkcja w rozwoju. Masz dostępne ${this.userPackage?.sessionsRemaining} sesji.`);
-    }
-
-    getStars(rating: number): { class: string }[] {
-        const stars = [];
-        const fullStars = Math.floor(rating);
-        const hasHalfStar = rating % 1 >= 0.5;
-
-        for (let i = 0; i < fullStars; i++) {
-            stars.push({ class: 'full' });
-        }
-
-        if (hasHalfStar) {
-            stars.push({ class: 'half' });
-        }
-
-        const remainingStars = 5 - stars.length;
-        for (let i = 0; i < remainingStars; i++) {
-            stars.push({ class: 'empty' });
-        }
-
-        return stars;
-    }
-
-    onImageError(event: any) {
-        event.target.src = '/assets/psychologist.png';
-    }
-
-    canLeaveReview(psychologist: Psychologist): boolean {
-        const currentUser = this.authService.getCurrentUser();
-        if (!currentUser) return false;
-
-        // TODO: Check if user has had at least 3 sessions with this psychologist
-        // This would require querying appointments
-        return true; // For now, allow all logged-in users to review
-    }
-
-    async submitReview() {
-        if (!this.selectedPsychologist) return;
-
-        const currentUser = this.authService.getCurrentUser();
-        if (!currentUser) {
-            alert('Musisz być zalogowany, aby dodać opinię.');
-            return;
-        }
-
-        try {
-            await this.psychologistService.addReview({
-                userId: currentUser.id,
-                psychologistId: this.selectedPsychologist.id,
-                rating: this.newReview.rating,
-                comment: this.newReview.comment || undefined,
-                isAnonymous: this.newReview.isAnonymous,
-                sessionCount: 3, // TODO: Get actual session count
-                createdAt: new Date()
-            });
-
-            // Reload reviews
-            this.selectedPsychologistReviews = await this.psychologistService.getPsychologistReviews(this.selectedPsychologist.id);
-
-            // Update psychologist rating in the list
-            const updatedPsychologist = await this.psychologistService.getPsychologistById(this.selectedPsychologist.id);
-            if (updatedPsychologist) {
-                this.selectedPsychologist = updatedPsychologist;
-                // Update in the lists
-                const index = this.allPsychologists.findIndex(p => p.id === updatedPsychologist.id);
-                if (index !== -1) {
-                    this.allPsychologists[index] = updatedPsychologist;
-                }
-                const filteredIndex = this.filteredPsychologists.findIndex(p => p.id === updatedPsychologist.id);
-                if (filteredIndex !== -1) {
-                    this.filteredPsychologists[filteredIndex] = updatedPsychologist;
-                }
-            }
-
-            this.resetReviewForm();
-            alert('Opinia została dodana pomyślnie!');
-        } catch (error) {
-            console.error('Error submitting review:', error);
-            alert('Wystąpił błąd podczas dodawania opinii.');
-        }
-    }
-
-    private resetReviewForm() {
-        this.newReview = {
-            rating: 5,
-            comment: '',
-            isAnonymous: false
-        };
-    }
-
-    getBookingButtonText(): string {
-        if (!this.currentUser) {
-            return 'Zaloguj się';
-        }
-        if (!this.hasActivePackage) {
-            return 'Brak pakietu';
-        }
-        return 'Umów wizytę';
-    }
-
-    getBookingButtonTitle(psychologist: Psychologist): string {
-        if (!this.currentUser) {
-            return 'Musisz być zalogowany, aby umówić wizytę';
-        }
-        if (!this.hasActivePackage) {
-            const message = this.userPackage
-                ? 'Twój pakiet jest nieaktywny lub wykorzystałeś wszystkie sesje. Skontaktuj się z administratorem.'
-                : 'Nie masz aktywnego pakietu. Skontaktuj się z administratorem.';
-            return message;
-        }
-        if (!psychologist.isAvailable) {
-            return 'Psycholog jest obecnie niedostępny';
-        }
-        return `Umów wizytę z ${psychologist.firstName} ${psychologist.lastName}. Pozostało sesji: ${this.userPackage?.sessionsRemaining || 0}`;
-    }
+    return `Umów wizytę z ${psychologist.firstName} ${psychologist.lastName}. Pozostało sesji: ${this.userPackage?.sessionsRemaining || 0}`;
+  }
 }

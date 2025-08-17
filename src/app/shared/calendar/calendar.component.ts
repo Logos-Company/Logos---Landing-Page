@@ -8,19 +8,19 @@ import { Psychologist } from '../../models/psychologist.model';
 import { User } from '../../models/user.model';
 
 interface CalendarDay {
-    date: Date;
-    day: number;
-    appointments: Appointment[];
-    hasAppointment: boolean;
-    isToday: boolean;
-    isCurrentMonth: boolean;
+  date: Date;
+  day: number;
+  appointments: Appointment[];
+  hasAppointment: boolean;
+  isToday: boolean;
+  isCurrentMonth: boolean;
 }
 
 @Component({
-    selector: 'app-calendar',
-    standalone: true,
-    imports: [CommonModule],
-    template: `
+  selector: 'app-calendar',
+  standalone: true,
+  imports: [CommonModule],
+  template: `
     <div class="calendar-container">
       <div class="calendar-header">
         <button class="nav-btn" (click)="previousMonth()">‹</button>
@@ -171,250 +171,276 @@ interface CalendarDay {
       </div>
     </div>
   `,
-    styleUrls: ['./calendar.component.scss']
+  styleUrls: ['./calendar.component.scss']
 })
 export class CalendarComponent implements OnInit {
-    @Input() userId!: string;
-    @Output() appointmentCreated = new EventEmitter<void>();
+  @Input() userId!: string;
+  @Input() assignedPsychologist?: Psychologist | null;
+  @Output() appointmentCreated = new EventEmitter<void>();
 
-    currentMonth = new Date().getMonth();
-    currentYear = new Date().getFullYear();
-    calendarDays: CalendarDay[] = [];
-    selectedDay: CalendarDay | null = null;
+  currentMonth = new Date().getMonth();
+  currentYear = new Date().getFullYear();
+  calendarDays: CalendarDay[] = [];
+  selectedDay: CalendarDay | null = null;
 
-    showTimeSlots = false;
-    showPsychologistSelection = false;
-    selectedDate: Date | null = null;
-    selectedTime: string | null = null;
-    availableTimeSlots: string[] = [];
-    availablePsychologists: Psychologist[] = [];
+  showTimeSlots = false;
+  showPsychologistSelection = false;
+  selectedDate: Date | null = null;
+  selectedTime: string | null = null;
+  availableTimeSlots: string[] = [];
+  availablePsychologists: Psychologist[] = [];
 
-    monthNames = [
-        'Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec',
-        'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'
-    ];
+  monthNames = [
+    'Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec',
+    'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'
+  ];
 
-    dayNames = ['Nie', 'Pon', 'Wto', 'Śro', 'Czw', 'Pią', 'Sob'];
+  dayNames = ['Nie', 'Pon', 'Wto', 'Śro', 'Czw', 'Pią', 'Sob'];
 
-    currentUser: User | null = null;
+  currentUser: User | null = null;
 
-    constructor(
-        private appointmentService: AppointmentService,
-        private psychologistService: PsychologistService,
-        private authService: AuthService
-    ) { }
+  constructor(
+    private appointmentService: AppointmentService,
+    private psychologistService: PsychologistService,
+    private authService: AuthService
+  ) { }
 
-    ngOnInit() {
-        this.currentUser = this.authService.getCurrentUser();
-        this.generateCalendar();
-    }
+  ngOnInit() {
+    this.currentUser = this.authService.getCurrentUser();
+    this.generateCalendar();
+  }
 
-    async generateCalendar() {
-        try {
-            const calendarData = await this.appointmentService.getCalendarData(
-                this.userId,
-                this.currentMonth,
-                this.currentYear
-            );
+  async generateCalendar() {
+    try {
+      const calendarData = await this.appointmentService.getCalendarData(
+        this.userId,
+        this.currentMonth,
+        this.currentYear
+      );
 
-            // Generate complete calendar grid including days from previous/next month
-            const firstDay = new Date(this.currentYear, this.currentMonth, 1);
-            const lastDay = new Date(this.currentYear, this.currentMonth + 1, 0);
-            const startDate = new Date(firstDay);
-            startDate.setDate(startDate.getDate() - firstDay.getDay());
+      // Generate complete calendar grid including days from previous/next month
+      const firstDay = new Date(this.currentYear, this.currentMonth, 1);
+      const lastDay = new Date(this.currentYear, this.currentMonth + 1, 0);
+      const startDate = new Date(firstDay);
+      startDate.setDate(startDate.getDate() - firstDay.getDay());
 
-            this.calendarDays = [];
+      this.calendarDays = [];
 
-            for (let i = 0; i < 42; i++) { // 6 weeks * 7 days
-                const currentDate = new Date(startDate);
-                currentDate.setDate(startDate.getDate() + i);
+      for (let i = 0; i < 42; i++) { // 6 weeks * 7 days
+        const currentDate = new Date(startDate);
+        currentDate.setDate(startDate.getDate() + i);
 
-                const existingDay = calendarData.find(day =>
-                    day.date.getDate() === currentDate.getDate() &&
-                    day.date.getMonth() === currentDate.getMonth()
-                );
+        const existingDay = calendarData.find(day =>
+          day.date.getDate() === currentDate.getDate() &&
+          day.date.getMonth() === currentDate.getMonth()
+        );
 
-                this.calendarDays.push({
-                    date: currentDate,
-                    day: currentDate.getDate(),
-                    appointments: existingDay?.appointments || [],
-                    hasAppointment: existingDay?.hasAppointment || false,
-                    isToday: existingDay?.isToday || false,
-                    isCurrentMonth: currentDate.getMonth() === this.currentMonth
-                });
-            }
-        } catch (error) {
-            console.error('Error generating calendar:', error);
-        }
-    }
-
-    previousMonth() {
-        if (this.currentMonth === 0) {
-            this.currentMonth = 11;
-            this.currentYear--;
-        } else {
-            this.currentMonth--;
-        }
-        this.generateCalendar();
-    }
-
-    nextMonth() {
-        if (this.currentMonth === 11) {
-            this.currentMonth = 0;
-            this.currentYear++;
-        } else {
-            this.currentMonth++;
-        }
-        this.generateCalendar();
-    }
-
-    onDayClick(day: CalendarDay) {
-        if (!day.isCurrentMonth) return;
-        this.selectedDay = day;
-    }
-
-    closeModal() {
-        this.selectedDay = null;
-    }
-
-    async scheduleAppointment(date: Date) {
-        this.selectedDate = date;
-        this.closeModal();
-
-        // For now, show time slots for any psychologist
-        // In a real implementation, you might want to show a psychologist selection first
-        const randomPsychologists = await this.psychologistService.getRandomPsychologists(1);
-        if (randomPsychologists.length > 0) {
-            const timeSlots = await this.appointmentService.getAvailableTimeSlots(
-                randomPsychologists[0].id,
-                this.formatDateForAPI(date)
-            );
-            this.availableTimeSlots = timeSlots;
-            this.showTimeSlots = true;
-        }
-    }
-
-    closeTimeSlots() {
-        this.showTimeSlots = false;
-        this.selectedDate = null;
-        this.availableTimeSlots = [];
-    }
-
-    async selectTimeSlot(time: string) {
-        this.selectedTime = time;
-        this.closeTimeSlots();
-
-        // Get available psychologists for this time slot
-        if (this.selectedDate) {
-            const psychologists = await this.psychologistService.getAvailablePsychologists(
-                this.formatDateForAPI(this.selectedDate),
-                time
-            );
-            this.availablePsychologists = psychologists;
-            this.showPsychologistSelection = true;
-        }
-    }
-
-    closePsychologistSelection() {
-        this.showPsychologistSelection = false;
-        this.availablePsychologists = [];
-        this.selectedTime = null;
-    }
-
-    async selectPsychologist(psychologist: Psychologist) {
-        if (!this.selectedDate || !this.selectedTime) return;
-
-        try {
-            const endTime = this.calculateEndTime(this.selectedTime, 60); // 60-minute session
-
-            const appointmentId = await this.appointmentService.createAppointment({
-                userId: this.userId,
-                psychologistId: psychologist.id,
-                date: this.selectedDate,
-                startTime: this.selectedTime,
-                endTime: endTime,
-                status: 'scheduled',
-                sessionType: 'online',
-                createdAt: new Date()
-            });
-
-            this.closePsychologistSelection();
-            this.generateCalendar(); // Refresh calendar
-            this.appointmentCreated.emit();
-
-            alert('Wizyta została umówiona pomyślnie!');
-        } catch (error) {
-            console.error('Error creating appointment:', error);
-            alert('Wystąpił błąd podczas umawiania wizyty.');
-        }
-    }
-
-    private calculateEndTime(startTime: string, durationMinutes: number): string {
-        const [hours, minutes] = startTime.split(':').map(Number);
-        const totalMinutes = hours * 60 + minutes + durationMinutes;
-        const endHours = Math.floor(totalMinutes / 60);
-        const endMinutes = totalMinutes % 60;
-        return `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
-    }
-
-    getAppointmentTitle(appointment: Appointment): string {
-        return `${appointment.startTime} - ${appointment.endTime} (${this.getStatusText(appointment.status)})`;
-    }
-
-    getStatusText(status: string): string {
-        switch (status) {
-            case 'scheduled': return 'Zaplanowana';
-            case 'completed': return 'Zakończona';
-            case 'cancelled': return 'Anulowana';
-            case 'no-show': return 'Niestawiennictwo';
-            default: return status;
-        }
-    }
-
-    formatDate(date: Date): string {
-        return date.toLocaleDateString('pl-PL', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
+        this.calendarDays.push({
+          date: currentDate,
+          day: currentDate.getDate(),
+          appointments: existingDay?.appointments || [],
+          hasAppointment: existingDay?.hasAppointment || false,
+          isToday: existingDay?.isToday || false,
+          isCurrentMonth: currentDate.getMonth() === this.currentMonth
         });
+      }
+    } catch (error) {
+      console.error('Error generating calendar:', error);
     }
+  }
 
-    private formatDateForAPI(date: Date): string {
-        return date.toISOString().split('T')[0];
+  previousMonth() {
+    if (this.currentMonth === 0) {
+      this.currentMonth = 11;
+      this.currentYear--;
+    } else {
+      this.currentMonth--;
     }
+    this.generateCalendar();
+  }
 
-    async getPsychologistName(psychologistId: string): Promise<string> {
-        try {
-            const psychologist = await this.psychologistService.getPsychologistById(psychologistId);
-            return psychologist ? `${psychologist.firstName} ${psychologist.lastName}` : 'Nieznany psycholog';
-        } catch (error) {
-            return 'Nieznany psycholog';
-        }
+  nextMonth() {
+    if (this.currentMonth === 11) {
+      this.currentMonth = 0;
+      this.currentYear++;
+    } else {
+      this.currentMonth++;
     }
+    this.generateCalendar();
+  }
 
-    sendMessage(appointment: Appointment) {
-        // Implement message functionality
-        console.log('Send message for appointment:', appointment.id);
-    }
+  onDayClick(day: CalendarDay) {
+    if (!day.isCurrentMonth) return;
+    this.selectedDay = day;
+  }
 
-    rescheduleAppointment(appointment: Appointment) {
-        // Implement reschedule functionality
-        console.log('Reschedule appointment:', appointment.id);
-    }
+  closeModal() {
+    this.selectedDay = null;
+  }
 
-    async cancelAppointment(appointment: Appointment) {
-        const reason = prompt('Podaj powód anulowania wizyty:');
-        if (reason) {
-            try {
-                await this.appointmentService.cancelAppointment(appointment.id, reason, this.userId);
-                this.generateCalendar(); // Refresh calendar
-                this.closeModal();
-                alert('Wizyta została anulowana.');
-            } catch (error) {
-                console.error('Error cancelling appointment:', error);
-                alert('Wystąpił błąd podczas anulowania wizyty.');
-            }
-        }
+  async scheduleAppointment(date: Date) {
+    this.selectedDate = date;
+    this.closeModal();
+
+    // For now, show time slots for any psychologist
+    // In a real implementation, you might want to show a psychologist selection first
+    const randomPsychologists = await this.psychologistService.getRandomPsychologists(1);
+    if (randomPsychologists.length > 0) {
+      const timeSlots = await this.appointmentService.getAvailableTimeSlots(
+        randomPsychologists[0].id,
+        this.formatDateForAPI(date)
+      );
+      this.availableTimeSlots = timeSlots;
+      this.showTimeSlots = true;
     }
+  }
+
+  closeTimeSlots() {
+    this.showTimeSlots = false;
+    this.selectedDate = null;
+    this.availableTimeSlots = [];
+  }
+
+  async selectTimeSlot(time: string) {
+    this.selectedTime = time;
+    this.closeTimeSlots();
+
+    // Jeśli użytkownik ma przypisanego psychologa, od razu utwórz wizytę
+    if (this.assignedPsychologist && this.selectedDate) {
+      // Sprawdź czy przypisany psycholog jest dostępny w tym terminie
+      const isAvailable = await this.psychologistService.isPsychologistAvailable(
+        this.assignedPsychologist.id,
+        this.formatDateForAPI(this.selectedDate),
+        time
+      );
+
+      if (isAvailable) {
+        // Automatycznie utwórz wizytę z przypisanym psychologiem
+        await this.createAppointmentWithPsychologist(this.assignedPsychologist);
+      } else {
+        // Psycholog nie jest dostępny, pokaż komunikat
+        alert('Twój psycholog nie jest dostępny w tym terminie. Wybierz inny termin lub innego psychologa.');
+        // Pokaż innych dostępnych psychologów
+        await this.showAvailablePsychologists(time);
+      }
+    } else {
+      // Brak przypisanego psychologa, pokaż listę dostępnych
+      await this.showAvailablePsychologists(time);
+    }
+  }
+
+  private async showAvailablePsychologists(time: string) {
+    // Get available psychologists for this time slot
+    if (this.selectedDate) {
+      const psychologists = await this.psychologistService.getAvailablePsychologists(
+        this.formatDateForAPI(this.selectedDate),
+        time
+      );
+      this.availablePsychologists = psychologists;
+      this.showPsychologistSelection = true;
+    }
+  }
+
+  closePsychologistSelection() {
+    this.showPsychologistSelection = false;
+    this.availablePsychologists = [];
+    this.selectedTime = null;
+  }
+
+  async selectPsychologist(psychologist: Psychologist) {
+    if (!this.selectedDate || !this.selectedTime) return;
+
+    try {
+      const endTime = this.calculateEndTime(this.selectedTime, 60); // 60-minute session
+
+      const appointmentId = await this.appointmentService.createAppointment({
+        userId: this.userId,
+        psychologistId: psychologist.id,
+        date: this.selectedDate,
+        startTime: this.selectedTime,
+        endTime: endTime,
+        status: 'scheduled',
+        sessionType: 'online',
+        createdAt: new Date()
+      });
+
+      this.closePsychologistSelection();
+      this.generateCalendar(); // Refresh calendar
+      this.appointmentCreated.emit();
+
+      alert('Wizyta została umówiona pomyślnie!');
+    } catch (error) {
+      console.error('Error creating appointment:', error);
+      alert('Wystąpił błąd podczas umawiania wizyty.');
+    }
+  }
+
+  private calculateEndTime(startTime: string, durationMinutes: number): string {
+    const [hours, minutes] = startTime.split(':').map(Number);
+    const totalMinutes = hours * 60 + minutes + durationMinutes;
+    const endHours = Math.floor(totalMinutes / 60);
+    const endMinutes = totalMinutes % 60;
+    return `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
+  }
+
+  getAppointmentTitle(appointment: Appointment): string {
+    return `${appointment.startTime} - ${appointment.endTime} (${this.getStatusText(appointment.status)})`;
+  }
+
+  getStatusText(status: string): string {
+    switch (status) {
+      case 'scheduled': return 'Zaplanowana';
+      case 'completed': return 'Zakończona';
+      case 'cancelled': return 'Anulowana';
+      case 'no-show': return 'Niestawiennictwo';
+      default: return status;
+    }
+  }
+
+  formatDate(date: Date): string {
+    return date.toLocaleDateString('pl-PL', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  }
+
+  private formatDateForAPI(date: Date): string {
+    return date.toISOString().split('T')[0];
+  }
+
+  async getPsychologistName(psychologistId: string): Promise<string> {
+    try {
+      const psychologist = await this.psychologistService.getPsychologistById(psychologistId);
+      return psychologist ? `${psychologist.firstName} ${psychologist.lastName}` : 'Nieznany psycholog';
+    } catch (error) {
+      return 'Nieznany psycholog';
+    }
+  }
+
+  sendMessage(appointment: Appointment) {
+    // Implement message functionality
+    console.log('Send message for appointment:', appointment.id);
+  }
+
+  rescheduleAppointment(appointment: Appointment) {
+    // Implement reschedule functionality
+    console.log('Reschedule appointment:', appointment.id);
+  }
+
+  async cancelAppointment(appointment: Appointment) {
+    const reason = prompt('Podaj powód anulowania wizyty:');
+    if (reason) {
+      try {
+        await this.appointmentService.cancelAppointment(appointment.id, reason, this.userId);
+        this.generateCalendar(); // Refresh calendar
+        this.closeModal();
+        alert('Wizyta została anulowana.');
+      } catch (error) {
+        console.error('Error cancelling appointment:', error);
+        alert('Wystąpił błąd podczas anulowania wizyty.');
+      }
+    }
+  }
 }

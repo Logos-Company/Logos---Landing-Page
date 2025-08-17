@@ -97,7 +97,7 @@ export class UserService {
             }
 
             const userData = userDoc.data() as User;
-            
+
             // Check if user has permission to select psychologist
             if (!userData.canSelectPsychologist) {
                 throw new Error('Użytkownik nie ma uprawnień do wyboru psychologa. Skontaktuj się z administratorem.');
@@ -350,33 +350,56 @@ export class UserService {
 
     async getUserNotes(userId: string, psychologistId?: string): Promise<PsychologistNote[]> {
         try {
+            console.log('🔍 Getting user notes for userId:', userId);
+
             let q;
             if (psychologistId) {
+                console.log('📝 Filtering by psychologistId:', psychologistId);
                 q = query(
-                    collection(this.db, 'psychologist_notes'),
+                    collection(this.db, 'psychologist-notes'),
                     where('userId', '==', userId),
                     where('psychologistId', '==', psychologistId),
-                    where('isVisibleToUser', '==', true),
-                    orderBy('createdAt', 'desc')
+                    where('isVisibleToUser', '==', true)
                 );
             } else {
+                console.log('📝 Getting all notes for user');
                 q = query(
-                    collection(this.db, 'psychologist_notes'),
+                    collection(this.db, 'psychologist-notes'),
                     where('userId', '==', userId),
-                    where('isVisibleToUser', '==', true),
-                    orderBy('createdAt', 'desc')
+                    where('isVisibleToUser', '==', true)
                 );
             }
 
+            console.log('🚀 Executing Firestore query...');
             const snapshot = await getDocs(q);
-            return snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data(),
-                createdAt: doc.data()['createdAt'].toDate(),
-                updatedAt: doc.data()['updatedAt']?.toDate()
-            })) as PsychologistNote[];
+            console.log(`📊 Found ${snapshot.docs.length} documents`);
+
+            const notes = snapshot.docs.map(doc => {
+                const data = doc.data();
+                console.log('📄 Processing note:', {
+                    id: doc.id,
+                    title: data['title'],
+                    content: data['content']?.substring(0, 50) + '...',
+                    isVisibleToUser: data['isVisibleToUser'],
+                    userId: data['userId'],
+                    psychologistId: data['psychologistId']
+                });
+
+                return {
+                    id: doc.id,
+                    ...data,
+                    createdAt: data['createdAt']?.toDate ? data['createdAt'].toDate() : new Date(data['createdAt']),
+                    updatedAt: data['updatedAt']?.toDate ? data['updatedAt'].toDate() : new Date(data['updatedAt'])
+                };
+            }) as PsychologistNote[];
+
+            // Sort by createdAt manually
+            notes.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+            console.log('✅ Returning notes:', notes.length);
+            return notes;
         } catch (error) {
-            console.error('Error fetching user notes:', error);
+            console.error('💥 Error fetching user notes:', error);
             return [];
         }
     }
@@ -385,8 +408,30 @@ export class UserService {
 
     async getUserCalendarData(userId: string, month: number, year: number): Promise<any[]> {
         try {
+            console.log(`📅 getUserCalendarData called for userId: ${userId}, month: ${month} (${month + 1}), year: ${year}`);
+
+            // FIRST: Let's get ALL appointments to see what's in the database
+            console.log(`🔍 DEBUGGING: Getting ALL appointments from Firebase...`);
+            const allAppointmentsQuery = query(collection(this.db, 'appointments'));
+            const allSnapshot = await getDocs(allAppointmentsQuery);
+            console.log(`🔍 TOTAL appointments in database: ${allSnapshot.docs.length}`);
+
+            allSnapshot.docs.forEach(doc => {
+                const data = doc.data();
+                console.log(`🔍 Appointment ${doc.id}:`, {
+                    userId: data['userId'],
+                    date: data['date']?.toDate(),
+                    dateString: data['date']?.toDate()?.toDateString(),
+                    startTime: data['startTime'],
+                    status: data['status'],
+                    psychologistId: data['psychologistId']
+                });
+            });
+
             const startDate = new Date(year, month, 1);
             const endDate = new Date(year, month + 1, 0);
+
+            console.log(`📅 Date range: ${startDate.toISOString()} to ${endDate.toISOString()}`);
 
             const q = query(
                 collection(this.db, 'appointments'),
@@ -396,39 +441,86 @@ export class UserService {
                 orderBy('date', 'asc')
             );
 
+            console.log('📅 Executing filtered appointments query...');
             const snapshot = await getDocs(q);
-            const appointments = snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data(),
-                date: doc.data()['date'].toDate()
-            })) as Appointment[];
+            console.log(`📅 Found ${snapshot.docs.length} appointments in date range for user ${userId}`);
 
-            // Group appointments by date
+            const appointments = snapshot.docs.map(doc => {
+                const data = doc.data();
+                const appointment = {
+                    id: doc.id,
+                    ...data,
+                    date: data['date'].toDate()
+                } as any;
+                console.log(`📅 Filtered appointment: ${appointment.date.toDateString()} ${appointment.startTime || 'N/A'}-${appointment.endTime || 'N/A'} (${appointment.status || 'N/A'})`);
+                return appointment;
+            }) as Appointment[];
+
+            // Generate calendar grid with proper weekday alignment
             const calendarData: any[] = [];
+
+            // Get first day of month and its weekday
+            const firstDay = new Date(year, month, 1);
+            const firstWeekday = (firstDay.getDay() + 6) % 7; // Convert to Monday = 0
+
+            console.log(`📅 First day of month: ${firstDay.toDateString()}, weekday: ${firstWeekday}`);
+
+            // Add empty cells for days before the 1st
+            for (let i = 0; i < firstWeekday; i++) {
+                calendarData.push({
+                    date: null,
+                    day: null,
+                    appointments: [],
+                    hasAppointment: false,
+                    isToday: false,
+                    isPast: false,
+                    isEmpty: true
+                });
+            }
+
+            // Add days of current month
             const daysInMonth = endDate.getDate();
+            console.log(`📅 Processing ${daysInMonth} days in month ${month + 1}/${year}`);
 
             for (let day = 1; day <= daysInMonth; day++) {
                 const currentDate = new Date(year, month, day);
                 const dayAppointments = appointments.filter(apt => {
                     const aptDate = new Date(apt.date);
-                    return aptDate.getDate() === day &&
+                    const matches = aptDate.getDate() === day &&
                         aptDate.getMonth() === month &&
                         aptDate.getFullYear() === year;
+
+                    if (matches) {
+                        console.log(`📅 ✅ Day ${day}: Found appointment ${apt.startTime}-${apt.endTime} (${apt.status})`);
+                    }
+
+                    return matches;
                 });
 
-                calendarData.push({
+                const dayData = {
                     date: currentDate,
                     day: day,
                     appointments: dayAppointments,
                     hasAppointment: dayAppointments.length > 0,
                     isToday: this.isToday(currentDate),
-                    isPast: currentDate < new Date()
-                });
+                    isPast: currentDate < new Date(),
+                    isEmpty: false
+                };
+
+                if (dayAppointments.length > 0) {
+                    console.log(`📅 🎯 Day ${day} (${currentDate.toDateString()}) has ${dayAppointments.length} appointments:`, dayAppointments.map(apt => `${apt.startTime}-${apt.endTime}`));
+                }
+
+                calendarData.push(dayData);
             }
+
+            console.log(`📅 Calendar data generated: ${calendarData.length} cells total`);
+            console.log(`📅 Empty cells: ${calendarData.filter(d => d.isEmpty).length}`);
+            console.log(`📅 Days with appointments: ${calendarData.filter(d => d.hasAppointment).length}`);
 
             return calendarData;
         } catch (error) {
-            console.error('Error getting user calendar data:', error);
+            console.error('❌ Error getting user calendar data:', error);
             return [];
         }
     }

@@ -4,14 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../core/auth.service';
 import { PsychologistService } from '../core/psychologist.service';
+import { SkeletonLoaderComponent } from '../shared/skeleton-loader/skeleton-loader.component';
 import { User } from '../models/user.model';
 import { Psychologist } from '../models/psychologist.model';
 
 @Component({
-    selector: 'app-moderator-dashboard',
-    standalone: true,
-    imports: [CommonModule, FormsModule, RouterModule],
-    template: `
+  selector: 'app-moderator-dashboard',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule, SkeletonLoaderComponent],
+  template: `
     <div class="moderator-dashboard">
       <!-- Header -->
       <header class="dashboard-header">
@@ -77,10 +78,10 @@ import { Psychologist } from '../models/psychologist.model';
       </nav>
 
       <!-- Loading -->
-      <div class="loading-container" *ngIf="isLoading">
-        <div class="spinner"></div>
-        <p>Ładowanie danych...</p>
-      </div>
+      <app-skeleton-loader 
+        *ngIf="isLoading" 
+        type="dashboard">
+      </app-skeleton-loader>
 
       <!-- Main Content -->
       <main class="dashboard-content" *ngIf="!isLoading">
@@ -348,278 +349,278 @@ import { Psychologist } from '../models/psychologist.model';
       </main>
     </div>
   `,
-    styleUrls: ['./moderator-dashboard.component.scss']
+  styleUrls: ['./moderator-dashboard.component.scss']
 })
 export class ModeratorDashboardComponent implements OnInit {
-    currentUser: User | null = null;
-    activeTab = 'overview';
-    isLoading = false;
+  currentUser: User | null = null;
+  activeTab = 'overview';
+  isLoading = false;
 
-    // Overview stats
-    pendingReviews = 0;
-    activeReports = 0;
-    approvedToday = 0;
-    rejectedToday = 0;
-    todayModerated = 0;
-    weekModerated = 0;
-    approvalRate = 0;
+  // Overview stats
+  pendingReviews = 0;
+  activeReports = 0;
+  approvedToday = 0;
+  rejectedToday = 0;
+  todayModerated = 0;
+  weekModerated = 0;
+  approvalRate = 0;
 
-    // Content stats
-    pendingProfiles = 0;
-    pendingUserContent = 0;
-    pendingComments = 0;
+  // Content stats
+  pendingProfiles = 0;
+  pendingUserContent = 0;
+  pendingComments = 0;
 
-    // Data
-    urgentItems: any[] = [];
-    pendingReviewsList: any[] = [];
-    filteredReviews: any[] = [];
-    reportsList: any[] = [];
-    filteredReports: any[] = [];
+  // Data
+  urgentItems: any[] = [];
+  pendingReviewsList: any[] = [];
+  filteredReviews: any[] = [];
+  reportsList: any[] = [];
+  filteredReports: any[] = [];
 
-    // Filters
-    reviewFilter = '';
-    reportFilter = '';
-    reportTypeFilter = '';
+  // Filters
+  reviewFilter = '';
+  reportFilter = '';
+  reportTypeFilter = '';
 
-    constructor(
-        private authService: AuthService,
-        private psychologistService: PsychologistService,
-        private router: Router
-    ) { }
+  constructor(
+    private authService: AuthService,
+    private psychologistService: PsychologistService,
+    private router: Router
+  ) { }
 
-    ngOnInit() {
-        this.currentUser = this.authService.getCurrentUser();
+  ngOnInit() {
+    this.currentUser = this.authService.getCurrentUser();
 
-        if (!this.currentUser || this.currentUser.role !== 'moderator') {
-            this.router.navigate(['/dashboard']);
-            return;
-        }
-
-        this.loadDashboardData();
+    if (!this.currentUser || this.currentUser.role !== 'moderator') {
+      this.router.navigate(['/dashboard']);
+      return;
     }
 
-    async loadDashboardData() {
-        this.isLoading = true;
-        try {
-            await this.loadOverviewStats();
-            await this.loadUrgentItems();
-            await this.loadPendingReviews();
-            await this.loadReports();
-        } catch (error) {
-            console.error('Error loading dashboard data:', error);
-        } finally {
-            this.isLoading = false;
-        }
-    }
+    this.loadDashboardData();
+  }
 
-    async loadOverviewStats() {
-        // TODO: Implement real stats loading from Firebase
-        this.pendingReviews = 12;
-        this.activeReports = 3;
-        this.approvedToday = 25;
-        this.rejectedToday = 4;
-        this.todayModerated = 29;
-        this.weekModerated = 156;
-        this.approvalRate = 86;
-        this.pendingProfiles = 2;
-        this.pendingUserContent = 8;
-        this.pendingComments = 15;
+  async loadDashboardData() {
+    this.isLoading = true;
+    try {
+      await this.loadOverviewStats();
+      await this.loadUrgentItems();
+      await this.loadPendingReviews();
+      await this.loadReports();
+    } catch (error) {
+      console.error('Error loading dashboard data:', error);
+    } finally {
+      this.isLoading = false;
     }
+  }
 
-    async loadUrgentItems() {
-        this.urgentItems = [
-            {
-                type: 'high-priority-report',
-                title: 'Zgłoszenie nękania',
-                description: 'Użytkownik zgłasza nieodpowiednie zachowanie psychologa',
-                timestamp: new Date()
-            },
-            {
-                type: 'spam-review',
-                title: 'Podejrzana seria opinii',
-                description: '5 podobnych opinii z tego samego IP',
-                timestamp: new Date(Date.now() - 1000 * 60 * 30)
-            }
-        ];
-    }
+  async loadOverviewStats() {
+    // TODO: Implement real stats loading from Firebase
+    this.pendingReviews = 12;
+    this.activeReports = 3;
+    this.approvedToday = 25;
+    this.rejectedToday = 4;
+    this.todayModerated = 29;
+    this.weekModerated = 156;
+    this.approvalRate = 86;
+    this.pendingProfiles = 2;
+    this.pendingUserContent = 8;
+    this.pendingComments = 15;
+  }
 
-    async loadPendingReviews() {
-        // TODO: Implement real reviews loading from Firebase
-        this.pendingReviewsList = [
-            {
-                id: '1',
-                userName: 'Anna K.',
-                rating: 5,
-                comment: 'Bardzo profesjonalna pomoc, polecam!',
-                psychologistName: 'Dr Jan Kowalski',
-                status: 'pending',
-                createdAt: new Date()
-            },
-            {
-                id: '2',
-                userName: 'Piotr N.',
-                rating: 1,
-                comment: 'Słaba jakość usług, nie polecam.',
-                psychologistName: 'Dr Anna Nowak',
-                status: 'reported',
-                createdAt: new Date(Date.now() - 1000 * 60 * 60)
-            }
-        ];
-        this.filteredReviews = [...this.pendingReviewsList];
-    }
+  async loadUrgentItems() {
+    this.urgentItems = [
+      {
+        type: 'high-priority-report',
+        title: 'Zgłoszenie nękania',
+        description: 'Użytkownik zgłasza nieodpowiednie zachowanie psychologa',
+        timestamp: new Date()
+      },
+      {
+        type: 'spam-review',
+        title: 'Podejrzana seria opinii',
+        description: '5 podobnych opinii z tego samego IP',
+        timestamp: new Date(Date.now() - 1000 * 60 * 30)
+      }
+    ];
+  }
 
-    async loadReports() {
-        this.reportsList = [
-            {
-                id: '1',
-                type: 'inappropriate-content',
-                severity: 'high',
-                status: 'new',
-                reporterName: 'Maria S.',
-                targetType: 'review',
-                targetName: 'Opinia o Dr. Kowalski',
-                description: 'Opinia zawiera nieodpowiednie treści',
-                createdAt: new Date()
-            },
-            {
-                id: '2',
-                type: 'harassment',
-                severity: 'critical',
-                status: 'in-progress',
-                reporterName: 'Jan D.',
-                targetType: 'psychologist',
-                targetName: 'Dr. Anna Nowak',
-                description: 'Nieodpowiednie zachowanie podczas sesji',
-                createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2)
-            }
-        ];
-        this.filteredReports = [...this.reportsList];
-    }
+  async loadPendingReviews() {
+    // TODO: Implement real reviews loading from Firebase
+    this.pendingReviewsList = [
+      {
+        id: '1',
+        userName: 'Anna K.',
+        rating: 5,
+        comment: 'Bardzo profesjonalna pomoc, polecam!',
+        psychologistName: 'Dr Jan Kowalski',
+        status: 'pending',
+        createdAt: new Date()
+      },
+      {
+        id: '2',
+        userName: 'Piotr N.',
+        rating: 1,
+        comment: 'Słaba jakość usług, nie polecam.',
+        psychologistName: 'Dr Anna Nowak',
+        status: 'reported',
+        createdAt: new Date(Date.now() - 1000 * 60 * 60)
+      }
+    ];
+    this.filteredReviews = [...this.pendingReviewsList];
+  }
 
-    setActiveTab(tab: string) {
-        this.activeTab = tab;
-    }
+  async loadReports() {
+    this.reportsList = [
+      {
+        id: '1',
+        type: 'inappropriate-content',
+        severity: 'high',
+        status: 'new',
+        reporterName: 'Maria S.',
+        targetType: 'review',
+        targetName: 'Opinia o Dr. Kowalski',
+        description: 'Opinia zawiera nieodpowiednie treści',
+        createdAt: new Date()
+      },
+      {
+        id: '2',
+        type: 'harassment',
+        severity: 'critical',
+        status: 'in-progress',
+        reporterName: 'Jan D.',
+        targetType: 'psychologist',
+        targetName: 'Dr. Anna Nowak',
+        description: 'Nieodpowiednie zachowanie podczas sesji',
+        createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2)
+      }
+    ];
+    this.filteredReports = [...this.reportsList];
+  }
 
-    logout() {
-        this.authService.logout();
-    }
+  setActiveTab(tab: string) {
+    this.activeTab = tab;
+  }
 
-    getUrgentIcon(type: string): string {
-        switch (type) {
-            case 'high-priority-report': return '🚨';
-            case 'spam-review': return '🔍';
-            default: return '⚠️';
-        }
-    }
+  logout() {
+    this.authService.logout();
+  }
 
-    getStars(rating: number): string {
-        return '★'.repeat(rating) + '☆'.repeat(5 - rating);
+  getUrgentIcon(type: string): string {
+    switch (type) {
+      case 'high-priority-report': return '🚨';
+      case 'spam-review': return '🔍';
+      default: return '⚠️';
     }
+  }
 
-    getStatusText(status: string): string {
-        switch (status) {
-            case 'pending': return 'Oczekuje';
-            case 'approved': return 'Zatwierdzona';
-            case 'rejected': return 'Odrzucona';
-            case 'reported': return 'Zgłoszona';
-            case 'flagged': return 'Oznaczona';
-            default: return status;
-        }
-    }
+  getStars(rating: number): string {
+    return '★'.repeat(rating) + '☆'.repeat(5 - rating);
+  }
 
-    getReportTypeText(type: string): string {
-        switch (type) {
-            case 'inappropriate-content': return 'Nieodpowiednia treść';
-            case 'spam': return 'Spam';
-            case 'harassment': return 'Nękanie';
-            case 'other': return 'Inne';
-            default: return type;
-        }
+  getStatusText(status: string): string {
+    switch (status) {
+      case 'pending': return 'Oczekuje';
+      case 'approved': return 'Zatwierdzona';
+      case 'rejected': return 'Odrzucona';
+      case 'reported': return 'Zgłoszona';
+      case 'flagged': return 'Oznaczona';
+      default: return status;
     }
+  }
 
-    getSeverityText(severity: string): string {
-        switch (severity) {
-            case 'low': return 'Niska';
-            case 'medium': return 'Średnia';
-            case 'high': return 'Wysoka';
-            case 'critical': return 'Krytyczna';
-            default: return severity;
-        }
+  getReportTypeText(type: string): string {
+    switch (type) {
+      case 'inappropriate-content': return 'Nieodpowiednia treść';
+      case 'spam': return 'Spam';
+      case 'harassment': return 'Nękanie';
+      case 'other': return 'Inne';
+      default: return type;
     }
+  }
 
-    getReportStatusText(status: string): string {
-        switch (status) {
-            case 'new': return 'Nowe';
-            case 'in-progress': return 'W trakcie';
-            case 'resolved': return 'Rozwiązane';
-            default: return status;
-        }
+  getSeverityText(severity: string): string {
+    switch (severity) {
+      case 'low': return 'Niska';
+      case 'medium': return 'Średnia';
+      case 'high': return 'Wysoka';
+      case 'critical': return 'Krytyczna';
+      default: return severity;
     }
+  }
 
-    filterReviews() {
-        this.filteredReviews = this.pendingReviewsList.filter(review => {
-            return !this.reviewFilter || review.status === this.reviewFilter;
-        });
+  getReportStatusText(status: string): string {
+    switch (status) {
+      case 'new': return 'Nowe';
+      case 'in-progress': return 'W trakcie';
+      case 'resolved': return 'Rozwiązane';
+      default: return status;
     }
+  }
 
-    filterReports() {
-        this.filteredReports = this.reportsList.filter(report => {
-            const matchesStatus = !this.reportFilter || report.status === this.reportFilter;
-            const matchesType = !this.reportTypeFilter || report.type === this.reportTypeFilter;
-            return matchesStatus && matchesType;
-        });
-    }
+  filterReviews() {
+    this.filteredReviews = this.pendingReviewsList.filter(review => {
+      return !this.reviewFilter || review.status === this.reviewFilter;
+    });
+  }
 
-    handleUrgentItem(item: any) {
-        // TODO: Implement urgent item handling
-        console.log('Handle urgent item:', item);
-    }
+  filterReports() {
+    this.filteredReports = this.reportsList.filter(report => {
+      const matchesStatus = !this.reportFilter || report.status === this.reportFilter;
+      const matchesType = !this.reportTypeFilter || report.type === this.reportTypeFilter;
+      return matchesStatus && matchesType;
+    });
+  }
 
-    approveReview(review: any) {
-        // TODO: Implement review approval
-        review.status = 'approved';
-        this.approvedToday++;
-        console.log('Review approved:', review);
-    }
+  handleUrgentItem(item: any) {
+    // TODO: Implement urgent item handling
+    console.log('Handle urgent item:', item);
+  }
 
-    rejectReview(review: any) {
-        // TODO: Implement review rejection
-        review.status = 'rejected';
-        this.rejectedToday++;
-        console.log('Review rejected:', review);
-    }
+  approveReview(review: any) {
+    // TODO: Implement review approval
+    review.status = 'approved';
+    this.approvedToday++;
+    console.log('Review approved:', review);
+  }
 
-    flagReview(review: any) {
-        // TODO: Implement review flagging
-        review.status = 'flagged';
-        console.log('Review flagged:', review);
-    }
+  rejectReview(review: any) {
+    // TODO: Implement review rejection
+    review.status = 'rejected';
+    this.rejectedToday++;
+    console.log('Review rejected:', review);
+  }
 
-    viewReviewDetails(review: any) {
-        // TODO: Implement review details view
-        console.log('View review details:', review);
-    }
+  flagReview(review: any) {
+    // TODO: Implement review flagging
+    review.status = 'flagged';
+    console.log('Review flagged:', review);
+  }
 
-    investigateReport(report: any) {
-        // TODO: Implement report investigation
-        report.status = 'in-progress';
-        console.log('Investigating report:', report);
-    }
+  viewReviewDetails(review: any) {
+    // TODO: Implement review details view
+    console.log('View review details:', review);
+  }
 
-    resolveReport(report: any, resolution: string) {
-        // TODO: Implement report resolution
-        report.status = 'resolved';
-        report.resolution = resolution;
-        console.log('Report resolved:', report, resolution);
-    }
+  investigateReport(report: any) {
+    // TODO: Implement report investigation
+    report.status = 'in-progress';
+    console.log('Investigating report:', report);
+  }
 
-    viewReportDetails(report: any) {
-        // TODO: Implement report details view
-        console.log('View report details:', report);
-    }
+  resolveReport(report: any, resolution: string) {
+    // TODO: Implement report resolution
+    report.status = 'resolved';
+    report.resolution = resolution;
+    console.log('Report resolved:', report, resolution);
+  }
 
-    moderateCategory(category: string) {
-        // TODO: Implement category moderation
-        console.log('Moderate category:', category);
-    }
+  viewReportDetails(report: any) {
+    // TODO: Implement report details view
+    console.log('View report details:', report);
+  }
+
+  moderateCategory(category: string) {
+    // TODO: Implement category moderation
+    console.log('Moderate category:', category);
+  }
 }

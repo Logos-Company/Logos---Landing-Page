@@ -8,6 +8,7 @@ import { PsychologistService } from '../core/psychologist.service';
 import { PackageService } from '../core/package.service';
 import { UserService } from '../core/user.service';
 import { DataSeederService } from '../core/data-seeder.service';
+import { SkeletonLoaderComponent } from '../shared/skeleton-loader/skeleton-loader.component';
 import { User, UserStats, Review, PsychologistChangeRequest } from '../models/user.model';
 import { Appointment } from '../models/appointment.model';
 import { Psychologist, PsychologistNote } from '../models/psychologist.model';
@@ -19,7 +20,8 @@ import { Package } from '../models/user.model';
   imports: [
     CommonModule,
     FormsModule,
-    RouterModule
+    RouterModule,
+    SkeletonLoaderComponent
   ],
   template: `
     <div class="dashboard">
@@ -29,13 +31,7 @@ import { Package } from '../models/user.model';
           <h1>Dashboard Użytkownika</h1>
           <div class="header-actions">
             <button class="demo-btn" (click)="refreshData()" [disabled]="isLoading" title="Odśwież dane">
-              🔄
-            </button>
-            <button class="demo-btn" (click)="resetDemoData()" [disabled]="isLoading" title="Resetuj dane demo">
-              ⚠️
-            </button>
-            <button class="demo-btn" (click)="switchToTestPsychologist()" [disabled]="isLoading" title="Test: Przełącz na psychologa">
-              👨‍⚕️
+              🔄 Odśwież
             </button>
             <span class="user-role user">UŻYTKOWNIK</span>
             <button class="logout-btn" (click)="logout()">Wyloguj</button>
@@ -97,10 +93,10 @@ import { Package } from '../models/user.model';
       </nav>
 
       <!-- Loading -->
-      <div class="loading-container" *ngIf="isLoading">
-        <div class="spinner"></div>
-        <p>Ładowanie danych...</p>
-      </div>
+      <app-skeleton-loader 
+        *ngIf="isLoading" 
+        type="dashboard">
+      </app-skeleton-loader>
 
       <!-- Main Content -->
       <main class="dashboard-content" *ngIf="!isLoading">
@@ -165,26 +161,66 @@ import { Package } from '../models/user.model';
           </div>
 
           <!-- Assigned Psychologist Info -->
-          <div class="psychologist-card" *ngIf="assignedPsychologist">
-            <h3>Twój psycholog</h3>
-            <div class="psychologist-info">
-              <div class="psychologist-avatar">
-                <img [src]="assignedPsychologist.profileImage || '/assets/default-avatar.png'" 
-                     [alt]="assignedPsychologist.firstName">
-              </div>
+          <div class="psychologist-info-card" *ngIf="assignedPsychologist">
+            <div class="card-header">
+              <h3>Twój psycholog</h3>
+              <span class="status-badge active">Aktywny</span>
+            </div>
+            
+            <div class="psychologist-content">
               <div class="psychologist-details">
                 <h4>{{ assignedPsychologist.firstName }} {{ assignedPsychologist.lastName }}</h4>
-                <p class="specializations">{{ assignedPsychologist.specializations?.join(', ') }}</p>
-                <p class="rating">⭐ {{ assignedPsychologist.rating }}/5 ({{ assignedPsychologist.reviewCount }} opinii)</p>
-                <div class="psychologist-actions">
-                  <button class="btn btn-primary" (click)="setActiveTab('calendar')">
-                    Umów wizytę
-                  </button>
-                  <button class="btn btn-secondary" (click)="showChangePsychologist = true">
-                    Zmień psychologa
-                  </button>
+                <p class="title">Psycholog kliniczny</p>
+                
+                <div class="specializations" *ngIf="assignedPsychologist.specializations?.length">
+                  <span class="specialization-tag" *ngFor="let spec of (assignedPsychologist.specializations || []).slice(0, 3)">
+                    {{ spec }}
+                  </span>
+                </div>
+                
+                <div class="rating-section" *ngIf="assignedPsychologist.rating">
+                  <div class="rating">
+                    <span class="stars">★★★★★</span>
+                    <span class="rating-text">{{ assignedPsychologist.rating }}/5</span>
+                  </div>
+                  <span class="review-count">({{ assignedPsychologist.reviewCount || 0 }} opinii)</span>
+                </div>
+                
+                <div class="contact-info">
+                  <div class="contact-item" *ngIf="assignedPsychologist.email">
+                    <i class="icon">✉️</i>
+                    <span>{{ assignedPsychologist.email }}</span>
+                  </div>
+                  <div class="contact-item" *ngIf="assignedPsychologist.phone">
+                    <i class="icon">📞</i>
+                    <span>{{ assignedPsychologist.phone }}</span>
+                  </div>
                 </div>
               </div>
+            </div>
+            
+            <div class="psychologist-actions">
+              <button class="btn btn-primary" (click)="setActiveTab('calendar')">
+                <i class="icon">📅</i>
+                Umów wizytę
+              </button>
+              <button class="btn btn-secondary" (click)="sendMessage()">
+                <i class="icon">�</i>
+                Wyślij wiadomość
+              </button>
+            </div>
+          </div>
+
+          <!-- No Assigned Psychologist -->
+          <div class="no-psychologist-card" *ngIf="!assignedPsychologist">
+            <div class="empty-state">
+              <div class="empty-icon">🧠</div>
+              <h3>Nie masz jeszcze przypisanego psychologa</h3>
+              <p>Wybierz psychologa z naszej listy specjalistów, aby rozpocząć terapię</p>
+              <button class="btn btn-primary" (click)="setActiveTab('psychologists')">
+                <i class="icon">👥</i>
+                Wybierz psychologa
+              </button>
             </div>
           </div>
 
@@ -325,15 +361,10 @@ import { Package } from '../models/user.model';
                 <div class="psychologist-actions">
                   <button 
                     class="btn btn-primary select-btn" 
-                    (click)="selectPsychologist(psychologist)"
-                    [disabled]="currentUser?.assignedPsychologistId === psychologist.id || 
-                               psychologist.isAvailable === false || 
-                               !currentUser?.canSelectPsychologist"
-                    [title]="!currentUser?.canSelectPsychologist ? 'Brak uprawnień - skontaktuj się z administratorem' : ''"
+                    [disabled]="true"
+                    title="Już masz przypisanego psychologa. Skontaktuj się z administratorem w celu zmiany."
                   >
-                    {{ currentUser?.assignedPsychologistId === psychologist.id ? 'Aktualny psycholog' : 
-                       !currentUser?.canSelectPsychologist ? 'Brak uprawnień' :
-                       'Wybierz psychologa' }}
+                    {{ currentUser?.assignedPsychologistId === psychologist.id ? '✅ Twój psycholog' : 'Nieaktywne - masz już psychologa' }}
                   </button>
                 </div>
               </div>
@@ -360,7 +391,9 @@ import { Package } from '../models/user.model';
             <div class="psychologist-profile">
               <div class="profile-header">
                 <div class="profile-avatar">
-                  {{ assignedPsychologist.firstName[0] }}{{ assignedPsychologist.lastName[0] }}
+                  <div class="avatar-fallback" *ngIf="!assignedPsychologist.profileImage">
+                    {{ assignedPsychologist.firstName[0] }}{{ assignedPsychologist.lastName[0] }}
+                  </div>
                 </div>
                 <div class="profile-info">
                   <h2>{{ assignedPsychologist.firstName }} {{ assignedPsychologist.lastName }}</h2>
@@ -435,9 +468,9 @@ import { Package } from '../models/user.model';
               <!-- Change psychologist option -->
               <div class="change-psychologist-section">
                 <h4>Chcesz zmienić psychologa?</h4>
-                <p>Jeśli obecny psycholog nie odpowiada Twoim potrzebom, możesz złożyć wniosek o zmianę.</p>
-                <button class="btn btn-secondary" (click)="openChangePsychologistModal()">
-                  🔄 Zmień psychologa
+                <p>Jeśli obecny psycholog nie odpowiada Twoim potrzebom, możesz wybrać innego.</p>
+                <button class="btn btn-secondary" (click)="setActiveTab('psychologists')">
+                  🔄 Wybierz innego psychologa
                 </button>
               </div>
             </div>
@@ -675,18 +708,182 @@ import { Package } from '../models/user.model';
 
         <!-- Calendar Tab -->
         <section class="calendar-section" *ngIf="activeTab === 'calendar'">
+          <div class="section-header">
+            <h3>Kalendarz wizyt</h3>
+            <p class="section-description">Przeglądaj i zarządzaj swoimi wizytami</p>
+          </div>
+
           <div class="calendar-header" *ngIf="!assignedPsychologist">
             <div class="warning-message">
-              <p>⚠️ Aby umówić wizytę, musisz najpierw wybrać psychologa.</p>
+              <p>⚠️ Aby zobaczyć kalendarz, musisz mieć przypisanego psychologa.</p>
               <button class="btn btn-primary" (click)="setActiveTab('psychologists')">
-                Wybierz psychologa
+                Sprawdź swoich psychologów
               </button>
             </div>
           </div>
           
-          <!-- Calendar will be implemented later -->
-          <div class="placeholder">
-            <p>Kalendarz będzie dostępny wkrótce</p>
+          <!-- Calendar Content -->
+          <div class="calendar-content" *ngIf="assignedPsychologist">
+            <!-- Month Navigation -->
+            <div class="calendar-navigation">
+              <button class="btn btn-secondary" (click)="previousMonth()">‹ Poprzedni</button>
+              <h3 class="current-month">{{ getCurrentMonthYear() }}</h3>
+              <button class="btn btn-secondary" (click)="nextMonth()">Następny ›</button>
+            </div>
+
+            <!-- Calendar Grid -->
+            <div class="calendar-grid">
+              <div class="calendar-header-row">
+                <div class="day-header">Pon</div>
+                <div class="day-header">Wt</div>
+                <div class="day-header">Śr</div>
+                <div class="day-header">Czw</div>
+                <div class="day-header">Pt</div>
+                <div class="day-header">Sob</div>
+                <div class="day-header">Nie</div>
+              </div>
+              
+              <div class="calendar-days">
+                @if (calendarData.length > 0) {
+                  @for (day of calendarData; track $index) {
+                    @if (day.isEmpty) {
+                      <div class="calendar-day empty-day"></div>
+                    } @else {
+                      <div class="calendar-day" 
+                           [class.today]="day.isToday"
+                           [class.has-appointment]="day.hasAppointment"
+                           [class.past]="day.isPast"
+                           (click)="selectDate(day.date)">
+                        <span class="day-number">{{ day.day }}</span>
+                        @if (day.hasAppointment) {
+                          <div class="appointment-indicators">
+                            @for (appointment of day.appointments.slice(0, 2); track appointment.id) {
+                              <div class="appointment-indicator" 
+                                   [class]="appointment.status"
+                                   [title]="appointment.startTime + ' - ' + appointment.endTime + ' (' + getStatusText(appointment.status) + ')'">
+                                {{ appointment.startTime }}
+                              </div>
+                            }
+                            @if (day.appointments.length > 2) {
+                              <div class="more-appointments">
+                                +{{ day.appointments.length - 2 }}
+                              </div>
+                            }
+                          </div>
+                        }
+                      </div>
+                    }
+                  }
+                } @else {
+                  <!-- Fallback calendar grid -->
+                  @for (day of generateFallbackCalendar(); track $index) {
+                    @if (day.isEmpty) {
+                      <div class="calendar-day empty-day"></div>
+                    } @else {
+                      <div class="calendar-day" 
+                           [class.today]="day.isToday"
+                           (click)="selectDate(day.date)">
+                        <span class="day-number">{{ day.day }}</span>
+                      </div>
+                    }
+                  }
+                }
+              </div>
+            </div>
+
+            <!-- Selected Day Details -->
+            <div class="selected-day-details" *ngIf="selectedDate">
+              <h4>{{ selectedDate | date:'fullDate':'pl' }}</h4>
+              <div class="day-appointments" *ngIf="selectedDayAppointments.length > 0; else noDayAppointments">
+                @for (appointment of selectedDayAppointments; track appointment.id) {
+                  <div class="appointment-detail-card" [class]="appointment.status">
+                    <div class="appointment-time">
+                      {{ appointment.startTime }} - {{ appointment.endTime }}
+                    </div>
+                    <div class="appointment-type">
+                      {{ appointment.type === 'individual' ? 'Sesja indywidualna' : 'Sesja grupowa' }}
+                    </div>
+                    <div class="appointment-status">
+                      {{ getStatusText(appointment.status) }}
+                    </div>
+                    @if (appointment.notes) {
+                      <div class="appointment-notes">
+                        <strong>Notatki:</strong> {{ appointment.notes }}
+                      </div>
+                    }
+                    <div class="appointment-psychologist">
+                      <strong>Psycholog:</strong> {{ assignedPsychologist.firstName }} {{ assignedPsychologist.lastName }}
+                    </div>
+                  </div>
+                }
+              </div>
+              <ng-template #noDayAppointments>
+                <p class="no-appointments">Brak wizyt w tym dniu</p>
+              </ng-template>
+            </div>
+
+            <!-- Upcoming Appointments -->
+            <div class="upcoming-appointments" *ngIf="upcomingAppointments.length > 0">
+              <h4>Nadchodzące wizyty ({{ upcomingAppointments.length }})</h4>
+              <div class="appointments-list">
+                @for (appointment of upcomingAppointments.slice(0, 5); track appointment.id) {
+                  <div class="appointment-card" [class]="appointment.status">
+                    <div class="appointment-date">
+                      {{ appointment.date | date:'dd.MM.yyyy (EEEE)':'pl' }}
+                    </div>
+                    <div class="appointment-time">
+                      {{ appointment.startTime }} - {{ appointment.endTime }}
+                    </div>
+                    <div class="appointment-type">
+                      {{ appointment.type === 'individual' ? 'Sesja indywidualna' : 'Sesja grupowa' }}
+                    </div>
+                    <div class="appointment-status">
+                      {{ getStatusText(appointment.status) }}
+                    </div>
+                    @if (appointment.notes) {
+                      <div class="appointment-notes">
+                        <small><strong>Notatki:</strong> {{ appointment.notes }}</small>
+                      </div>
+                    }
+                    <div class="appointment-psychologist">
+                      <small>Psycholog: {{ assignedPsychologist.firstName }} {{ assignedPsychologist.lastName }}</small>
+                    </div>
+                  </div>
+                }
+              </div>
+              @if (upcomingAppointments.length > 5) {
+                <p class="more-appointments-note">
+                  I {{ upcomingAppointments.length - 5 }} więcej wizyt...
+                </p>
+              }
+            </div>
+
+            <!-- Past Appointments -->
+            <div class="past-appointments" *ngIf="recentAppointments.length > 0">
+              <h4>Ostatnie wizyty</h4>
+              <div class="appointments-list">
+                @for (appointment of recentAppointments.slice(0, 3); track appointment.id) {
+                  <div class="appointment-card past" [class]="appointment.status">
+                    <div class="appointment-date">
+                      {{ appointment.date | date:'dd.MM.yyyy':'pl' }}
+                    </div>
+                    <div class="appointment-time">
+                      {{ appointment.startTime }} - {{ appointment.endTime }}
+                    </div>
+                    <div class="appointment-status">
+                      {{ getStatusText(appointment.status) }}
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- No appointments message -->
+          <div class="empty-state" *ngIf="assignedPsychologist && calendarData.length === 0">
+            <div class="empty-icon">📅</div>
+            <h4>Brak wizyt w tym miesiącu</h4>
+            <p>Skontaktuj się ze swoim psychologiem aby umówić wizytę</p>
           </div>
         </section>
 
@@ -707,61 +904,7 @@ import { Package } from '../models/user.model';
         </section>
       </main>
 
-      <!-- Change Psychologist Modal -->
-      <div class="modal" *ngIf="showChangePsychologist" (click)="closeChangePsychologistModal()">
-        <div class="modal-content" (click)="$event.stopPropagation()">
-          <div class="modal-header">
-            <h3>Zmiana psychologa</h3>
-            <button class="close-btn" (click)="closeChangePsychologistModal()">×</button>
-          </div>
-          
-          <div class="modal-body">
-            <form (ngSubmit)="submitPsychologistChange()" #changeForm="ngForm">
-              <div class="form-group">
-                <label>Wybierz nowego psychologa:</label>
-                <select [(ngModel)]="changeRequest.newPsychologistId" name="newPsychologistId" required>
-                  <option value="">Wybierz psychologa</option>
-                  @for (psychologist of allPsychologists; track psychologist.id) {
-                    <option [value]="psychologist.id"
-                            [disabled]="psychologist.id === currentUser?.assignedPsychologistId">
-                      {{ psychologist.firstName }} {{ psychologist.lastName }} - {{ psychologist.specializations?.join(', ') }}
-                    </option>
-                  }
-                </select>
-              </div>
-              
-              <div class="form-group">
-                <label>Powód zmiany:</label>
-                <textarea 
-                  [(ngModel)]="changeRequest.reason" 
-                  name="reason" 
-                  required
-                  rows="4"
-                  placeholder="Opisz powód, dla którego chcesz zmienić psychologa..."
-                ></textarea>
-              </div>
-              
-              <div class="form-group">
-                <label>Priorytet:</label>
-                <select [(ngModel)]="changeRequest.urgency" name="urgency" required>
-                  <option value="low">Niski</option>
-                  <option value="medium">Średni</option>
-                  <option value="high">Wysoki</option>
-                </select>
-              </div>
-              
-              <div class="modal-actions">
-                <button type="button" class="btn btn-secondary" (click)="closeChangePsychologistModal()">
-                  Anuluj
-                </button>
-                <button type="submit" class="btn btn-primary" [disabled]="!changeForm.valid">
-                  Wyślij prośbę
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
+
 
       <!-- Add Review Modal -->
       <div class="modal" *ngIf="showAddReview" (click)="closeAddReviewModal()">
@@ -828,8 +971,6 @@ import { Package } from '../models/user.model';
           </div>
         </div>
       </div>
-
-      <!-- Change Psychologist Modal -->
   `,
   styleUrls: ['./dashboard.component.scss']
 })
@@ -849,8 +990,16 @@ export class DashboardComponent implements OnInit {
   assignedPsychologist: User | null = null;
   currentPackage: Package | null = null;
   recentAppointments: Appointment[] = [];
+  upcomingAppointments: Appointment[] = [];
   userNotes: PsychologistNote[] = [];
   userReviews: Review[] = [];
+
+  // Calendar
+  currentMonth = 7; // August (0-based, so 7 = August)
+  currentYear = 2025;
+  calendarData: any[] = [];
+  selectedDate: Date | null = null;
+  selectedDayAppointments: Appointment[] = [];
 
   // Psychologists
   allPsychologists: User[] = [];
@@ -969,6 +1118,12 @@ export class DashboardComponent implements OnInit {
       console.log('Current user:', this.currentUser);
 
       if (this.currentUser) {
+        console.log('🔍 CURRENT USER DEBUG:');
+        console.log(`   User ID: ${this.currentUser.id}`);
+        console.log(`   Email: ${this.currentUser.email}`);
+        console.log(`   Expected Firebase userId: WmoA9OnaVfXSnz3dP6vNEZIW1I13`);
+        console.log(`   Match? ${this.currentUser.id === 'WmoA9OnaVfXSnz3dP6vNEZIW1I13'}`);
+
         console.log('Loading user stats...');
         // Load user stats
         this.userStats = await this.userService.getUserStats(this.currentUser.id);
@@ -978,26 +1133,58 @@ export class DashboardComponent implements OnInit {
         // Load user's appointments
         const appointments = await this.appointmentService.getUserAppointments(this.currentUser.id);
         console.log('Appointments loaded:', appointments.length);
+        console.log('Current user ID:', this.currentUser.id);
+        console.log('Expected user ID from Firebase:', 'WmoA9OnaVfXSnz3dP6vNEZIW1I13');
+
+        // Debug each appointment
+        appointments.forEach((apt, index) => {
+          console.log(`Appointment ${index + 1}:`, {
+            id: apt.id,
+            date: apt.date,
+            dateString: new Date(apt.date).toDateString(),
+            startTime: apt.startTime,
+            endTime: apt.endTime,
+            status: apt.status,
+            type: apt.type
+          });
+        });
 
         this.recentAppointments = appointments
           .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
           .slice(0, 5);
 
+        // Load upcoming appointments
+        this.upcomingAppointments = appointments
+          .filter(apt => new Date(apt.date) > new Date() && apt.status === 'scheduled')
+          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+        // Load calendar data for current month
+        await this.loadCalendarData();
+
         // Load assigned psychologist if exists
         if (this.currentUser.assignedPsychologistId) {
           console.log('Loading assigned psychologist:', this.currentUser.assignedPsychologistId);
           try {
-            const psychologist = await this.psychologistService.getPsychologist(
-              this.currentUser.assignedPsychologistId
-            );
+            // Try to get psychologist from users collection (where they're stored)
+            const psychologist = await this.userService.getUserProfile(this.currentUser.assignedPsychologistId);
             if (psychologist) {
-              this.assignedPsychologist = {
-                ...psychologist,
-                role: 'psychologist' as any,
-                isActive: true,
-                createdAt: new Date()
-              };
-              console.log('Assigned psychologist loaded:', this.assignedPsychologist);
+              this.assignedPsychologist = psychologist;
+              console.log('Assigned psychologist loaded from users:', this.assignedPsychologist);
+            } else {
+              console.log('Psychologist not found in users collection, trying psychologists collection...');
+              // Fallback to psychologists collection
+              const psychFromPsychCollection = await this.psychologistService.getPsychologist(
+                this.currentUser.assignedPsychologistId
+              );
+              if (psychFromPsychCollection) {
+                this.assignedPsychologist = {
+                  ...psychFromPsychCollection,
+                  role: 'psychologist' as any,
+                  isActive: true,
+                  createdAt: new Date()
+                };
+                console.log('Assigned psychologist loaded from psychologists collection:', this.assignedPsychologist);
+              }
             }
           } catch (error) {
             console.error('Error loading psychologist:', error);
@@ -1017,11 +1204,22 @@ export class DashboardComponent implements OnInit {
           }
         }
 
-        // Load user notes
+        // Load user notes from psychologist_notes collection
         console.log('Loading user notes...');
         try {
           this.userNotes = await this.userService.getUserNotes(this.currentUser.id);
-          console.log('Notes loaded:', this.userNotes.length);
+          console.log('Notes loaded from psychologist_notes collection:', this.userNotes.length);
+
+          // Log each note for debugging
+          this.userNotes.forEach((note, index) => {
+            console.log(`Note ${index + 1}:`, {
+              title: note.title,
+              content: note.content?.substring(0, 50) + '...',
+              psychologistId: note.psychologistId,
+              isVisibleToUser: note.isVisibleToUser,
+              tags: note.tags
+            });
+          });
         } catch (error) {
           console.error('Error loading notes:', error);
           this.userNotes = [];
@@ -1308,7 +1506,7 @@ export class DashboardComponent implements OnInit {
       // Update local data - change is immediate
       this.currentUser.assignedPsychologistId = this.changeRequest.newPsychologistId;
       this.currentUser.assignmentStatus = 'approved';
-      
+
       // Find the new psychologist from the list
       const newPsychologist = this.allPsychologists.find(p => p.id === this.changeRequest.newPsychologistId);
       if (newPsychologist) {
@@ -1335,10 +1533,6 @@ export class DashboardComponent implements OnInit {
 
   openAddReviewModal(): void {
     this.showAddReview = true;
-  }
-
-  openChangePsychologistModal(): void {
-    this.showChangePsychologist = true;
   }
 
   closeAddReviewModal(): void {
@@ -1393,35 +1587,6 @@ export class DashboardComponent implements OnInit {
   }
 
   // ===== DEMO DATA MANAGEMENT =====
-
-  async resetDemoData(): Promise<void> {
-    if (!confirm('Czy na pewno chcesz zresetować wszystkie dane demo? Ta operacja nie może być cofnięta.')) {
-      return;
-    }
-
-    try {
-      this.isLoading = true;
-      console.log('Resetting demo data...');
-
-      // Clear all existing data
-      await this.dataSeederService.clearAllData();
-
-      // Recreate fresh demo data
-      await this.dataSeederService.seedAllData();
-
-      // Reload dashboard data
-      await this.loadDashboardData();
-
-      alert('Dane demo zostały zresetowane!');
-      console.log('Demo data reset successfully');
-
-    } catch (error) {
-      console.error('Error resetting demo data:', error);
-      alert('Wystąpił błąd podczas resetowania danych demo');
-    } finally {
-      this.isLoading = false;
-    }
-  }
 
   async refreshData(): Promise<void> {
     try {
@@ -1495,5 +1660,132 @@ export class DashboardComponent implements OnInit {
     } finally {
       this.isLoading = false;
     }
+  }
+
+  // ===== CALENDAR METHODS =====
+
+  async loadCalendarData(): Promise<void> {
+    if (!this.currentUser) return;
+
+    try {
+      console.log(`🗓️ Loading calendar data for month ${this.currentMonth + 1}/${this.currentYear} for user ${this.currentUser.id}`);
+
+      this.calendarData = await this.userService.getUserCalendarData(
+        this.currentUser.id,
+        this.currentMonth,
+        this.currentYear
+      );
+
+      console.log(`🗓️ Calendar data loaded: ${this.calendarData.length} days`);
+      console.log(`🗓️ Days with appointments: ${this.calendarData.filter(d => d.hasAppointment).length}`);
+
+      // Log days with appointments for debugging
+      this.calendarData.filter(d => d.hasAppointment).forEach(day => {
+        console.log(`🗓️ Day ${day.day} has ${day.appointments.length} appointments`);
+      });
+
+    } catch (error) {
+      console.error('❌ Error loading calendar data:', error);
+      this.calendarData = [];
+    }
+  }
+
+  getCurrentMonthYear(): string {
+    const date = new Date(this.currentYear, this.currentMonth);
+    return date.toLocaleDateString('pl-PL', { month: 'long', year: 'numeric' });
+  }
+
+  async previousMonth(): Promise<void> {
+    this.currentMonth--;
+    if (this.currentMonth < 0) {
+      this.currentMonth = 11;
+      this.currentYear--;
+    }
+    await this.loadCalendarData();
+  }
+
+  async nextMonth(): Promise<void> {
+    this.currentMonth++;
+    if (this.currentMonth > 11) {
+      this.currentMonth = 0;
+      this.currentYear++;
+    }
+    await this.loadCalendarData();
+  }
+
+  selectDate(date: Date): void {
+    this.selectedDate = date;
+    console.log('Selected date:', date);
+
+    // Find appointments for this date
+    this.selectedDayAppointments = this.recentAppointments
+      .concat(this.upcomingAppointments)
+      .filter(apt => {
+        const aptDate = new Date(apt.date);
+        return aptDate.getDate() === date.getDate() &&
+          aptDate.getMonth() === date.getMonth() &&
+          aptDate.getFullYear() === date.getFullYear();
+      })
+      .sort((a, b) => a.startTime.localeCompare(b.startTime));
+  }
+
+  generateFallbackCalendar(): any[] {
+    const calendarData: any[] = [];
+
+    // Get first day of month and its weekday
+    const firstDay = new Date(this.currentYear, this.currentMonth, 1);
+    const firstWeekday = (firstDay.getDay() + 6) % 7; // Convert to Monday = 0
+    const lastDay = new Date(this.currentYear, this.currentMonth + 1, 0);
+
+    // Add empty cells for days before the 1st
+    for (let i = 0; i < firstWeekday; i++) {
+      calendarData.push({
+        date: null,
+        day: null,
+        isEmpty: true
+      });
+    }
+
+    // Add days of current month
+    for (let day = 1; day <= lastDay.getDate(); day++) {
+      const currentDate = new Date(this.currentYear, this.currentMonth, day);
+      calendarData.push({
+        date: currentDate,
+        day: day,
+        isEmpty: false,
+        isToday: this.isToday(currentDate),
+        hasAppointment: false,
+        appointments: []
+      });
+    }
+
+    return calendarData;
+  }
+
+  isToday(date: Date): boolean {
+    const today = new Date();
+    return date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear();
+  }
+
+  requestNewAppointment(): void {
+    if (!this.assignedPsychologist) {
+      alert('Musisz najpierw wybrać psychologa');
+      return;
+    }
+
+    // TODO: Implement appointment booking modal or navigate to booking page
+    alert('Funkcjonalność umówienia wizyty będzie dostępna wkrótce. Skontaktuj się z psychologiem bezpośrednio.');
+  }
+
+  onImageError(event: any): void {
+    // Set fallback image when psychologist image fails to load
+    event.target.src = '/assets/specialists/default-avatar.png';
+  }
+
+  sendMessage(): void {
+    // TODO: Implement messaging functionality
+    alert('Funkcja wiadomości będzie dostępna wkrótce!');
   }
 }

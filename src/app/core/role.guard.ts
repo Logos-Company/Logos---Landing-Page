@@ -19,7 +19,7 @@ export class RoleGuard implements CanActivate {
     ): boolean {
         // Check if we have a stored user first
         const storedUser = localStorage.getItem('user');
-        
+
         if (storedUser) {
             try {
                 const user = JSON.parse(storedUser);

@@ -10,6 +10,7 @@ export interface Appointment {
     startTime: string; // HH:MM format
     endTime: string;   // HH:MM format
     status: AppointmentStatus;
+    type?: 'individual' | 'group' | 'consultation';
     notes?: string;
     psychologistNotes?: string;
     userNotes?: string;

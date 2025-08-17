@@ -22,7 +22,7 @@ export interface Psychologist {
     updatedAt?: Date;
     totalSessions?: number;
     isActive: boolean;
-    
+
     // Admin fields
     verificationStatus?: 'pending' | 'verified' | 'suspended';
     licenseNumber?: string;

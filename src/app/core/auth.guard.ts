@@ -16,7 +16,7 @@ export class AuthGuard {
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | boolean {
         // Check if we have a stored user first
         const storedUser = localStorage.getItem('user');
-        
+
         if (storedUser) {
             try {
                 const user = JSON.parse(storedUser);
