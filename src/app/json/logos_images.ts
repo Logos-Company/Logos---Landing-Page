@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
     providedIn: 'root' // <-- TO JEST KLUCZOWE
 })
 export class LogosImages {
-    logo = "assets/logo.svg";
+    logo = "assets/logo_black_2.png";
     brokenHeartIcon = "assets/icons/broken-heart.png";
     brokenHeartIcon2 = "assets/icons/broken-heart-2.png";
     calendarIcon = "assets/icons/calendar.png";
