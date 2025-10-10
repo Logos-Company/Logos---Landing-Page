@@ -13,6 +13,7 @@ import {
 
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { TranslationService } from '../../../services/translation.service';
 @Component({
   selector: 'app-cta-section',
   standalone: true,
@@ -29,7 +30,10 @@ import { Router } from '@angular/router';
   ]
 })
 export class CtaSectionComponent {
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    public translationService: TranslationService
+  ) { }
 
   goToContactForm() {
     this.router.navigate(['/contactform']);

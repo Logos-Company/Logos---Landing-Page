@@ -9,6 +9,7 @@ import {
 } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { TranslationService } from '../../services/translation.service';
 @Component({
   selector: 'app-footer',
   imports: [CommonModule, RouterModule], // <- TO JEST KLUCZOWE
@@ -28,5 +29,5 @@ import { RouterModule } from '@angular/router';
   ]
 })
 export class FooterComponent {
-
+  constructor(public translationService: TranslationService) { }
 }

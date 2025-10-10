@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common'; // <-- dodaj to, aby używać CommonModule
+import { TranslationService } from '../../../services/translation.service';
 @Component({
   selector: 'app-stats',
   imports: [CommonModule], // <-- dodaj to
@@ -8,12 +9,20 @@ import { CommonModule } from '@angular/common'; // <-- dodaj to, aby używać Co
   styleUrl: './stats.component.scss'
 })
 export class StatsComponent {
-  stats = [
-    { value: 9, displayedValue: 0, label: 'Happy Customers' },
-    { value: 150, displayedValue: 0, label: 'Monthly Visitors' },
-    { value: 1500, displayedValue: 0, label: 'Countries Worldwide' },
-    { value: 10000, displayedValue: 0, label: 'Top Partners' }
-  ];
+  stats: any[] = [];
+
+  constructor(public translationService: TranslationService) {
+    this.initializeStats();
+  }
+
+  initializeStats() {
+    this.stats = [
+      { value: 500, displayedValue: 0, labelKey: 'stats.patients', suffix: '+' },
+      { value: 25, displayedValue: 0, labelKey: 'stats.psychologists', suffix: '+' },
+      { value: 1200, displayedValue: 0, labelKey: 'stats.sessions', suffix: '+' },
+      { value: 100, displayedValue: 0, labelKey: 'stats.satisfaction', suffix: '%' }
+    ];
+  }
 
   ngOnInit(): void {
     this.animateStats();

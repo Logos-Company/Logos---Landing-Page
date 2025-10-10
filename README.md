@@ -1,4 +1,4 @@
-# Logos - Platforma Psychologiczna 🧠
+# Loogos - Platforma Psychologiczna 🧠
 
 Nowoczesna platforma do konsultacji psychologicznych online z zaawansowanym systemem zarządzania użytkownikami i dashboardami rolowymi.
 
@@ -15,7 +15,7 @@ Nowoczesna platforma do konsultacji psychologicznych online z zaawansowanym syst
 
 ## 🎯 Opis projektu
 
-Logos to kompleksowa platforma do świadczenia usług psychologicznych online. System umożliwia pacjentom łatwe znalezienie i rezerwację sesji z psychologami, a specjalistom - efektywne zarządzanie swoją praktyką. Platforma oferuje różne dashboardy w zależności od roli użytkownika oraz zaawansowany system zarządzania pakietami usług.
+Loogos to kompleksowa platforma do świadczenia usług psychologicznych online. System umożliwia pacjentom łatwe znalezienie i rezerwację sesji z psychologami, a specjalistom - efektywne zarządzanie swoją praktyką. Platforma oferuje różne dashboardy w zależności od roli użytkownika oraz zaawansowany system zarządzania pakietami usług.
 
 ## 🚀 Technologie
 
@@ -138,8 +138,8 @@ src/
 
 1. **Klonowanie repozytorium**
 ```bash
-git clone https://github.com/Logos-Company/Logos---Landing-Page.git
-cd Logos---Landing-Page
+git clone https://github.com/Loogos-Company/Loogos---Landing-Page.git
+cd Loogos---Landing-Page
 ```
 
 2. **Instalacja zależności**
@@ -250,7 +250,7 @@ Utwórz pliki w folderze `src/app/models/`
 
 ## 🤝 Kontakt
 
-- **Firma**: Logos Company
-- **Repozytorium**: [GitHub](https://github.com/Logos-Company/Logos---Landing-Page)
+- **Firma**: Loogos Company
+- **Repozytorium**: [GitHub](https://github.com/Loogos-Company/Loogos---Landing-Page)
 - **Wersja Angular**: 20.0.3
 - **Ostatnia aktualizacja**: Sierpień 2025

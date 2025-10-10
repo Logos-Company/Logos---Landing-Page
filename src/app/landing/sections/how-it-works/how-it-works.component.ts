@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { trigger, transition, style, animate, query, stagger } from '@angular/animations';
 import { LogosImages } from '../../../json/logos_images';
+import { TranslationService } from '../../../services/translation.service';
 
 @Component({
   selector: 'app-how-it-works',
@@ -25,28 +26,31 @@ import { LogosImages } from '../../../json/logos_images';
 export class HowItWorksComponent {
   steps: { title: string; icon: string; desc: string; }[] = [];
 
-  constructor(private logos: LogosImages) {
+  constructor(
+    private logos: LogosImages,
+    public translationService: TranslationService
+  ) {
 
     this.steps = [
       {
         icon: logos.psychologistIcon,
-        title: 'Wybierz specjalistę',
-        desc: 'Przeglądaj profile psychologów i wybierz osobę, która najbardziej Ci odpowiada.'
+        title: this.translationService.t('howItWorks.step1.title'),
+        desc: this.translationService.t('howItWorks.step1.desc')
       },
       {
         icon: logos.bookingIcon,
-        title: 'Zarezerwuj termin',
-        desc: 'Wybierz dogodny dzień i godzinę – bez dzwonienia i kolejek.'
+        title: this.translationService.t('howItWorks.step2.title'),
+        desc: this.translationService.t('howItWorks.step2.desc')
       },
       {
         icon: logos.laptopIcon,
-        title: 'Dołącz do spotkania',
-        desc: 'Spotkanie odbywa się online w bezpiecznej i wygodnej atmosferze.'
+        title: this.translationService.t('howItWorks.step3.title'),
+        desc: this.translationService.t('howItWorks.step3.desc')
       },
       {
         icon: logos.arrowRightIcon,
-        title: 'Zrób pierwszy krok',
-        desc: 'Pierwsza rozmowa to początek zmiany – nie musisz być sam/a.'
+        title: this.translationService.t('howItWorks.step4.title'),
+        desc: this.translationService.t('howItWorks.step4.desc')
       }
     ];
   }

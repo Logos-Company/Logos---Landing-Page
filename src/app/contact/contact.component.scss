@@ -1,7 +1,6 @@
-// Hero Section
 .contact-hero {
     background: #f8fafc;
-    padding: 100px 20px 60px;
+    padding: 20px 20px 30px;
     margin-top: 70px;
     text-align: center;
 
@@ -11,36 +10,36 @@
     }
 
     &__title {
-        font-size: 2.8rem;
+        font-size: 2.2rem;
         font-weight: 700;
-        margin-bottom: 1.2rem;
+        margin-bottom: 0.8rem;
         color: #1e293b;
         letter-spacing: -0.5px;
 
         @media (max-width: 768px) {
-            font-size: 2.2rem;
+            font-size: 2rem;
         }
     }
 
     &__subtitle {
-        font-size: 1.3rem;
+        font-size: 1.1rem;
         color: #64748b;
         font-weight: 400;
         max-width: 600px;
         margin: 0 auto;
-        line-height: 1.6;
+        line-height: 1.5;
 
         @media (max-width: 768px) {
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
     }
 }
 
 // Main Contact Section
 .contact {
-    padding: 60px 20px;
+    padding: 30px 20px 40px;
     background: #ffffff;
-    min-height: calc(100vh - 300px);
+    min-height: calc(100vh - 250px);
 
     &__container {
         max-width: 600px;
@@ -56,33 +55,33 @@
     }
 
     &__form-container {
-        padding: 40px;
+        padding: 25px 30px;
 
         @media (max-width: 768px) {
-            padding: 30px 20px;
+            padding: 20px 15px;
         }
     }
 
     &__form-title {
-        font-size: 2rem;
+        font-size: 1.6rem;
         font-weight: 700;
         color: #1e293b;
-        margin-bottom: 0.8rem;
+        margin-bottom: 0.5rem;
         text-align: center;
     }
 
     &__form-subtitle {
         color: #64748b;
-        margin-bottom: 2.5rem;
-        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+        font-size: 1rem;
         text-align: center;
-        line-height: 1.5;
+        line-height: 1.4;
     }
 
     &__form {
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
+        gap: 1rem;
     }
 
     &__form-row {
@@ -108,10 +107,10 @@
 
         input,
         textarea {
-            padding: 1rem;
+            padding: 0.8rem;
             border: 2px solid #e5e7eb;
             border-radius: 8px;
-            font-size: 1rem;
+            font-size: 0.95rem;
             transition: all 0.3s ease;
             background: #fafafa;
 
@@ -129,7 +128,7 @@
 
         textarea {
             resize: vertical;
-            min-height: 120px;
+            min-height: 80px;
         }
 
         .error {
@@ -168,9 +167,9 @@
         background: #3b82f6;
         color: white;
         border: none;
-        padding: 1rem 2rem;
+        padding: 0.9rem 2rem;
         border-radius: 8px;
-        font-size: 1.1rem;
+        font-size: 1rem;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.3s ease;
@@ -178,7 +177,7 @@
         align-items: center;
         justify-content: center;
         gap: 0.5rem;
-        margin-top: 1rem;
+        margin-top: 0.5rem;
 
         &:hover:not(:disabled) {
             background: #2563eb;
@@ -210,19 +209,19 @@
 // Responsive Design
 @media (max-width: 768px) {
     .contact-hero {
-        padding: 100px 20px 40px;
+        padding: 80px 20px 25px;
 
         &__title {
-            font-size: 2.2rem;
+            font-size: 1.9rem;
         }
 
         &__subtitle {
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
     }
 
     .contact {
-        padding: 40px 20px;
+        padding: 25px 15px 30px;
 
         &__container {
             max-width: 100%;
@@ -233,11 +232,15 @@
         }
 
         &__form-title {
-            font-size: 1.6rem;
+            font-size: 1.4rem;
         }
 
         &__form-subtitle {
-            font-size: 1rem;
+            font-size: 0.9rem;
+        }
+
+        &__form {
+            gap: 0.8rem;
         }
     }
 }

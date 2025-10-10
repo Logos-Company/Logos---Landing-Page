@@ -4,10 +4,12 @@
             <img class="navbar_logo_image" [src]="logosImages.logo" />
         </div>
         <div class="navbar_links">
-            <a class="navbar_links_link" (click)="goToHome()">Strona Główna</a>
-            <a class="navbar_links_link" (click)="goToContactForm()">Kontakt</a>
-            <a class="navbar_links_link" (click)="goToExternalLogin()">Zaloguj się</a>
-            <a class="navbar_links_link cta" (click)="goToExternalRegister()">Dołącz do nas</a>
+            <a class="navbar_links_link" (click)="goToHome()">{{ translationService.t('navbar.home') }}</a>
+            <a class="navbar_links_link" (click)="goToContactForm()">{{ translationService.t('navbar.contact') }}</a>
+            <a class="navbar_links_link" (click)="goToExternalLogin()">{{ translationService.t('navbar.login') }}</a>
+            <a class="navbar_links_link cta" (click)="goToExternalRegister()">{{ translationService.t('navbar.register')
+                }}</a>
+            <app-language-switcher class="navbar_language"></app-language-switcher>
         </div>
     </div>
 </div>

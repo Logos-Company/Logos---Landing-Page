@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LogosImages } from '../../../json/logos_images';
+import { TranslationService } from '../../../services/translation.service';
 @Component({
   selector: 'app-offer-section',
   standalone: true,
@@ -9,35 +10,34 @@ import { LogosImages } from '../../../json/logos_images';
   styleUrl: './offer-section.component.scss'
 })
 export class OfferSectionComponent {
-  mainTitle = 'Sprawdź, w czym możemy Ci pomóc';
-  mainDescription = 'Oferujemy indywidualne podejście i wsparcie dopasowane do Twoich potrzeb:';
+  mainTitle = '';
+  mainDescription = '';
   problems: { title: string; icon: string; description: string }[] = [];
-  constructor(private logos: LogosImages) {
+  constructor(
+    private logos: LogosImages,
+    public translationService: TranslationService
+  ) {
 
     this.problems = [
       {
-        title: 'Kryzys emocjonalny',
+        title: this.translationService.t('helpAreas.emotional.title'),
         icon: this.logos.rainIcon,
-        description:
-          'Czujesz się przytłoczony? Pomożemy Ci odzyskać równowagę emocjonalną i spojrzeć na sytuację z nowej perspektywy.'
+        description: this.translationService.t('helpAreas.emotional.shortDesc')
       },
       {
-        title: 'Relacje i komunikacja',
+        title: this.translationService.t('helpAreas.relationships.title'),
         icon: this.logos.speakingIcon,
-        description:
-          'Masz trudności w relacjach? Razem nauczymy się, jak budować zdrowe więzi i jasno wyrażać swoje potrzeby.'
+        description: this.translationService.t('helpAreas.relationships.shortDesc')
       },
       {
-        title: 'Lęk i stres',
+        title: this.translationService.t('helpAreas.anxiety.title'),
         icon: this.logos.lightningIcon,
-        description:
-          'Doświadczasz napięcia, niepokoju lub ataków paniki? Pokażemy Ci skuteczne techniki radzenia sobie i odzyskania spokoju.'
+        description: this.translationService.t('helpAreas.anxiety.shortDesc')
       },
       {
-        title: 'Budowanie pewności siebie',
+        title: this.translationService.t('helpAreas.confidence.title'),
         icon: this.logos.flexedArmIcon,
-        description:
-          'Masz wątpliwości co do własnej wartości? Pomagamy w odkrywaniu wewnętrznej siły i życia w zgodzie ze sobą.'
+        description: this.translationService.t('helpAreas.confidence.shortDesc')
       }
     ];
   }

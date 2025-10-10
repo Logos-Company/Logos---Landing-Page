@@ -6,23 +6,23 @@
                 <img src="assets/logo_black_2.png" alt="Logo" />
 
             </div>
-            <p class="footer__desc">Zapewnij sobie spokój.</p>
-            <p class="footer__copyright">© Maciej Wawryszuk 2025</p>
+            <p class="footer__desc">{{ translationService.t('footer.tagline') }}</p>
+            <p class="footer__copyright">© Loogos sp.z.o.o 2025</p>
         </div>
 
         <!-- Kolumna: Linki -->
         <div class="footer__col">
-            <h4 class="footer__heading">Linki</h4>
+            <h4 class="footer__heading">{{ translationService.t('footer.links') }}</h4>
             <ul class="footer__list">
-                <li><a routerLink="/privacy-policy">Polityka Prywatności</a></li>
-                <li><a routerLink="/terms-of-service">Regulamin</a></li>
-                <li><a routerLink="/contactform">Kontakt</a></li>
+                <li><a routerLink="/privacy-policy">{{ translationService.t('footer.privacy') }}</a></li>
+                <li><a routerLink="/terms-of-service">{{ translationService.t('footer.terms') }}</a></li>
+                <li><a routerLink="/contactform">{{ translationService.t('footer.contact') }}</a></li>
             </ul>
         </div>
 
         <!-- Kolumna: Social Media -->
         <div class="footer__col footer__social">
-            <h4 class="footer__heading">Social Media</h4>
+            <h4 class="footer__heading">{{ translationService.t('footer.social') }}</h4>
             <div class="footer__social-icons">
                 <a href="#"><img src="assets/icons/facebook.png" alt="Facebook" /></a>
                 <a href="#"><img src="assets/icons/instagram.png" alt="Instagram" /></a>

@@ -6,6 +6,7 @@ import { NavbarComponent } from '../shared/navbar/navbar.component';
 import { FooterComponent } from '../shared/footer/footer.component';
 import { MobileNavComponent } from '../shared/navbar/mobile-nav/mobile-nav.component';
 import { LogosImages } from "../json/logos_images";
+import { TranslationService } from '../services/translation.service';
 
 @Component({
   selector: 'app-contact',
@@ -19,7 +20,10 @@ export class ContactComponent {
   contactForm: FormGroup;
   isSubmitting = false;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    public translationService: TranslationService
+  ) {
     this.contactForm = this.fb.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],

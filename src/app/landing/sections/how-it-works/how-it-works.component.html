@@ -1,6 +1,6 @@
 <section class="how-it-works">
-    <h2 class="how-it-works__title">Jak to działa?</h2>
-    <p class="how-it-works__description">Umówienie wizyty to tylko kilka kroków</p>
+    <h2 class="how-it-works__title">{{ translationService.t('howItWorks.title') }}</h2>
+    <p class="how-it-works__description">{{ translationService.t('howItWorks.description') }}</p>
 
     <div class="how-it-works__steps" [@listAnimation]>
         <div class="step" *ngFor="let step of steps; let i = index">

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LogosImages } from '../../../json/logos_images';
+import { TranslationService } from '../../../services/translation.service';
 @Component({
   selector: 'app-help-areas',
   standalone: true,
@@ -12,38 +13,36 @@ import { LogosImages } from '../../../json/logos_images';
 
 export class HelpAreasComponent {
   problems: { title: string; icon: string; description: string }[] = [];
-  constructor(private logos: LogosImages) {
+  constructor(
+    private logos: LogosImages,
+    public translationService: TranslationService
+  ) {
 
     this.problems = [
       {
-        title: 'Kryzys emocjonalny',
+        title: this.translationService.t('helpAreas.emotional.title'),
         icon: this.logos.brokenHeartIcon,
-        description:
-          'Terapia ukierunkowana na pomoc w trudnych chwilach życiowych – gdy czujesz, że wszystko Cię przerasta lub tracisz kontrolę nad emocjami.'
+        description: this.translationService.t('helpAreas.emotional.desc')
       },
       {
-        title: 'Relacje i komunikacja',
+        title: this.translationService.t('helpAreas.relationships.title'),
         icon: this.logos.handShakeIcon,
-        description:
-          'Pomoc w budowaniu zdrowych relacji – w związkach, rodzinie czy pracy. Naucz się mówić o swoich potrzebach i stawiać granice.'
+        description: this.translationService.t('helpAreas.relationships.desc')
       },
       {
-        title: 'Lęk i stres',
+        title: this.translationService.t('helpAreas.anxiety.title'),
         icon: this.logos.sadFaceIcon,
-        description:
-          'Lęki, napięcie, ataki paniki? Naucz się technik radzenia sobie ze stresem i odzyskaj poczucie bezpieczeństwa.'
+        description: this.translationService.t('helpAreas.anxiety.desc')
       },
       {
-        title: 'Budowanie pewności siebie',
+        title: this.translationService.t('helpAreas.confidence.title'),
         icon: this.logos.startIcon2,
-        description:
-          'Wzmocnij samoocenę, przełam wewnętrzne blokady i naucz się żyć bardziej w zgodzie ze sobą.'
+        description: this.translationService.t('helpAreas.confidence.desc')
       },
       {
-        title: 'Potrzeba rozmowy',
+        title: this.translationService.t('helpAreas.conversation.title'),
         icon: this.logos.speakingIcon,
-        description:
-          'Masz po prostu potrzebę rozmowy z kimś, kto nie będzie pytał, oceniał? Oferujemy wsparcie bez osądzania.'
+        description: this.translationService.t('helpAreas.conversation.desc')
       }
     ];
   }

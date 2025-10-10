@@ -10,9 +10,11 @@ import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
 import { LogosTexts } from "../../../json/logos_texts";
 import { LogosImages } from "../../../json/logos_images";
+import { TranslationService } from '../../../services/translation.service';
+import { LanguageSwitcherComponent } from '../../language-switcher/language-switcher.component';
 @Component({
   selector: 'app-mobile-nav',
-  imports: [CommonModule],
+  imports: [CommonModule, LanguageSwitcherComponent],
   templateUrl: './mobile-nav.component.html',
   styleUrl: './mobile-nav.component.scss',
   animations: [
@@ -48,7 +50,10 @@ export class MobileNavComponent {
     this.isScrolled = window.scrollY > 10;
   };
 
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    public translationService: TranslationService
+  ) { }
 
   toggleMobileMenu() {
     this.mobileMenuOpen = !this.mobileMenuOpen;
@@ -74,13 +79,13 @@ export class MobileNavComponent {
   goToExternalLogin() {
     this.mobileMenuOpen = false;
     // Przekierowanie na zewnętrzną aplikację - login
-    window.open('https://app.logos.pl/login', '_blank');
+    window.open('https://app.loogos.pl/login', '_blank');
   }
 
   goToExternalRegister() {
     this.mobileMenuOpen = false;
     // Przekierowanie na zewnętrzną aplikację - rejestracja
-    window.open('https://app.logos.pl/register', '_blank');
+    window.open('https://app.loogos.pl/register', '_blank');
   }
 
   logosTexts = new LogosTexts();

@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common'; // <-- dodaj CommonModule
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  title = 'logos';
+  title = 'loogos';
   constructor(public cookieConsent: CookieConsentService, router: Router, analytics: AnalyticsService) {
     router.events.subscribe(evt => {
       if (evt instanceof NavigationEnd) {

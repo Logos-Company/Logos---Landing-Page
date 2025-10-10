@@ -2,17 +2,22 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { LogosImages } from '../../json/logos_images';
 import { LogosTexts } from '../../json/logos_texts';
+import { TranslationService } from '../../services/translation.service';
+import { LanguageSwitcherComponent } from '../language-switcher/language-switcher.component';
 
 import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-navbar',
-  imports: [CommonModule],
+  imports: [CommonModule, LanguageSwitcherComponent],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss'
 })
 export class NavbarComponent {
 
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    public translationService: TranslationService
+  ) { }
   goToHome() {
     this.router.navigate(['/home']);
   }
@@ -23,12 +28,12 @@ export class NavbarComponent {
 
   goToExternalLogin() {
     // Przekierowanie na zewnętrzną aplikację - login
-    window.open('https://app.logos.pl/login', '_blank');
+    window.open('https://app.loogos.pl/login', '_blank');
   }
 
   goToExternalRegister() {
     // Przekierowanie na zewnętrzną aplikację - rejestracja
-    window.open('https://app.logos.pl/register', '_blank');
+    window.open('https://app.loogos.pl/register', '_blank');
   }
 
   logosTexts = new LogosTexts();

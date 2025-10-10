@@ -1,10 +1,9 @@
 <section class="cta-section">
-    <h2 class="cta-title" [@fadeItem]="{ value: '', params: { delay: 300 } }">Zrób pierwszy krok ku lepszemu
-        samopoczuciu</h2>
+    <h2 class="cta-title" [@fadeItem]="{ value: '', params: { delay: 300 } }">{{ translationService.t('cta.title') }}
+    </h2>
     <p class="cta-description" [@fadeItem]="{ value: '', params: { delay: 600 } }">
-        Twoje zdrowie psychiczne ma znaczenie. Wystarczy jedna rozmowa, by zacząć coś zmieniać. Jesteśmy tu, by Ci
-        pomóc.
+        {{ translationService.t('cta.description') }}
     </p>
-    <button class="cta-button" [@fadeItem]="{ value: '', params: { delay: 900 } }" (click)="goToContactForm()">Umów się
-        na sesję</button>
+    <button class="cta-button" [@fadeItem]="{ value: '', params: { delay: 900 } }" (click)="goToContactForm()">{{
+        translationService.t('cta.button') }}</button>
 </section>

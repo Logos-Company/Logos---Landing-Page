@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LogosImages } from '../../../json/logos_images';
+import { TranslationService } from '../../../services/translation.service';
+
 @Component({
   selector: 'app-testimonials',
   standalone: true,
@@ -8,50 +10,53 @@ import { LogosImages } from '../../../json/logos_images';
   templateUrl: './testimonials.component.html',
   styleUrl: './testimonials.component.scss'
 })
-export class TestimonialsComponent {
-  title = 'Opinie pacjentów';
-  testimonials: { title: string; image: string; review: string; name: string; }[] = [];
-  constructor(private logos: LogosImages) {
+export class TestimonialsComponent implements OnInit {
+  title = '';
+  testimonials: any[] = [];
+  visibleCards: boolean[] = [];
 
+  constructor(
+    private logos: LogosImages,
+    public translationService: TranslationService
+  ) {
     this.testimonials = [
       {
-        title: 'Zmieniło moje życie!',
-        review: 'Dzięki terapii odzyskałam spokój i kontrolę nad emocjami. Sesje online były wygodne i dyskretne.',
-        name: 'Marta K.',
+        title: '',
+        review: this.translationService.t('testimonials.review1.text'),
+        name: this.translationService.t('testimonials.review1.author'),
         image: this.logos.testimonialImage2
       },
       {
-        title: 'Poprawiłem relacje z bliskimi',
-        review: 'Nauczyłem się jasno wyrażać swoje potrzeby i stawiać granice. Dzięki temu moje kontakty rodzinne i zawodowe się poprawiły.',
-        name: 'Adam W.',
+        title: '',
+        review: this.translationService.t('testimonials.review2.text'),
+        name: this.translationService.t('testimonials.review2.author'),
         image: this.logos.testimonialImage1
       },
       {
-        title: 'Wsparcie w walce z lękiem',
-        review: 'Techniki, które poznałam, pomogły mi opanować ataki paniki i radzić sobie ze stresem na co dzień.',
-        name: 'Paulina L.',
+        title: '',
+        review: this.translationService.t('testimonials.review3.text'),
+        name: this.translationService.t('testimonials.review3.author'),
         image: this.logos.testimonialImage4
       },
       {
-        title: 'Zwiększyłem pewność siebie',
-        review: 'Przez lata miałem wątpliwości co do siebie. Teraz czuję się silniejszy i bardziej sobą.',
-        name: 'Michał R.',
+        title: '',
+        review: this.translationService.t('testimonials.review4.text'),
+        name: this.translationService.t('testimonials.review4.author'),
         image: this.logos.testimonialImage3
       }
     ];
   }
-  visibleCards: boolean[] = [];
 
-  ngOnInit() {
-    this.visibleCards = this.testimonials.map(() => false);
+  ngOnInit(): void {
+    this.visibleCards = new Array(this.testimonials.length).fill(false);
     this.animateCards();
   }
 
-  animateCards() {
-    this.testimonials.forEach((_, i) => {
+  animateCards(): void {
+    this.testimonials.forEach((_, index) => {
       setTimeout(() => {
-        this.visibleCards[i] = true;
-      }, i * 300);  // opóźnienie 300ms między kolejnymi kartami
+        this.visibleCards[index] = true;
+      }, index * 200);
     });
   }
 }
