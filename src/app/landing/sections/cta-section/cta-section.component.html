@@ -5,5 +5,6 @@
         Twoje zdrowie psychiczne ma znaczenie. Wystarczy jedna rozmowa, by zacząć coś zmieniać. Jesteśmy tu, by Ci
         pomóc.
     </p>
-    <button class="cta-button" [@fadeItem]="{ value: '', params: { delay: 900 } }">Umów się na sesję</button>
+    <button class="cta-button" [@fadeItem]="{ value: '', params: { delay: 900 } }" (click)="goToContactForm()">Umów się
+        na sesję</button>
 </section>

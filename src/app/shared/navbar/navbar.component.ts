@@ -21,13 +21,16 @@ export class NavbarComponent {
     this.router.navigate(['/contactform']);
   }
 
-  goToLogin() {
-    this.router.navigate(['/login']);
+  goToExternalLogin() {
+    // Przekierowanie na zewnętrzną aplikację - login
+    window.open('https://app.logos.pl/login', '_blank');
   }
 
-  goToAdminLogin() {
-    this.router.navigate(['/admin/login']);
+  goToExternalRegister() {
+    // Przekierowanie na zewnętrzną aplikację - rejestracja
+    window.open('https://app.logos.pl/register', '_blank');
   }
+
   logosTexts = new LogosTexts();
   logosImages = new LogosImages();
   isScrolled = false;

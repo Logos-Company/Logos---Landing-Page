@@ -62,16 +62,27 @@ export class MobileNavComponent {
   }
 
   goToHome() {
+    this.mobileMenuOpen = false;
     this.router.navigate(['/home']);
   }
 
   goToContactForm() {
+    this.mobileMenuOpen = false;
     this.router.navigate(['/contactform']);
   }
 
-  goToLogin() {
-    this.router.navigate(['/login']);
+  goToExternalLogin() {
+    this.mobileMenuOpen = false;
+    // Przekierowanie na zewnętrzną aplikację - login
+    window.open('https://app.logos.pl/login', '_blank');
   }
+
+  goToExternalRegister() {
+    this.mobileMenuOpen = false;
+    // Przekierowanie na zewnętrzną aplikację - rejestracja
+    window.open('https://app.logos.pl/register', '_blank');
+  }
+
   logosTexts = new LogosTexts();
   logosImages = new LogosImages();
 }
