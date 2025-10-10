@@ -19,7 +19,7 @@ export class NavbarComponent {
     public translationService: TranslationService
   ) { }
   goToHome() {
-    this.router.navigate(['/home']);
+    this.router.navigate(['/']);
   }
 
   goToContactForm() {

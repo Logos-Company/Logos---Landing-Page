@@ -5,8 +5,8 @@ import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.componen
 import { TermsOfServiceComponent } from './terms-of-service/terms-of-service.component';
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'home', pathMatch: 'full' },
-    { path: 'home', component: LandingComponent },
+    { path: '', component: LandingComponent },
+    { path: 'home', redirectTo: '', pathMatch: 'full' },
     { path: 'contactform', component: ContactComponent },
     { path: 'privacy-policy', component: PrivacyPolicyComponent },
     { path: 'terms-of-service', component: TermsOfServiceComponent },

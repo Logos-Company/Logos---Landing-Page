@@ -68,7 +68,7 @@ export class MobileNavComponent {
 
   goToHome() {
     this.mobileMenuOpen = false;
-    this.router.navigate(['/home']);
+    this.router.navigate(['/']);
   }
 
   goToContactForm() {
