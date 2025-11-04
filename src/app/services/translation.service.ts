@@ -26,6 +26,10 @@ export class TranslationService {
             pl: 'Kontakt',
             en: 'Contact'
         },
+        'navbar.articles': {
+            pl: 'Artykuły',
+            en: 'Articles'
+        },
         'navbar.login': {
             pl: 'Zaloguj się',
             en: 'Log in'
@@ -419,6 +423,80 @@ export class TranslationService {
         'footer.social': {
             pl: 'Social Media',
             en: 'Social Media'
+        },
+
+        // Articles
+        'articles.title': {
+            pl: 'Artykuły',
+            en: 'Articles'
+        },
+        'articles.subtitle': {
+            pl: 'Odkryj naszą kolekcję artykułów o zdrowiu psychicznym, terapii i rozwoju osobistym',
+            en: 'Discover our collection of articles about mental health, therapy and personal development'
+        },
+        'articles.allCategories': {
+            pl: 'Wszystkie kategorie',
+            en: 'All categories'
+        },
+        'articles.loading': {
+            pl: 'Ładowanie artykułów...',
+            en: 'Loading articles...'
+        },
+        'articles.retry': {
+            pl: 'Spróbuj ponownie',
+            en: 'Try again'
+        },
+        'articles.readMore': {
+            pl: 'Czytaj więcej',
+            en: 'Read more'
+        },
+        'articles.noArticles': {
+            pl: 'Brak artykułów',
+            en: 'No articles found'
+        },
+        'articles.noArticlesDesc': {
+            pl: 'W tej kategorii nie ma jeszcze żadnych artykułów.',
+            en: 'There are no articles in this category yet.'
+        },
+        'articles.error': {
+            pl: 'Wystąpił błąd',
+            en: 'An error occurred'
+        },
+        'articles.backToList': {
+            pl: 'Powrót do listy',
+            en: 'Back to list'
+        },
+        'articles.share': {
+            pl: 'Udostępnij',
+            en: 'Share'
+        },
+        'articles.author': {
+            pl: 'Autor',
+            en: 'Author'
+        },
+        'articles.category': {
+            pl: 'Kategoria',
+            en: 'Category'
+        },
+        'articles.shareArticle': {
+            pl: 'Udostępnij artykuł',
+            en: 'Share article'
+        },
+        'articles.related': {
+            pl: 'Powiązane artykuły',
+            en: 'Related articles'
+        },
+        'articles.ctaTitle': {
+            pl: 'Chcesz przeczytać więcej?',
+            en: 'Want to read more?'
+        },
+        'articles.ctaDescription': {
+            pl: 'Odkryj więcej artykułów o zdrowiu psychicznym i rozwoju osobistym',
+            en: 'Discover more articles about mental health and personal development'
+        },
+        'articles.exploreMore': {
+            pl: 'Przeglądaj więcej artykułów',
+            en: 'Explore more articles'
         }
     };
 

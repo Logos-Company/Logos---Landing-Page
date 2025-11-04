@@ -1,0 +1,138 @@
+<app-navbar></app-navbar>
+<app-mobile-nav></app-mobile-nav>
+
+<div class="article-detail-page">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
+        <app-loading-spinner></app-loading-spinner>
+        <p>{{ translationService.t('articles.loading') }}</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error" class="error-container">
+        <div class="error-content">
+            <h2>{{ translationService.t('articles.error') }}</h2>
+            <p class="error-message">{{ error }}</p>
+            <div class="error-actions">
+                <button class="retry-btn" (click)="loadArticle(article?.id || 0)">
+                    {{ translationService.t('articles.retry') }}
+                </button>
+                <button class="back-btn" (click)="goBackToArticles()">
+                    {{ translationService.t('articles.backToList') }}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Article Content -->
+    <article *ngIf="!isLoading && !error && article" class="article-detail">
+        <!-- Breadcrumb -->
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb">
+            <a (click)="goBackToArticles()">{{ translationService.t('articles.title') }}</a>
+            <span class="separator">›</span>
+            <span *ngIf="article?.category" class="category-link" (click)="goToCategory(article.category?.slug!)">
+                {{ article.category?.name }}
+            </span>
+            <span *ngIf="article?.category" class="separator">›</span>
+            <span class="current">{{ article.title }}</span>
+        </nav> <!-- Article Header -->
+        <header class="article-header">
+            <div class="article-meta">
+                <span *ngIf="article?.category" class="article-category"
+                    (click)="goToCategory(article.category?.slug!)">
+                    {{ article.category?.name }}
+                </span>
+                <span class="article-date">{{ formatDate(article.published_at_iso || article.published_at) }}</span>
+                <span class="reading-time">{{ article.reading_time }}</span>
+            </div>
+
+            <h1 class="article-title">{{ article.title }}</h1>
+
+            <p class="article-excerpt">{{ article.excerpt }}</p>
+
+            <div class="article-actions">
+                <button class="share-btn" (click)="shareArticle()">
+                    <span class="share-icon">📤</span>
+                    {{ translationService.t('articles.share') }}
+                </button>
+                <span *ngIf="article?.author" class="article-author">
+                    {{ translationService.t('articles.author') }}: {{ article.author?.name }}
+                </span>
+            </div>
+        </header>
+
+        <!-- Featured Image -->
+        <div class="article-image" *ngIf="article.featured_image">
+            <img [src]="article.featured_image" [alt]="article.title" />
+        </div>
+
+        <!-- Placeholder for no image -->
+        <div class="article-image-placeholder" *ngIf="!article.featured_image">
+            <div class="placeholder-content">
+                <span class="placeholder-icon">📄</span>
+                <p>{{ article.title }}</p>
+            </div>
+        </div> <!-- Article Content -->
+        <div class="article-content">
+            <div class="content-wrapper" [innerHTML]="article.content"></div>
+        </div>
+
+        <!-- Article Footer -->
+        <footer class="article-footer">
+            <div class="article-tags" *ngIf="article?.category">
+                <span class="tag-label">{{ translationService.t('articles.category') }}:</span>
+                <span class="tag" (click)="goToCategory(article.category?.slug!)">
+                    {{ article.category?.name }}
+                </span>
+            </div>
+            <div class="article-share">
+                <span class="share-label">{{ translationService.t('articles.shareArticle') }}:</span>
+                <button class="share-btn-small" (click)="shareArticle()">
+                    {{ translationService.t('articles.share') }}
+                </button>
+            </div>
+        </footer>
+    </article>
+
+    <!-- Related Articles -->
+    <section *ngIf="relatedArticles.length > 0" class="related-articles">
+        <div class="related-container">
+            <h3 class="related-title">{{ translationService.t('articles.related') }}</h3>
+
+            <div class="related-grid">
+                <article *ngFor="let relatedArticle of relatedArticles" class="related-card"
+                    [routerLink]="['/article', relatedArticle.id]">
+
+                    <div class="related-image" *ngIf="relatedArticle.featured_image">
+                        <img [src]="relatedArticle.featured_image" [alt]="relatedArticle.title" />
+                    </div>
+
+                    <!-- Placeholder for related articles without image -->
+                    <div class="related-image-placeholder" *ngIf="!relatedArticle.featured_image">
+                        <span class="placeholder-icon">📄</span>
+                    </div>
+                    <div class="related-content">
+                        <h4 class="related-article-title">{{ relatedArticle.title }}</h4>
+                        <p class="related-excerpt">{{ relatedArticle.excerpt | slice:0:100 }}...</p>
+                        <span class="related-date">{{ formatDate(relatedArticle.published_at_iso ||
+                            relatedArticle.published_at) }}</span>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="article-cta">
+        <div class="cta-content">
+            <h3>{{ translationService.t('articles.ctaTitle') }}</h3>
+            <p>{{ translationService.t('articles.ctaDescription') }}</p>
+            <button class="cta-button" (click)="goBackToArticles()">
+                {{ translationService.t('articles.exploreMore') }}
+            </button>
+        </div>
+    </section>
+</div>
+
+<app-footer></app-footer>

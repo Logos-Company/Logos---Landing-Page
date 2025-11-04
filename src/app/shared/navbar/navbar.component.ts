@@ -26,6 +26,10 @@ export class NavbarComponent {
     this.router.navigate(['/contactform']);
   }
 
+  goToArticles() {
+    this.router.navigate(['/articles']);
+  }
+
   goToExternalLogin() {
     // Przekierowanie na zewnętrzną aplikację - login
     window.open('https://app.loogos.pl/login', '_blank');

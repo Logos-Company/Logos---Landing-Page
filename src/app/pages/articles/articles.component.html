@@ -1,0 +1,78 @@
+<app-navbar></app-navbar>
+<app-mobile-nav></app-mobile-nav>
+
+<div class="articles-page">
+    <div class="articles-container">
+        <!-- Header Section -->
+        <header class="articles-header">
+            <h1 class="articles-title">{{ translationService.t('articles.title') }}</h1>
+            <p class="articles-subtitle">{{ translationService.t('articles.subtitle') }}</p>
+        </header>
+
+        <!-- Categories Filter -->
+        <div class="categories-filter">
+            <button class="category-btn" [class.active]="selectedCategory === null" (click)="onCategorySelect(null)">
+                {{ translationService.t('articles.allCategories') }}
+            </button>
+            <button *ngFor="let category of categories" class="category-btn"
+                [class.active]="selectedCategory === category.slug" (click)="onCategorySelect(category.slug)">
+                {{ category.name }}
+            </button>
+        </div>
+
+        <!-- Loading State -->
+        <div *ngIf="isLoading" class="loading-container">
+            <app-loading-spinner></app-loading-spinner>
+            <p>{{ translationService.t('articles.loading') }}</p>
+        </div>
+
+        <!-- Error State -->
+        <div *ngIf="error" class="error-container">
+            <p class="error-message">{{ error }}</p>
+            <button class="retry-btn" (click)="loadAllArticles()">
+                {{ translationService.t('articles.retry') }}
+            </button>
+        </div>
+
+        <!-- Articles Grid -->
+        <div *ngIf="!isLoading && !error" class="articles-grid">
+            <article *ngFor="let article of articles" class="article-card" [routerLink]="['/article', article.id]">
+                <div class="article-image">
+                    <img *ngIf="article.featured_image" [src]="article.featured_image" [alt]="article.title" />
+                    <div *ngIf="!article.featured_image" class="image-placeholder">
+                        <span class="placeholder-icon">📄</span>
+                    </div>
+                    <div class="article-category" *ngIf="article.category">
+                        {{ article.category.name }}
+                    </div>
+                </div>
+                <div class="article-content">
+                    <div class="article-meta">
+                        <span class="article-date">{{ formatDate(article.published_at_iso || article.published_at)
+                            }}</span>
+                        <span class="reading-time">{{ article.reading_time }}</span>
+                    </div>
+                    <h2 class="article-title">{{ article.title }}</h2>
+                    <p class="article-excerpt">{{ getExcerpt(article.excerpt) }}</p>
+
+                    <div class="article-footer">
+                        <span *ngIf="article.author" class="article-author">
+                            {{ article.author.name }}
+                        </span>
+                        <span class="read-more">
+                            {{ translationService.t('articles.readMore') }} →
+                        </span>
+                    </div>
+                </div>
+            </article>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="!isLoading && !error && articles.length === 0" class="empty-state">
+            <h3>{{ translationService.t('articles.noArticles') }}</h3>
+            <p>{{ translationService.t('articles.noArticlesDesc') }}</p>
+        </div>
+    </div>
+</div>
+
+<app-footer></app-footer>
