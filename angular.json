@@ -28,7 +28,8 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/assets",
-              "src/favicon.ico"
+              "src/favicon.ico",
+              "src/CNAME"
             ],
             "styles": [
               "src/styles.scss"
@@ -86,7 +87,8 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/assets",
-              "src/favicon.ico"
+              "src/favicon.ico",
+              "src/CNAME"
             ],
             "styles": [
               "src/styles.scss"
