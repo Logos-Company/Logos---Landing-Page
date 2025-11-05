@@ -66,7 +66,7 @@ export interface ApiResponse<T> {
     providedIn: 'root'
 })
 export class ArticleService {
-    private apiUrl = 'https://phplaravel-1543174-5966899.cloudwaysapps.com/api/v1';
+    private apiUrl = 'https://phplaravel-1545128-5974899.cloudwaysapps.com/api/v1';
 
     constructor(private http: HttpClient) { }
 
