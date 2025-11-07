@@ -21,8 +21,6 @@ export interface Article {
         id: number;
         name: string;
         slug: string;
-        color: string;
-        icon: string;
     };
     author?: {
         id: number;
@@ -41,8 +39,6 @@ export interface Category {
     name: string;
     slug: string;
     description: string;
-    color: string;
-    icon: string;
     created_at: string;
     updated_at: string;
     published_content_items_count: number;
