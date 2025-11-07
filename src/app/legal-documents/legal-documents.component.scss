@@ -1,0 +1,241 @@
+.legal-documents {
+    font-family: 'Inter', sans-serif;
+    color: #333;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+
+    .container {
+        max-width: 900px;
+        margin: 80px auto;
+        padding: 40px 20px;
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        line-height: 1.6;
+    }
+
+    h1 {
+        font-size: 2.2rem;
+        margin-bottom: 40px;
+        color: #1e1f4b;
+        text-align: center;
+        border-bottom: 3px solid #007bff;
+        padding-bottom: 15px;
+    }
+
+    h2 {
+        font-size: 1.8rem;
+        margin: 40px 0 20px 0;
+        color: #1e1f4b;
+        position: relative;
+
+        &:first-of-type {
+            margin-top: 0;
+        }
+    }
+
+    .document-section {
+        margin-bottom: 60px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    .divider {
+        height: 2px;
+        background: linear-gradient(to right, #007bff, #28a745);
+        margin: 60px 0;
+        border-radius: 1px;
+        position: relative;
+
+        &::after {
+            content: '⚖️';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #ffffff;
+            padding: 0 15px;
+            font-size: 1.2rem;
+        }
+    }
+
+    ol {
+        counter-reset: section;
+        padding-left: 25px;
+
+        >li {
+            margin-bottom: 25px;
+            counter-increment: section;
+            position: relative;
+        }
+
+        ol {
+            list-style-type: decimal;
+            padding-left: 25px;
+            margin-top: 10px;
+        }
+    }
+
+    ul {
+        list-style-type: disc;
+        padding-left: 25px;
+
+        li {
+            margin-bottom: 8px;
+        }
+    }
+
+    strong {
+        color: #007bff;
+        font-weight: 600;
+    }
+
+    .loading-state {
+        text-align: center;
+        padding: 40px;
+        font-size: 1.1rem;
+        color: #666;
+
+        &::before {
+            content: '⏳';
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 15px;
+        }
+    }
+
+    .error-state {
+        text-align: center;
+        padding: 40px;
+        background-color: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 8px;
+        margin-bottom: 30px;
+
+        .error-message {
+            color: #d73502;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        p:not(.error-message) {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+    }
+
+    .version-info {
+        background-color: #e9ecef;
+        padding: 15px 20px;
+        border-radius: 8px;
+        margin-bottom: 25px;
+        font-size: 0.95rem;
+        border-left: 4px solid #007bff;
+
+        p {
+            margin: 0;
+            color: #666;
+
+            &:not(:last-child) {
+                margin-bottom: 8px;
+            }
+        }
+    }
+
+    .content {
+        ::ng-deep {
+
+            h1,
+            h2,
+            h3,
+            h4,
+            h5,
+            h6 {
+                color: #1e1f4b;
+                margin-top: 30px;
+                margin-bottom: 15px;
+            }
+
+            p {
+                margin-bottom: 15px;
+            }
+
+            ul,
+            ol {
+                margin-bottom: 15px;
+            }
+
+            strong {
+                color: #007bff;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 20px 0;
+
+                th,
+                td {
+                    border: 1px solid #dee2e6;
+                    padding: 12px;
+                    text-align: left;
+                }
+
+                th {
+                    background-color: #f8f9fa;
+                    font-weight: 600;
+                }
+            }
+        }
+    }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+    .legal-documents {
+        .container {
+            margin: 20px auto;
+            padding: 20px 15px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+        }
+
+        .divider {
+            margin: 40px 0;
+        }
+
+        .document-section {
+            margin-bottom: 40px;
+        }
+
+        ol,
+        ul {
+            padding-left: 20px;
+        }
+    }
+}
+
+// Print styles
+@media print {
+    .legal-documents {
+        .container {
+            box-shadow: none;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .divider {
+            page-break-before: always;
+        }
+    }
+}

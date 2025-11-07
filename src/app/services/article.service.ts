@@ -58,6 +58,26 @@ export interface ApiResponse<T> {
     };
 }
 
+export interface TermsOfService {
+    id: number;
+    title: string;
+    content: string;
+    version: string;
+    effective_date: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface PrivacyPolicy {
+    id: number;
+    title: string;
+    content: string;
+    version: string;
+    effective_date: string;
+    created_at: string;
+    updated_at: string;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -91,5 +111,17 @@ export class ArticleService {
                 article: response.data.content,
                 related: response.data.related
             })));
+    }
+
+    // Regulamin
+    getTermsOfService(): Observable<TermsOfService> {
+        return this.http.get<ApiResponse<TermsOfService>>(`${this.apiUrl}/terms-of-service`)
+            .pipe(map(response => response.data));
+    }
+
+    // Polityka prywatności
+    getPrivacyPolicy(): Observable<PrivacyPolicy> {
+        return this.http.get<ApiResponse<PrivacyPolicy>>(`${this.apiUrl}/privacy-policy`)
+            .pipe(map(response => response.data));
     }
 }

@@ -1,0 +1,236 @@
+<app-navbar></app-navbar>
+<app-mobile-nav></app-mobile-nav>
+
+<section class="legal-documents">
+    <div class="container">
+        <h1>📄 Regulamin i Polityka Prywatności</h1>
+
+        <div *ngIf="isLoading" class="loading-state">
+            <p>Ładowanie dokumentów...</p>
+        </div>
+
+        <!-- Regulamin Section -->
+        <div class="document-section" id="terms-of-service">
+            <div *ngIf="isLoadingTerms && !isLoadingPrivacy" class="loading-state">
+                <p>Ładowanie regulaminu...</p>
+            </div>
+
+            <div *ngIf="termsError" class="error-state">
+                <h2>📄 Regulamin</h2>
+                <p class="error-message">{{ termsError }}</p>
+            </div>
+
+            <div *ngIf="!isLoadingTerms && !termsError && termsOfService">
+                <h2>📄 {{ termsOfService.title || 'Regulamin' }}</h2>
+                <div class="version-info" *ngIf="termsOfService.version || termsOfService.effective_date">
+                    <p *ngIf="termsOfService.version">Wersja: {{ termsOfService.version }}</p>
+                    <p *ngIf="termsOfService.effective_date">Obowiązuje od: {{ termsOfService.effective_date |
+                        date:'dd.MM.yyyy' }}</p>
+                </div>
+                <div class="content" [innerHTML]="termsOfService.content"></div>
+            </div>
+
+            <!-- Fallback content for terms -->
+            <div *ngIf="!isLoadingTerms && !termsOfService && !termsError">
+                <h2>📄 Regulamin</h2>
+
+                <ol>
+                    <li>
+                        <strong>Postanowienia ogólne</strong>
+                        <ol>
+                            <li>Niniejszy regulamin określa zasady korzystania z serwisu internetowego dostępnego pod
+                                adresem
+                                <strong>[TWOJA_DOMENA.PL]</strong>.
+                            </li>
+                            <li>Serwis prowadzony jest przez <strong>[NAZWA FIRMY / OSOBY]</strong>, z siedzibą w
+                                <strong>[ADRES]</strong>, NIP: <strong>[NIP]</strong>, REGON: <strong>[REGON]</strong>.
+                            </li>
+                            <li>Korzystając z serwisu, użytkownik akceptuje warunki niniejszego regulaminu.</li>
+                        </ol>
+                    </li>
+
+                    <li>
+                        <strong>Definicje</strong>
+                        <ul>
+                            <li><strong>Serwis</strong> – strona internetowa dostępna pod adresem [TWOJA_DOMENA.PL].
+                            </li>
+                            <li><strong>Użytkownik</strong> – każda osoba fizyczna lub prawna korzystająca z Serwisu.
+                            </li>
+                            <li><strong>Administrator</strong> – właściciel i operator Serwisu.</li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <strong>Warunki korzystania</strong>
+                        <ol>
+                            <li>Użytkownik zobowiązuje się do korzystania z Serwisu zgodnie z obowiązującym prawem oraz
+                                zasadami
+                                współżycia społecznego.</li>
+                            <li>Zabrania się dostarczania treści o charakterze bezprawnym.</li>
+                            <li>Administrator zastrzega sobie prawo do wprowadzania zmian w Serwisie bez wcześniejszego
+                                powiadomienia.</li>
+                        </ol>
+                    </li>
+
+                    <li>
+                        <strong>Odpowiedzialność</strong>
+                        <ol>
+                            <li>Administrator nie ponosi odpowiedzialności za przerwy w działaniu Serwisu wynikające z
+                                przyczyn
+                                technicznych.</li>
+                            <li>Administrator nie ponosi odpowiedzialności za działania Użytkowników niezgodne z
+                                Regulaminem.</li>
+                        </ol>
+                    </li>
+
+                    <li>
+                        <strong>Prawa autorskie</strong>
+                        <ol>
+                            <li>Wszystkie treści opublikowane w Serwisie są chronione prawem autorskim.</li>
+                            <li>Kopiowanie, przetwarzanie i rozpowszechnianie treści bez zgody Administratora jest
+                                zabronione.</li>
+                        </ol>
+                    </li>
+
+                    <li>
+                        <strong>Postanowienia końcowe</strong>
+                        <ol>
+                            <li>Regulamin wchodzi w życie z dniem opublikowania na stronie internetowej.</li>
+                            <li>Administrator zastrzega sobie prawo do zmiany Regulaminu. Zmiany obowiązują od momentu
+                                ich
+                                publikacji.</li>
+                        </ol>
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider"></div>
+
+        <!-- Privacy Policy Section -->
+        <div class="document-section" id="privacy-policy">
+            <div *ngIf="isLoadingPrivacy && !isLoadingTerms" class="loading-state">
+                <p>Ładowanie polityki prywatności...</p>
+            </div>
+
+            <div *ngIf="privacyError" class="error-state">
+                <h2>🔒 Polityka Prywatności</h2>
+                <p class="error-message">{{ privacyError }}</p>
+            </div>
+
+            <div *ngIf="!isLoadingPrivacy && !privacyError && privacyPolicy">
+                <h2>🔒 {{ privacyPolicy.title || 'Polityka Prywatności' }}</h2>
+                <div class="version-info" *ngIf="privacyPolicy.version || privacyPolicy.effective_date">
+                    <p *ngIf="privacyPolicy.version">Wersja: {{ privacyPolicy.version }}</p>
+                    <p *ngIf="privacyPolicy.effective_date">Obowiązuje od: {{ privacyPolicy.effective_date |
+                        date:'dd.MM.yyyy' }}</p>
+                </div>
+                <div class="content" [innerHTML]="privacyPolicy.content"></div>
+            </div>
+
+            <!-- Fallback content for privacy policy -->
+            <div *ngIf="!isLoadingPrivacy && !privacyPolicy && !privacyError">
+                <h2>🔒 Polityka Prywatności</h2>
+
+                <ol>
+                    <li>
+                        <strong>Informacje ogólne</strong>
+                        <ol>
+                            <li>Niniejsza Polityka Prywatności określa zasady przetwarzania i ochrony danych osobowych
+                                użytkowników
+                                Serwisu dostępnego pod adresem <strong>[TWOJA_DOMENA.PL]</strong>.</li>
+                            <li>Administratorem danych jest <strong>[NAZWA FIRMY / OSOBY]</strong>, z siedzibą w
+                                <strong>[ADRES]</strong>, NIP: <strong>[NIP]</strong>.
+                            </li>
+                        </ol>
+                    </li>
+
+                    <li>
+                        <strong>Zakres zbieranych danych</strong>
+                        <ol>
+                            <li>Serwis może gromadzić następujące dane użytkowników:
+                                <ul>
+                                    <li>Imię i nazwisko</li>
+                                    <li>Adres e-mail</li>
+                                    <li>Adres IP</li>
+                                    <li>Dane zbierane automatycznie przez pliki cookies</li>
+                                </ul>
+                            </li>
+                            <li>Podanie danych osobowych jest dobrowolne, ale może być konieczne do skorzystania z
+                                niektórych
+                                funkcji Serwisu.</li>
+                        </ol>
+                    </li>
+
+                    <li>
+                        <strong>Cele przetwarzania danych</strong>
+                        <ul>
+                            <li>Świadczenia usług drogą elektroniczną</li>
+                            <li>Prowadzenia analiz statystycznych</li>
+                            <li>Kontaktu z użytkownikami</li>
+                            <li>Zabezpieczenia serwisu przed nadużyciami</li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <strong>Podstawy prawne przetwarzania</strong>
+                        <ul>
+                            <li>Art. 6 ust. 1 lit. a) RODO – zgoda użytkownika</li>
+                            <li>Art. 6 ust. 1 lit. b) RODO – realizacja umowy</li>
+                            <li>Art. 6 ust. 1 lit. f) RODO – prawnie uzasadniony interes Administratora</li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <strong>Prawa użytkownika</strong>
+                        <ul>
+                            <li>Dostępu do swoich danych</li>
+                            <li>Ich sprostowania, usunięcia lub ograniczenia przetwarzania</li>
+                            <li>Wniesienia sprzeciwu</li>
+                            <li>Przenoszenia danych</li>
+                            <li>Cofnięcia zgody</li>
+                            <li>Złożenia skargi do organu nadzorczego (PUODO)</li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <strong>Cookies</strong>
+                        <ol>
+                            <li>Serwis korzysta z plików cookies w celu zapewnienia poprawnego działania, analizy
+                                statystycznej i
+                                personalizacji treści.</li>
+                            <li>Użytkownik może samodzielnie zarządzać plikami cookies w ustawieniach swojej
+                                przeglądarki.</li>
+                        </ol>
+                    </li>
+
+                    <li>
+                        <strong>Przekazywanie danych</strong>
+                        <ol>
+                            <li>Dane mogą być przekazywane zaufanym podmiotom przetwarzającym dane w naszym imieniu (np.
+                                dostawcy
+                                hostingu, narzędzia analityczne).</li>
+                            <li>Dane nie są przekazywane do państw trzecich, chyba że użytkownik wyraźnie na to zezwoli.
+                            </li>
+                        </ol>
+                    </li>
+
+                    <li>
+                        <strong>Okres przechowywania</strong><br>
+                        Dane są przechowywane tak długo, jak jest to konieczne do realizacji celów, dla których zostały
+                        zebrane, lub
+                        do czasu cofnięcia zgody.
+                    </li>
+
+                    <li>
+                        <strong>Zmiany w Polityce Prywatności</strong><br>
+                        Polityka może być aktualizowana. Nowa wersja będzie publikowana na stronie Serwisu.
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<app-footer></app-footer>

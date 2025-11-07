@@ -85,7 +85,7 @@
                     <div class="contact__form-group">
                         <label class="contact__checkbox">
                             <input type="checkbox" formControlName="privacyAccepted">
-                            {{ translationService.t('contact.privacyPolicy') }} <a href="/privacy-policy"
+                            {{ translationService.t('contact.privacyPolicy') }} <a href="/legal#privacy-policy"
                                 target="_blank">privacy policy</a> <span class="required">*</span>
                         </label>
                         <div *ngIf="contactForm.get('privacyAccepted')?.touched && contactForm.get('privacyAccepted')?.errors"
